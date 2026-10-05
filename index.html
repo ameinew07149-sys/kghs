@@ -227,6 +227,7 @@ textarea{min-height:110px;resize:vertical}
 .idea-card b{font-weight:400;color:var(--pink)}
 /* ===== 相機與編輯（美圖秀秀式） ===== */
 body.fullmode .sound{display:none}
+body.fullmode .scan-fab{display:none}
 body.fullmode .toast{bottom:auto;top:calc(72px + env(safe-area-inset-top,0px))}
 .full{position:fixed;inset:0;z-index:12;display:flex;flex-direction:column}
 #cam{background:#000;color:#fff}
@@ -295,12 +296,43 @@ body.fullmode .toast{bottom:auto;top:calc(72px + env(safe-area-inset-top,0px))}
 .fl img,.fl .ph{width:66px;height:82px;object-fit:cover;border-radius:12px;border:3px solid transparent;background:var(--t-pink)}
 .fl[aria-pressed="true"]{color:var(--ink)}
 .fl[aria-pressed="true"] img,.fl[aria-pressed="true"] .ph{border-color:var(--pink)}
-.toolbar{display:grid;grid-template-columns:repeat(7,1fr);background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+.toolbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
 .toolbar button{border:0;background:none;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.8rem;padding:6px 0;cursor:pointer;border-radius:12px}
 .toolbar button i{font-style:normal;font-size:1.45rem;line-height:1.25}
 .toolbar button[aria-pressed="true"]{background:var(--t-pink);color:var(--pink-d)}
 #pad{display:block;width:100%;height:auto;aspect-ratio:900/420;background:#fff;border-radius:18px;border:2px solid var(--line);touch-action:none}
 body:not(.test) .testonly{display:none!important}
+.skip-link{display:block;margin:12px auto 0;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#FFD6E2;font:inherit;font-size:.95rem;border-radius:999px;padding:8px 18px;cursor:pointer}
+.presets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 12px}
+.presets button{padding:0;border:3px solid transparent;border-radius:14px;overflow:hidden;cursor:pointer;background:none}
+.presets img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.note-prev{display:block;width:70%;max-width:260px;margin:4px auto 10px;border-radius:10px}
+.ncolors{display:flex;gap:12px;justify-content:center;margin:4px 0 10px}
+.ncolors button{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);cursor:pointer}
+.ncolors button[aria-pressed="true"]{box-shadow:0 0 0 4px var(--pink)}
+#noteText{min-height:96px}
+#scan{background:#000;color:#fff}
+.sc-title{color:#fff;font-size:1.05rem}
+#scVid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sc-mask{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.sc-box{position:relative;width:min(68vw,300px);aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.5)}
+.sc-box i{position:absolute;width:34px;height:34px;border:5px solid #FF8FAB}
+.sc-box .tl{top:-3px;left:-3px;border-right:0;border-bottom:0;border-radius:18px 0 0 0}
+.sc-box .tr{top:-3px;right:-3px;border-left:0;border-bottom:0;border-radius:0 18px 0 0}
+.sc-box .bl{bottom:-3px;left:-3px;border-right:0;border-top:0;border-radius:0 0 0 18px}
+.sc-box .br{bottom:-3px;right:-3px;border-left:0;border-top:0;border-radius:0 0 18px 0}
+.sc-line{position:absolute;left:8%;right:8%;height:3px;border-radius:3px;background:#FF8FAB;box-shadow:0 0 12px #FF8FAB;animation:scanline 2s ease-in-out infinite}
+@keyframes scanline{0%{top:8%}50%{top:90%}100%{top:8%}}
+@media (prefers-reduced-motion:reduce){.sc-line{animation:none;top:50%}}
+.sc-box.ok i{border-color:#7FD6AE}
+.sc-tip{position:absolute;left:0;right:0;top:calc(50% + min(34vw,150px) + 22px);text-align:center;color:#fff;font-size:1.1rem;text-shadow:0 1px 6px rgba(0,0,0,.6);padding:0 20px}
+.scan-fab{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:10;border:0;background:var(--pink);color:#fff;font:inherit;font-size:1.15rem;border-radius:999px;padding:15px 28px;box-shadow:0 6px 18px rgba(242,102,140,.45),0 4px 0 var(--pink-d);cursor:pointer;white-space:nowrap}
+body.fullmode .scan-fab{display:none}
+#home{padding-bottom:84px}
+.scanbtn{margin-top:4px}
+.unlock-stamp{width:96px;height:96px;margin:4px auto 12px;border-radius:50%;background:var(--pink-l);color:#fff;border:5px solid #fff;box-shadow:0 6px 16px rgba(242,102,140,.4);display:grid;place-items:center;font-size:2.6rem;animation:pop .6s cubic-bezier(.2,.9,.3,1.5)}
+#edit.notemode [data-tool="tpl"],#edit.notemode [data-tool="frame"],#edit.notemode [data-tool="filter"]{display:none}
+#noteColorsRow{display:flex;gap:12px;margin:2px 0 12px}
 /* 對話框 */
 .modal{position:fixed;inset:0;z-index:40;background:rgba(30,20,35,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
 .sheet{background:var(--card);border-radius:26px;padding:22px 20px 20px;max-width:460px;width:100%;max-height:86vh;overflow:auto}
@@ -420,8 +452,30 @@ body:not(.test) .testonly{display:none!important}
       <button class="shutter" id="shutter" aria-label="拍照"><span></span></button>
       <button class="side-btn" data-ed="timer"><span class="thumb">⏱</span><b id="timerLbl">3 秒</b></button>
     </div>
+    <button class="skip-link" data-ed="skip">不想拍照？選照片或貼便利貼</button>
   </div>
 </section>
+
+<section id="scan" class="view full" hidden>
+  <div class="cam-top"><button class="ico-btn" data-sc="close" aria-label="離開">✕</button><p class="sc-title">掃描點位 QR Code</p><span style="width:46px"></span></div>
+  <div class="cam-view">
+    <video id="scVid" playsinline muted autoplay></video>
+    <div class="sc-mask"><div class="sc-box"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><div class="sc-line"></div></div></div>
+    <p class="sc-tip" id="scTip">把牆上的 QR Code 放進框框裡</p>
+    <div class="cam-fail" id="scFail" hidden>
+      <p class="cf-t">相機還沒打開</p>
+      <p class="cf-s">按下面的按鈕，手機問妳時請選「允許」</p>
+      <button class="btn" data-sc="retry">開啟相機</button>
+      <button class="linkbtn" style="color:#FFB3C7" data-ed="camhelp">打不開怎麼辦？</button>
+    </div>
+  </div>
+  <div class="cam-bottom">
+    <button class="skip-link" style="margin-top:4px" data-sc="manual">掃不到？輸入 QR Code 下方的點位代碼</button>
+    <div class="row wrapr testonly" id="scTest" style="justify-content:center;margin-top:10px"></div>
+  </div>
+</section>
+
+<button class="scan-fab" id="scanFab" data-sc="open" hidden>📷 掃描 QR Code</button>
 
 <section id="edit" class="view full" hidden>
   <div class="ed-top">
@@ -453,6 +507,7 @@ body:not(.test) .testonly{display:none!important}
         <div class="pair" style="margin-top:8px"><button class="btn soft small" data-ed="undo">復原一筆</button><button class="btn soft small" data-ed="clearpen">全部擦掉</button></div>
       </div>
       <div class="tp" id="t-msg">
+        <div id="noteColorsRow" class="ncolors" hidden></div>
         <div class="seg" id="msgMode"><button data-mode2="type">打字留言</button><button data-mode2="hand">手寫留言</button></div>
         <div id="m-title" hidden>
           <label class="sub" for="title" style="display:block;margin-top:0">作品名稱</label>
@@ -464,7 +519,7 @@ body:not(.test) .testonly{display:none!important}
           <textarea id="msg" maxlength="50" placeholder="寫一句話給大家（50 字內）"></textarea>
           <div class="row" id="quickCats"></div>
           <div class="quick" id="quick"></div>
-          <p class="sub">要放在照片上嗎？</p>
+          <p class="sub" id="placeLbl">要放在照片上嗎？</p>
           <div class="row wrapr" id="msgPlace">
             <button class="chip" data-place="caption">寫在相框底部</button>
             <button class="chip" data-place="note">做成便利貼</button>
@@ -548,6 +603,8 @@ const CONFIG = {
   // 照片壓縮：上傳前在手機上壓到 maxBytes 以下；thumbWidth 是手機裡保留的小圖寬度
   upload: { maxBytes: 450*1024, minQuality: .6, thumbWidth: 240 },
   // 拍風景時的作品名稱與介紹範例
+  // 不想拍照的人：可以選準備好的照片（每個點位放 spots[].presets 圖檔網址；沒放就用示範圖）或貼便利貼祝福
+  noteBlessings: ['祝大家今晚聚餐愉快！','雖然今晚不能到，心一直都在','大家幫我多吃一點、多笑一點','好想念妳們，下次一定見！','謝謝主辦的大家辛苦了','雄女的姊妹們，永遠青春美麗'],
   quickTitles: ['午後的鐘聲','老樹與光','回家的路','那年的走廊','靜靜等妳回來'],
   quickScene: ['這是我心中雄女最美的角度','當年天天經過，現在才發現這裡這麼美','光線跟三十年前一模一樣','想把這個角落留給學妹們','每次想起高中，腦中就是這個畫面'],
   // 留言範例：分成幾類，玩家點一下就填好
@@ -607,7 +664,7 @@ if(TEST) document.body.classList.add('test');
 const esc=s=>String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let toastTimer;
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3000); }
-function show(id){ document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id); document.body.classList.toggle('fullmode', id==='cam'||id==='edit'); window.scrollTo(0,0); }
+function show(id){ document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id); document.body.classList.toggle('fullmode', id==='cam'||id==='edit'||id==='scan'); const fab=document.getElementById('scanFab'); if(fab) fab.hidden = id!=='home'; window.scrollTo(0,0); }
 const spotById=id=>CONFIG.spots.find(s=>s.id===id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function dateStr(){ const d=new Date(); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`; }
@@ -656,10 +713,14 @@ let pending=null;
 if(params.get('spot')){ pending={ id:params.get('spot'), k:params.get('k') ?? '' }; try{ history.replaceState(null,'',location.pathname); }catch(e){} }
 function scanSpot(id,k){
   const s=spotById(id);
-  if(!s || k!==s.key){ toast('這個 QR Code 不是活動點位，請再掃描一次'); return; }
+  if(!s || k!==s.key){ toast('這個 QR Code 不是活動點位，請再掃描一次'); return false; }
+  const again=!!S.done[id];
   S.scanned[id]=true; save();
-  toast(`找到「${s.name}」了！`);
-  openEditor(id);
+  show('home'); renderHome();
+  try{ sfx.stamp(); }catch(_){}
+  modal(`<div class="unlock-stamp">${s.stamp}</div><h2 style="text-align:center">${again?'這一站已經集過章了':'找到了！'}</h2><p style="text-align:center">「${esc(s.name)}」${again?'要重拍一次嗎？':'解鎖了，現在就來拍照吧'}</p>`,
+    [{label: again ? '重拍這一站' : '開始拍照', fn:()=>openEditor(id)}, {label:'等一下再拍', soft:true}]);
+  return true;
 }
 function handlePending(){ if(!pending) return; const p=pending; pending=null; scanSpot(p.id,p.k); }
 
@@ -910,7 +971,7 @@ function renderHome(){
     <div class="syncbar" id="syncBar" hidden><span id="syncText"></span><button class="btn soft small" data-act="retry">立即重試</button></div>
     <div class="who-row"><span class="tiny" style="margin:0">找回進度用：末三碼 ${esc(p.l3)}</span><button class="btn soft small" data-act="logout">不是妳？</button></div>
     <div class="stamps" aria-label="集章進度 ${n} / ${spots.length}">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
-    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>讀下面的謎題，猜猜是校園哪裡</li><li>走到那裡，用手機相機對準牆上的 QR Code</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句話，就集到一章</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
+    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>讀下面的謎題，猜猜是校園哪裡</li><li>走到那裡，點下方的「📷 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句話，就集到一章</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
     ${n===spots.length ? `<section class="unlock"><h2>五個祕境都找到了！</h2><p>邀請函準備好了，聚餐地點寫在裡面。</p><button class="btn white wide" data-act="invite">打開邀請函</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
     <section class="spots">${spots.map(spotHTML).join('')}</section>
     <details class="devtools testonly" ${devOpen?'open':''}>
@@ -927,16 +988,17 @@ function renderHome(){
 function spotHTML(s){
   const d=S.done[s.id], sc=S.scanned[s.id], known=d||sc;
   let foot;
-  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已集章 ♡　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 ✓',failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">📷 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
+  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已集章 ♡　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 ✓',failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">📷 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?'<p class="work">📝 便利貼祝福</p>':''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
   else if(sc) foot=`<p class="status ok">找到了！可以拍照了</p><button class="btn wide" data-act="shoot" data-id="${s.id}">去拍照</button>`;
-  else foot=`<details class="hint"><summary>猜不到？看提示</summary><p>${esc(s.hint)}</p></details><p class="status">找到地點後，用手機相機對準那裡的 QR Code。</p>`;
+  else foot=`<details class="hint"><summary>猜不到？看提示</summary><p>${esc(s.hint)}</p></details><button class="btn soft wide scanbtn" data-sc="open">📷 到了！掃描 QR Code</button>`;
   return `<article class="spot"><div class="head"><span class="mark">${s.stamp}</span><h3 class="${known?'':'unknown'}">${known?esc(s.name):'？？？'}</h3></div><p class="riddle">${esc(s.riddle)}</p>${foot}</article>`;
 }
 /* ===================== 版型、相框、美顏 ===================== */
 const LAYOUTS={
   single:{ W:1080, H:1350, cap:[64,42], cells:[[56,56,968,1040]] },
   strip: { W:720, H:2160, cap:[56,38], cells:[0,1,2,3].map(i=>[40,40+i*471,640,447]) },
-  grid:  { W:1080, H:1500, cap:[66,42], cells:[0,1,2,3].map(i=>[50+(i%2)*502,50+Math.floor(i/2)*597,478,573]) }
+  grid:  { W:1080, H:1500, cap:[66,42], cells:[0,1,2,3].map(i=>[50+(i%2)*502,50+Math.floor(i/2)*597,478,573]) },
+  note:  { W:1080, H:1080, cap:[64,42], cells:[] }
 };
 const W65='rgba(255,255,255,.65)';
 const FRAMES={
@@ -1073,7 +1135,7 @@ let stream=null, facing='user', shooting=false, ideaSel=-1, tplSel=-1, quickCat=
 
 function wrapLines(c,text,maxW){
   const lines=[]; let line='';
-  for(const ch of text){ if(ch==='\n'){ lines.push(line); line=''; continue; } const t=line+ch; if(c.measureText(t).width>maxW && line){ lines.push(line); line=ch; } else line=t; }
+  for(const ch of text){ if(ch==='\n'){ lines.push(line); line=''; continue; } const t=line+ch; if(c.measureText(t).width>maxW && line && !'，。！？、）」』：；…,.!?'.includes(ch)){ lines.push(line); line=ch; } else line=t; }
   if(line) lines.push(line); return lines;
 }
 function fitText(c,text,maxW,maxH,big,small,font){
@@ -1145,6 +1207,13 @@ function handImage(){
 }
 function draw(showSel=true){
   if(!E.spot) return;
+  if(E.layout==='note'){
+    cx.clearRect(0,0,cv.width,cv.height);
+    paintNote(cx, cv.width, E.msgMode==='type' ? E.msg.trim() : '', E.noteColor, showSel);
+    E.strokes.forEach(sk=>strokePath(cx,sk));
+    E.stickers.forEach((st,i)=>drawSticker(st, showSel && !penMode() && i===E.sel));
+    return;
+  }
   const lay=L(), Fm=FRAMES[E.frame], W=lay.W, H=lay.H, rad=Math.round(W*0.024);
   cx.clearRect(0,0,W,H); cx.fillStyle=Fm.bg; cx.fillRect(0,0,W,H); drawPattern(cx,Fm.pattern,W,H);
   lay.cells.forEach(([x,y,w,h],i)=>{
@@ -1206,7 +1275,7 @@ function openEditor(id){
   const kind = prev && prev.kind ? prev.kind : 'selfie';
   Object.assign(E,{ spot:spotById(id), tool:null, layout:'single', frame:'berry', filter:'milk', caption:true, cells:[newCell()], cur:0, stickers:[], sel:-1, strokes:[],
     msg: prev && prev.msg ? prev.msg : '', msgMode:'type', msgPlace:'caption', hand:[], kind, title: prev && prev.title ? prev.title : '', shotK:0 });
-  ideaSel=-1; tplSel=-1;
+  ideaSel=-1; tplSel=-1; $('#edit').classList.remove('notemode'); $('.ed-back').textContent='‹ 重拍'; E.noteColor='yellow'; E.pen='#FFFFFF';
   cv.width=L().W; cv.height=L().H;
   $('#edTitle').textContent=E.spot.name; $('#msg').value=E.msg; $('#title').value=E.title;
   setCamMode(kind==='scene' ? 'scene' : 'selfie', true);
@@ -1358,7 +1427,7 @@ function goEdit(){
   stopStream(); duckMusic(false); E.cur=0; E.sel=-1;
   show('edit'); renderFilters(); setTool(null);
 }
-function retake(){ E.shotK=0; E.cells=L().cells.map(newCell); openCam(); }
+function retake(){ leaveNoteMode(); E.shotK=0; E.cells=L().cells.map(newCell); openCam(); }
 
 /* ---------- 編輯：工具列 ---------- */
 function setTool(t){
@@ -1390,10 +1459,14 @@ function syncUI(){
   $('#capBtn').textContent = E.caption ? '底部文字：顯示' : '底部文字：隱藏';
   const sc=E.kind==='scene';
   $('#m-type').hidden = E.msgMode!=='type'; $('#m-hand').hidden = E.msgMode!=='hand';
+  const nt=E.layout==='note';
+  $('#noteColorsRow').hidden=!nt; $('#msgPlace').hidden=nt; $('#placeLbl').hidden=nt;
+  if(nt) $('#noteColorsRow').innerHTML=Object.entries(NOTE_COLORS).map(([k,[bg]])=>`<button data-ncol="${k}" aria-label="便利貼顏色" aria-pressed="${k===E.noteColor}" style="background:${bg}"></button>`).join('');
   $('#m-title').hidden = !(sc && E.msgMode==='type');
-  $('#msgLabel').textContent = sc ? '作品介紹（為什麼拍這裡？）' : '留一句話給大家';
-  $('#msg').placeholder = sc ? '以攝影師的身分，介紹一下這張照片' : '寫一句話給大家（50 字內）';
-  $('#padPut').textContent = E.stickers.some(s=>s.type==='hand') ? '更新照片上的手寫' : '貼到照片上';
+  $('#msgLabel').textContent = nt ? '便利貼上的祝福（60 字內）' : sc ? '作品介紹（為什麼拍這裡？）' : '留一句話給大家';
+  $('#msg').maxLength = nt ? 60 : 50;
+  $('#msg').placeholder = nt ? '例如：雖然今晚不能到，心一直都在' : sc ? '以攝影師的身分，介紹一下這張照片' : '寫一句話給大家（50 字內）';
+  $('#padPut').textContent = E.stickers.some(s=>s.type==='hand') ? (nt?'更新便利貼上的手寫':'更新照片上的手寫') : (nt?'貼到便利貼上':'貼到照片上');
 }
 
 /* ---------- 各工具的內容 ---------- */
@@ -1413,9 +1486,10 @@ function renderStk(cat){
 function renderTemplates(){ $('#tpls').innerHTML=CONFIG.templates.map((t,i)=>`<button class="tpl" data-tpl="${i}" aria-pressed="${i===tplSel}">${tplPreview(t)}${esc(t.name)}</button>`).join(''); }
 function renderQuick(){
   const scene=E.kind==='scene';
-  $('#quickCats').hidden=scene;
-  if(!scene) $('#quickCats').innerHTML=Object.keys(CONFIG.quickMsgs).map(c=>`<button class="chip" data-qcat="${esc(c)}" aria-pressed="${c===quickCat}">${esc(c)}</button>`).join('');
-  const list = scene ? CONFIG.quickScene : CONFIG.quickMsgs[quickCat];
+  const nt=E.layout==='note';
+  $('#quickCats').hidden=scene||nt;
+  if(!scene && !nt) $('#quickCats').innerHTML=Object.keys(CONFIG.quickMsgs).map(c=>`<button class="chip" data-qcat="${esc(c)}" aria-pressed="${c===quickCat}">${esc(c)}</button>`).join('');
+  const list = nt ? CONFIG.noteBlessings : scene ? CONFIG.quickScene : CONFIG.quickMsgs[quickCat];
   $('#quick').innerHTML=list.map(m=>`<button class="chip" data-quick="${esc(m)}">${esc(m)}</button>`).join('');
 }
 function renderIdeas(){
@@ -1456,7 +1530,9 @@ function applyTemplate(i){
 function addSticker(obj){
   sfx.pop();
   const lay=L();
-  E.stickers.push(Object.assign({ x:lay.W/2+(Math.random()-.5)*lay.W*0.3, y:lay.H*0.35+(Math.random()-.5)*lay.H*0.2, s:1.15, r:(Math.random()-.5)*0.35, base:Math.round(lay.W*0.2), hw:60, hh:60 }, obj));
+  let pos={ x:lay.W/2+(Math.random()-.5)*lay.W*0.3, y:lay.H*0.35+(Math.random()-.5)*lay.H*0.2 };
+  if(E.layout==='note' && obj.type!=='hand'){ const spots=[[.14,.2],[.86,.2],[.14,.72],[.86,.66],[.5,.72]], k=E.stickers.length%spots.length; pos={ x:spots[k][0]*lay.W, y:spots[k][1]*lay.H }; }
+  E.stickers.push(Object.assign({ ...pos, s:E.layout==='note'?0.9:1.15, r:(Math.random()-.5)*0.35, base:Math.round(lay.W*0.2), hw:60, hh:60 }, obj));
   E.sel=E.stickers.length-1; syncUI(); draw();
 }
 function setPlace(p){
@@ -1567,10 +1643,81 @@ function putHand(){
   toast('貼好了！可以拖曳、縮放');
 }
 
+/* ---------- 不想拍照：選準備好的照片／貼便利貼 ---------- */
+const NOTE_COLORS={ yellow:['#FFF1A8','#C9A227'], pink:['#FFD6E2','#D14B72'], blue:['#D9EAFF','#3B6FB6'], green:['#DDF3D3','#3E8A4E'] };
+const presetCache={};
+function demoPresets(spot){
+  if(presetCache[spot.id]) return presetCache[spot.id];
+  const out=[0,1,2,3].map(i=>{
+    const c=document.createElement('canvas'); c.width=800; c.height=1000; const g=c.getContext('2d');
+    const hue=(spot.id.charCodeAt(1)*40+i*70)%360, sky=g.createLinearGradient(0,0,0,1000);
+    sky.addColorStop(0,`hsl(${hue},65%,80%)`); sky.addColorStop(1,'#FFF6EA'); g.fillStyle=sky; g.fillRect(0,0,800,1000);
+    g.fillStyle=`hsl(${(hue+140)%360},30%,55%)`; g.fillRect(60+i*30,420,420,580);
+    g.fillStyle='rgba(255,255,255,.8)'; for(let r=0;r<4;r++) for(let k=0;k<3;k++) g.fillRect(100+i*30+k*130,480+r*120,80,60);
+    g.fillStyle='#6E5A44'; g.fillRect(620-i*20,560,36,440);
+    g.fillStyle='#5E9E62'; [[640,520,130],[560,580,90],[720,580,90]].forEach(([x,y,r])=>{ g.beginPath(); g.arc(x-i*20,y,r,0,Math.PI*2); g.fill(); });
+    g.fillStyle='rgba(0,0,0,.45)'; g.fillRect(30,30,380,64); g.fillStyle='#fff'; g.font=`400 34px ${HF}`; g.textBaseline='middle';
+    g.fillText(`示範照片｜${spot.name} ${i+1}`,48,62);
+    return c.toDataURL('image/jpeg',.85);
+  });
+  return presetCache[spot.id]=out;
+}
+function skipMenu(){
+  if(shooting) return;
+  modal(`<h2>不想拍照也沒關係</h2><p>選一種方式完成這一站：</p>`,
+    [{label:'🖼️ 選一張準備好的照片', fn:presetPicker}, {label:'📝 寫一張便利貼祝福大家', fn:()=>openNote()}, {label:'回去拍照', soft:true}]);
+}
+function presetPicker(){
+  const list=(E.spot.presets && E.spot.presets.length) ? E.spot.presets : demoPresets(E.spot);
+  modal(`<h2>選一張喜歡的照片</h2><p>選好之後，一樣可以加相框、貼紙和留言。</p><div class="presets">${list.map((u,i)=>`<button data-preset="${i}"><img src="${u}" alt="照片 ${i+1}"></button>`).join('')}</div>`,
+    [{label:'回去拍照', soft:true}]);
+  $('#sheet').querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{
+    $('#modal').hidden=true;
+    const im=new Image(); if(/^https?:/.test(list[+b.dataset.preset])) im.crossOrigin='anonymous';
+    im.onload=()=>{ stopStream(); setLayout('single'); E.cells=[newCell()]; setCellImage(0,im); E.cells[0].mini=miniOf(E.cells[0].raw); E.kind='preset'; E.shotK=1; goEdit(); toast('照片選好了！可以裝飾，最後留一句話'); };
+    im.onerror=()=>toast('這張照片載入失敗，請換一張');
+    im.src=list[+b.dataset.preset];
+  });
+}
+/* 便利貼：直接用編輯畫面（可加貼紙、文字、塗鴉、手寫），底圖換成一整張便利貼 */
+function paintNote(g,size,text,ck,hintEmpty){
+  const [bg,ac]=NOTE_COLORS[ck]||NOTE_COLORS.yellow;
+  g.fillStyle=bg; g.fillRect(0,0,size,size);
+  const sh=g.createLinearGradient(0,size*.6,0,size); sh.addColorStop(0,'rgba(0,0,0,0)'); sh.addColorStop(1,'rgba(0,0,0,.06)'); g.fillStyle=sh; g.fillRect(0,0,size,size);
+  g.save(); g.translate(size/2,size*.035); g.rotate(-.04); g.fillStyle='rgba(255,255,255,.6)'; g.fillRect(-size*.16,-size*.03,size*.32,size*.07); g.restore();
+  g.textAlign='center'; g.textBaseline='middle';
+  if(text){
+    g.fillStyle='#3B3346';
+    const f=fitText(g, text, size*.78, size*.56, Math.round(size*.085), Math.round(size*.042), HF);
+    g.font=`400 ${f.s}px ${HF}`;
+    const top=size*.42-(f.ls.length-1)*f.s*1.35/2; f.ls.forEach((ln,i)=>g.fillText(ln,size/2,top+i*f.s*1.35));
+  } else if(hintEmpty){
+    g.fillStyle='rgba(59,51,70,.35)'; g.font=`400 ${Math.round(size*.05)}px ${HF}`;
+    g.fillText('點下方「留言」寫祝福', size/2, size*.42);
+  }
+  g.fillStyle=ac; g.textAlign='right';
+  g.font=`700 ${Math.round(size*.046)}px ${GF}`; g.fillText(`— ${S.player.name}（第 ${S.player.cls} 屆）`, size*.93, size*.86);
+  g.font=`400 ${Math.round(size*.032)}px ${HF}`; g.fillText(`寫於「${E.spot.name}」 ${dateStr()}`, size*.93, size*.93);
+}
+function openNote(){
+  stopStream(); duckMusic(false);
+  E.layout='note'; E.cells=[]; E.cur=0; E.kind='note'; E.noteColor=E.noteColor||'yellow';
+  E.stickers=[]; E.strokes=[]; E.sel=-1; E.msgMode='type'; E.msgPlace='none'; E.hand=[];
+  cv.width=1080; cv.height=1080;
+  $('#edit').classList.add('notemode'); $('#edTitle').textContent=`${E.spot.name}・便利貼`; $('.ed-back').textContent='‹ 回相機'; E.pen='#FF6F95';
+  show('edit'); renderQuick(); drawPad(); setTool('msg');
+  toast('寫下祝福，也可以加貼紙、文字、塗鴉');
+}
+function leaveNoteMode(){
+  $('#edit').classList.remove('notemode'); $('#edTitle').textContent=E.spot ? E.spot.name : ''; $('.ed-back').textContent='‹ 重拍'; E.pen='#FFFFFF';
+  if(E.layout==='note'){ E.layout='single'; E.cells=[newCell()]; cv.width=L().W; cv.height=L().H; E.kind = E.mode==='scene' ? 'scene' : 'selfie'; E.stickers=[]; E.strokes=[]; E.msgPlace='caption'; }
+  renderQuick();
+}
+
 /* 完成 */
 function finish(){
-  if(!filled()){ toast('照片還沒拍完喔'); retake(); return; }
-  if(!hasMsg()){ if(E.tool!=='msg') setTool('msg'); toast(E.msgMode==='type' ? (E.kind==='scene' ? '幫作品取個名字，或寫一段介紹' : '最後留一句話給大家，點一下現成的句子也可以') : '在白色板子上寫幾個字'); return; }
+  if(E.layout!=='note' && !filled()){ toast('照片還沒拍完喔'); retake(); return; }
+  if(!hasMsg()){ if(E.tool!=='msg') setTool('msg'); toast(E.msgMode==='type' ? (E.kind==='note' ? '在便利貼上寫幾句祝福，或點一句現成的' : E.kind==='scene' ? '幫作品取個名字，或寫一段介紹' : '最後留一句話給大家，點一下現成的句子也可以') : '在白色板子上寫幾個字'); return; }
   E.sel=-1; draw(false);
   const img=cv.toDataURL('image/jpeg',.8);
   modal(`<h2>這樣可以嗎？</h2><img src="${img}" alt="完成的照片" style="display:block;max-height:48vh;max-width:100%;margin:6px auto 4px;border-radius:8px">`,
@@ -1597,6 +1744,7 @@ $('#penColors').addEventListener('click', e=>{ const b=e.target.closest('[data-p
 $('#penSizes').addEventListener('click', e=>{ const b=e.target.closest('[data-psize]'); if(b){ E.penSize=+b.dataset.psize; syncUI(); } });
 $('#padColors').addEventListener('click', e=>{ const b=e.target.closest('[data-padc]'); if(b){ E.handColor=b.dataset.padc; syncUI(); } });
 $('#msgMode').addEventListener('click', e=>{ const b=e.target.closest('[data-mode2]'); if(!b) return; E.msgMode=b.dataset.mode2; syncUI(); draw(); });
+$('#noteColorsRow').addEventListener('click', e=>{ const b=e.target.closest('[data-ncol]'); if(!b) return; E.noteColor=b.dataset.ncol; syncUI(); draw(); });
 $('#msgPlace').addEventListener('click', e=>{ const b=e.target.closest('[data-place]'); if(b) setPlace(b.dataset.place); });
 $('#msg').addEventListener('input', e=>{ E.msg=e.target.value; syncUI(); draw(); });
 $('#title').addEventListener('input', e=>{ E.title=e.target.value; syncUI(); draw(); });
@@ -1609,6 +1757,7 @@ document.addEventListener('click', e=>{
   if(a==='close'){ stopStream(); duckMusic(false); E.spot=null; backHome(); }
   if(a==='flip'){ if(shooting) return; facing = facing==='user' ? 'environment' : 'user'; $('#fCam').setAttribute('capture',facing); if(!FAKE.raf) startStream().catch(()=>toast('無法切換鏡頭')); }
   if(a==='fakecam') startFake();
+  if(a==='skip') skipMenu();
   if(a==='timer'){ const opts=[0,3,5,10]; E.timer=opts[(opts.indexOf(E.timer)+1)%opts.length]; syncCam(); }
   if(a==='retrycam') startCam().then(()=>{ if($('#camFail').hidden===false) camHelp(); });
   if(a==='camhelp') camHelp();
@@ -1721,9 +1870,78 @@ document.addEventListener('visibilitychange', ()=>{
 $('#soundBtn').addEventListener('click', ()=>setSound(!SND.on));
 $('#soundBtn').textContent = SND.on ? '🔊 聲音開' : '🔇 聲音關'; $('#soundBtn').setAttribute('aria-pressed', SND.on);
 
+/* ===================== 掃描 QR Code（網頁內掃描框） =====================
+   只有在掃描畫面時才開相機；掃到或離開就立刻關閉。
+   手機支援 BarcodeDetector 就用內建的，不支援（例如 iPhone）就載入 jsQR 來解碼。 */
+const SC={ stream:null, timer:null, det:null, busy:false, canvas:document.createElement('canvas') };
+const scVid=$('#scVid');
+function loadJsQR(){ return window.jsQR ? Promise.resolve() : loadScript('https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'); }
+async function openScanner(){
+  show('scan'); duckMusic(true); $('#scFail').hidden=true; $('#scTip').textContent='把牆上的 QR Code 放進框框裡';
+  document.querySelector('.sc-box').classList.remove('ok');
+  $('#scTest').innerHTML = CONFIG.spots.map(s=>`<button class="chip" data-scsim="${s.id}">🧪 模擬掃到「${s.stamp}」</button>`).join('');
+  if(!navigator.mediaDevices?.getUserMedia){ $('#scFail').hidden=false; return; }
+  try{
+    SC.stream=await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1280}, height:{ideal:720} }, audio:false });
+    scVid.srcObject=SC.stream; await scVid.play().catch(()=>{}); camOK=true;
+  }catch(e){ $('#scFail').hidden=false; return; }
+  try{ if('BarcodeDetector' in window){ const f=await BarcodeDetector.getSupportedFormats(); if(f.includes('qr_code')) SC.det=new BarcodeDetector({formats:['qr_code']}); } }catch(_){ SC.det=null; }
+  if(!SC.det){ try{ await loadJsQR(); }catch(_){ $('#scTip').textContent='掃描功能載入失敗，請改用下方的「輸入點位代碼」'; return; } }
+  clearInterval(SC.timer); SC.timer=setInterval(scanTick, 180);
+}
+function closeScanner(){
+  clearInterval(SC.timer); SC.timer=null; SC.stream?.getTracks().forEach(t=>t.stop()); SC.stream=null; scVid.srcObject=null; duckMusic(false);
+}
+async function scanTick(){
+  if(SC.busy || !SC.stream || scVid.readyState<2) return;
+  SC.busy=true;
+  try{
+    let text=null;
+    if(SC.det){ const r=await SC.det.detect(scVid); if(r && r[0]) text=r[0].rawValue; }
+    else if(window.jsQR){
+      const w=scVid.videoWidth, h=scVid.videoHeight, k=Math.min(1,640/Math.max(w,h)), c=SC.canvas;
+      c.width=Math.round(w*k); c.height=Math.round(h*k);
+      const g=c.getContext('2d',{willReadFrequently:true}); g.drawImage(scVid,0,0,c.width,c.height);
+      const d=g.getImageData(0,0,c.width,c.height), r=jsQR(d.data,c.width,c.height,{inversionAttempts:'dontInvert'});
+      if(r) text=r.data;
+    }
+    if(text) handleScanText(text);
+  }catch(_){}
+  SC.busy=false;
+}
+function handleScanText(text){
+  let id=null, k=null;
+  try{ const u=new URL(text, location.href); id=u.searchParams.get('spot'); k=u.searchParams.get('k'); }catch(_){}
+  const s=id && spotById(id);
+  if(!s || k!==s.key){ $('#scTip').textContent='這不是活動點位的 QR Code，換一張試試'; return; }
+  document.querySelector('.sc-box').classList.add('ok');
+  try{ navigator.vibrate?.(80); }catch(_){}
+  closeScanner(); scanSpot(id,k);
+}
+function manualCode(){
+  modal(`<h2>輸入點位代碼</h2><p>代碼印在每個點位 QR Code 的下方。</p><input type="text" id="codeIn" autocomplete="off" autocapitalize="off" placeholder="例如：q7k2" style="margin-top:6px">`,
+    [{label:'確定', fn:()=>{
+      const v=(document.getElementById('codeIn')?.value||'').trim().toLowerCase();
+      const s=CONFIG.spots.find(x=>x.key.toLowerCase()===v);
+      if(!s){ toast('代碼不對，請再確認一次'); setTimeout(manualCode,60); return; }
+      closeScanner(); scanSpot(s.id,s.key);
+    }}, {label:'取消', soft:true}]);
+  setTimeout(()=>document.getElementById('codeIn')?.focus(),80);
+}
+document.addEventListener('click', e=>{
+  const sim=e.target.closest('[data-scsim]'); if(sim){ const s=spotById(sim.dataset.scsim); closeScanner(); scanSpot(s.id,s.key); return; }
+  const b=e.target.closest('[data-sc]'); if(!b) return;
+  const a=b.dataset.sc;
+  if(a==='open') openScanner();
+  if(a==='close'){ closeScanner(); backHome(); }
+  if(a==='retry'){ closeScanner(); openScanner(); }
+  if(a==='manual') manualCode();
+});
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden && SC.stream){ closeScanner(); if(!$('#scan').hidden) backHome(); } });
+
 /* ===================== 送出 ===================== */
 async function submit(){
-  const spot=E.spot.id, key=DB.current, t=Date.now(), layout=E.layout, msg=E.msgMode==='type' ? E.msg.trim() : '';
+  const spot=E.spot.id, key=DB.current, t=Date.now(), layout=E.layout==='note' ? 'note-'+E.noteColor : E.layout, msg=E.msgMode==='type' ? E.msg.trim() : '';
   E.sel=-1; draw(false);
   const photo=await compressCanvas(cv);
   if(!photo){ toast('照片處理失敗，請再按一次「完成」'); return; }
@@ -1734,10 +1952,10 @@ async function submit(){
   S.done[spot]={ thumb, msg, kind, title, hand: hc ? hc.toDataURL('image/png') : null, layout, t, sync:'queued', kb:Math.round(photo.size/1024) };
   S.scanned[spot]=true; save();
   enqueue({ id:`entry|${key}|${spot}`, kind:'entry', key, spot, photo, hand, msg, layout, photoKind:kind, title, name:S.player.name, cls:S.player.cls, t });
-  justStamped=spot; const stamp=E.spot.stamp; E.spot=null;
+  justStamped=spot; const stamp=E.spot.stamp; $('#edit').classList.remove('notemode'); E.spot=null;
   const all=CONFIG.spots.every(s=>S.done[s.id]);
   if(all && !S.endSeen){ S.endSeen=true; save(); sfx.stamp(); playStory('ending', openInvite); return; }
-  show('home'); renderHome(); toast(`集到「${stamp}」章了 ♡`); setTimeout(()=>sfx.stamp(),250);
+  show('home'); renderHome(); toast(kind==='note' ? `便利貼貼好了，集到「${stamp}」章 ♡` : `集到「${stamp}」章了 ♡`); setTimeout(()=>sfx.stamp(),250);
 }
 
 /* ===================== 邀請函 ===================== */
