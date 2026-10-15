@@ -1,0 +1,37 @@
+rules_version = '2';
+// 雄女祕境集章：Firestore 安全規則
+// 管理員 = 在 Authentication 建立的那個 Email（要和 wall.html 的 adminEmail 一樣）
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'ameinew07149@gmail.com';
+    }
+    function str(v, max) { return v is string && v.size() <= max; }
+
+    // 玩家：只能用「稱呼|屆別|末三碼」精確查一筆，不能列出全部（保護末三碼）
+    match /players/{key} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if str(request.resource.data.uid, 40) && str(request.resource.data.name, 20)
+                    && str(request.resource.data.cls, 6) && request.resource.data.l3.matches('^[0-9]{3}$')
+                    && str(request.resource.data.code, 10);
+      allow update, delete: if isAdmin();
+    }
+
+    // 集章紀錄：大家都看得到沒被隱藏的；玩家只能新增或覆蓋沒被隱藏的；只有管理員能隱藏
+    match /entries/{id} {
+      function valid(d) {
+        return str(d.playerUid, 40) && str(d.spot, 4) && str(d.name, 20) && str(d.cls, 6)
+          && str(d.msg, 80) && str(d.title, 20) && str(d.layout, 20)
+          && d.kind in ['selfie', 'scene', 'preset', 'note']
+          && str(d.photoUrl, 600) && d.t is int
+          && (!('wallUrl' in d) || str(d.wallUrl, 600)) && (!('tinyUrl' in d) || str(d.tinyUrl, 600)) && d.hidden == false
+          && id == d.playerUid + '_' + d.spot;
+      }
+      allow read: if resource.data.hidden == false || isAdmin();
+      allow create: if valid(request.resource.data);
+      allow update: if isAdmin() || (resource.data.hidden == false && valid(request.resource.data));
+      allow delete: if isAdmin();
+    }
+  }
+}

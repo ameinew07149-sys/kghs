@@ -1,0 +1,13 @@
+rules_version = '2';
+// 雄女祕境集章：照片空間規則
+// 任何人可看（投影牆要用）；只能新增、不能覆蓋或刪除別人的照片；只收圖片、單張 3 MB 以內
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /photos/{uid}/{file} {
+      allow read: if true;
+      allow create: if request.resource.size < 3 * 1024 * 1024
+                    && request.resource.contentType.matches('image/(jpeg|png)');
+      allow update, delete: if request.auth != null && request.auth.token.email == 'ameinew07149@gmail.com';
+    }
+  }
+}
