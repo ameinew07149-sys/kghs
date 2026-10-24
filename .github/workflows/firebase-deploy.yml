@@ -1,0 +1,33 @@
+# Firebase 部署：到 GitHub → Actions → 「Firebase 部署」→ Run workflow 手動執行
+# 需要先在 Settings → Secrets and variables → Actions 新增 FIREBASE_SERVICE_ACCOUNT（服務帳戶金鑰 JSON 全文）
+name: Firebase 部署
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 要部署什麼
+        type: choice
+        default: firestore:rules,storage
+        options:
+          - firestore:rules,storage
+          - hosting
+          - hosting,firestore:rules,storage
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 寫入服務帳戶金鑰
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "$RUNNER_TEMP/sa.json"
+      - name: 部署
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: npx --yes firebase-tools@13 deploy --only "${{ inputs.only }}" --project kghs-reunion --non-interactive
+      - name: 刪除金鑰
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
