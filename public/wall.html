@@ -224,7 +224,6 @@ button:focus-visible{outline-color:var(--gold-hi)}
   <button data-k="hide">隱藏照片</button>
   <button data-k="full">全螢幕</button>
   <button data-k="finale" class="finbtn">播放大結局</button>
-  <button data-k="demo" id="bDemo">模擬有人上傳</button>
 </div>
 
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
@@ -232,7 +231,7 @@ button:focus-visible{outline-color:var(--gold-hi)}
 <script>
 /* ===================== 設定（要和玩家頁的 CONFIG 一致） ===================== */
 const CONFIG = {
-  // 和玩家頁同一組 firebaseConfig；apiKey 留空＝示範模式（假資料）
+  // 和玩家頁同一組 firebaseConfig；一定要填，沒填投影牆不會顯示照片
   firebase: { apiKey:'', authDomain:'', projectId:'', storageBucket:'', messagingSenderId:'', appId:'' },
   // 後台管理員帳號（在 Firebase 主控台 → Authentication 建立的那個 Email）；隱藏照片時要輸入它的密碼
   adminEmail: 'ameinew07149@gmail.com',
@@ -261,73 +260,6 @@ const shuffle=a=>{ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(M
 
 let items=[], mode='grid', paused=false, inFinale=false;
 
-/* ===================== 示範資料 ===================== */
-const DEMO_NAMES=['淑芬','美玲','雅惠','秀英','麗華','玉珍','惠美','怡君','佩珊','素貞','月娥','碧霞','靜宜','慧玲','秀琴','美惠','淑娟','麗娟','雅玲','玉芳'];
-const DEMO_MSGS=['好久不見，大家都好嗎？','青春不散場！','雄女永遠是我們的家','下次聚會一定還要來','謝謝當年的妳們','三十年了，這棵樹還在','當年在這裡偷吃便當','鐘聲一響還是會想衝','我們班的大家，今晚見！','回來的感覺真好','福利社的熱狗還是那個味道','階梯好像變矮了'];
-const DEMO_TITLES=['午後的鐘聲','老樹與光','回家的路','那年的走廊','靜靜等妳回來'];
-const DEMO_SCENE=['這是我心中雄女最美的角度','當年天天經過，現在才發現這裡這麼美','光線跟三十年前一模一樣','想把這個角落留給學妹們'];
-const FR=[['#FBD3DE','#B23A5E'],['#DED4FA','#5B4A9B'],['#FFEFAE','#8A6A12'],['#CFE6FF','#2F5C8F'],['#DCEFCF','#3F6B2E']];
-function demoScene(i,spot,name){
-  const W=360,H=450,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'), [bg,ink]=FR[i%FR.length];
-  g.fillStyle=bg; g.fillRect(0,0,W,H);
-  const x=18,y=18,w=W-36,h=H-100, gr=g.createLinearGradient(0,y,0,y+h);
-  gr.addColorStop(0,['#FFD9A8','#BFE3FF','#F6C7D6','#CDE7C9'][i%4]); gr.addColorStop(1,'#FFF7EC');
-  g.fillStyle=gr; g.fillRect(x,y,w,h);
-  g.fillStyle='rgba(150,90,70,.75)'; g.fillRect(x+w*.08,y+h*.42,w*.5,h*.58);
-  g.fillStyle='rgba(255,255,255,.75)'; for(let r=0;r<3;r++) for(let k=0;k<3;k++) g.fillRect(x+w*(.12+k*.15),y+h*(.5+r*.15),w*.09,h*.08);
-  g.fillStyle='#6E5A44'; g.fillRect(x+w*.76,y+h*.55,w*.05,h*.45);
-  g.fillStyle='rgba(90,150,90,.9)'; [[.78,.45,.17],[.7,.52,.13],[.86,.52,.13]].forEach(([a,b,r])=>{ g.beginPath(); g.arc(x+w*a,y+h*b,w*r,0,Math.PI*2); g.fill(); });
-  g.fillStyle=ink; g.textAlign='center'; g.textBaseline='middle'; g.font='400 24px Huninn, sans-serif'; g.fillText('《'+DEMO_TITLES[i%DEMO_TITLES.length]+'》', W/2, H-56);
-  g.globalAlpha=.7; g.font='700 17px Gaegu, sans-serif'; g.fillText('攝影｜'+name, W/2, H-28); g.globalAlpha=1;
-  return c.toDataURL('image/jpeg',.8);
-}
-function demoPhoto(i,spot,name){
-  const strip=i%5===1, grid4=i%5===4, W=strip?240:360, H=strip?720:grid4?500:450, c=document.createElement('canvas'); c.width=W; c.height=H;
-  const g=c.getContext('2d'), [bg,ink]=FR[i%FR.length];
-  g.fillStyle=bg; g.fillRect(0,0,W,H);
-  const cells=strip?[0,1,2,3].map(k=>[14,14+k*159,W-28,148]):grid4?[0,1,2,3].map(k=>[16+(k%2)*168,16+Math.floor(k/2)*196,160,188]):[[18,18,W-36,H-100]];
-  cells.forEach(([x,y,w,h],k)=>{
-    const gr=g.createLinearGradient(0,y,0,y+h); gr.addColorStop(0,['#BFE3FF','#FFE3C9','#E8DCFF','#D9F3E6'][(i+k)%4]); gr.addColorStop(1,['#F7F0E6','#FDE7EF','#FFF6D8','#EAF4FF'][(i+k)%4]);
-    g.save(); g.beginPath(); g.rect(x,y,w,h); g.clip(); g.fillStyle=gr; g.fillRect(x,y,w,h);
-    g.fillStyle='rgba(120,170,120,.35)'; g.beginPath(); g.ellipse(x+w*.2,y+h*.95,w*.5,h*.3,0,0,Math.PI*2); g.fill();
-    const n=strip?2:(i%3)+1, cols=['#5B4A7A','#B23A5E','#2F5C8F','#8A6A12'];
-    for(let p=0;p<n;p++){
-      const cx=x+w*(n===1?.5:.3+p*(.4/(n-1||1))), base=y+h, hr=Math.min(w,h)*.11;
-      g.fillStyle=cols[(i+p)%4]; g.beginPath(); g.ellipse(cx,base,hr*1.9,hr*2.4,0,Math.PI,0); g.fill();
-      g.fillStyle='#F5D6C0'; g.beginPath(); g.arc(cx,base-hr*3,hr,0,Math.PI*2); g.fill();
-      g.fillStyle='#3A2E2A'; g.beginPath(); g.arc(cx,base-hr*3.25,hr*1.02,Math.PI,0); g.fill();
-    }
-    g.restore();
-  });
-  g.fillStyle=ink; g.textAlign='center'; g.textBaseline='middle';
-  g.font=`400 ${strip?18:24}px Huninn, sans-serif`; g.fillText(spotName(spot), W/2, H-(strip?32:56));
-  g.globalAlpha=.7; g.font=`700 ${strip?14:17}px Gaegu, sans-serif`; g.fillText(`${name} ♡ 2026.12.19`, W/2, H-(strip?13:28)); g.globalAlpha=1;
-  return c.toDataURL('image/jpeg',.8);
-}
-let demoN=0;
-const DEMO_NOTES=['雖然今晚不能到，心一直都在','祝大家聚餐愉快！','大家幫我多吃一點、多笑一點','好想念妳們，下次一定見！','雄女的姊妹們，永遠青春美麗'];
-function demoNoteImg(msg,color,name){
-  const S=480, c=document.createElement('canvas'); c.width=c.height=S; const g=c.getContext('2d');
-  g.fillStyle=({yellow:'#FFF1A8',pink:'#FFD6E2',blue:'#D9EAFF',green:'#DDF3D3'})[color]; g.fillRect(0,0,S,S);
-  g.save(); g.translate(S/2,S*.035); g.rotate(-.04); g.fillStyle='rgba(255,255,255,.6)'; g.fillRect(-S*.16,-S*.03,S*.32,S*.07); g.restore();
-  g.fillStyle='#3B3346'; g.font='400 34px Huninn, sans-serif'; g.textAlign='center'; g.textBaseline='middle';
-  const lines=[]; let line=''; for(const ch of msg){ if(g.measureText(line+ch).width>S*.78 && !'，。！？、'.includes(ch)){ lines.push(line); line=ch; } else line+=ch; } lines.push(line);
-  lines.forEach((l,i)=>g.fillText(l,S/2,S*.42-(lines.length-1)*23+i*46));
-  g.font='700 24px Gaegu, sans-serif'; g.textAlign='right'; g.fillStyle=({yellow:'#A9861A',pink:'#C2456B',blue:'#3B6FB6',green:'#3E8A4E'})[color]; g.fillText('— '+name,S*.93,S*.88);
-  g.font='34px sans-serif'; g.textAlign='left'; g.fillText(['🌸','💌','⭐','🎀'][msg.length%4],S*.08,S*.86);
-  return c.toDataURL('image/jpeg',.85);
-}
-function demoEntry(minsAgo){
-  const i=demoN++, person=Math.floor(i/5)%DEMO_NAMES.length, name=DEMO_NAMES[person], spot=CONFIG.spots[i%5].id;
-  const keep=i<70 || Math.random()<.85;   // 有些人沒集滿
-  const scene=i%3===2;
-  if(keep && i%7===3){
-    const color=['yellow','pink','blue','green'][i%4], msg=DEMO_NOTES[i%DEMO_NOTES.length];
-    return { id:'demo'+i, name, cls:String(38+(person*7)%15), spot, kind:'note', layout:'note-'+color, title:'', color, msg, hand:null, img:demoNoteImg(msg,color,name), t:Date.now()-minsAgo*60000 };
-  }
-  return keep ? { id:'demo'+i, name, cls:String(38+(person*7)%15), spot, layout:scene?'single':(i%5===1?'strip':i%5===4?'grid':'single'), kind:scene?'scene':'selfie', title:scene?DEMO_TITLES[i%DEMO_TITLES.length]:'', msg:scene?DEMO_SCENE[i%DEMO_SCENE.length]:DEMO_MSGS[i%DEMO_MSGS.length], hand:null, img:scene?demoScene(i,spot,name):demoPhoto(i,spot,name), t:Date.now()-minsAgo*60000 } : null;
-}
-
 /* ===================== 資料來源 ===================== */
 function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
 const FBV='10.12.2'; let FB=null;
@@ -341,10 +273,6 @@ async function fb(){
 function docToItem(id,e){
   return { id, name:e.name, cls:e.cls, spot:e.spot, msg:e.msg||'', kind:e.kind||'selfie', title:e.title||'', layout:e.layout||'single',
     color:(e.layout||'').startsWith('note-')?e.layout.slice(5):'yellow', img:e.wallUrl||e.photoUrl, full:e.photoUrl, tiny:e.tinyUrl||e.wallUrl||e.photoUrl, hand:e.handUrl||null, t:e.t||Date.now() };
-}
-async function loadAll(){
-  if(!LIVE){ if(!items.length) items=Array.from({length:100},(_,k)=>demoEntry(10+k*2)).filter(Boolean); return; }
-  // 正式模式：資料由 subscribe() 的即時監聽一次載入並持續更新
 }
 /* 即時監聽：第一次收到全部照片；之後有人上傳／重拍／被隱藏，都會即時推過來（斷線會自動重連） */
 let firstSnap=true;
@@ -628,7 +556,6 @@ function hidePicker(){
     <div class="row"><button class="soft" data-k="cancel">取消</button></div>`);
 }
 async function hideOne(id){
-  if(!LIVE){ removeItem(id); closeSheet(); notice('已隱藏（示範模式只在這台電腦上移除）'); return; }
   try{
     const { db, auth }=await fb();
     if(!auth.currentUser){
@@ -650,7 +577,6 @@ document.addEventListener('click', e=>{
   if(k==='cancel') closeSheet();
   if(k==='finale') playFinale();
   if(k==='full'){ const d=document.documentElement; (document.fullscreenElement ? document.exitFullscreen() : d.requestFullscreen?.())?.catch?.(()=>notice('這個視窗不能全螢幕，請按瀏覽器的全螢幕（F11）')); }
-  if(k==='demo') addItem(demoEntry(0) || demoEntry(0) || demoEntry(0));
 });
 $('#finale').addEventListener('click', ()=>{ /* 大結局中點畫面不中斷，按 Esc 才停止 */ });
 document.addEventListener('keydown', e=>{
@@ -666,10 +592,9 @@ let rt=null; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()
 
 /* ===================== 啟動 ===================== */
 (async function init(){
-  if(LIVE) $('#bDemo').hidden=true;
   tick(); setInterval(tick, 20000);
   if(LIVE){ $('#stage').innerHTML='<p class="empty">讀取照片中…</p>'; try{ await subscribe(); }catch(e){ notice('讀不到資料，請確認網路'); } }
-  else { await loadAll(); renderStats(); setMode('grid'); }
+  else $('#stage').innerHTML='<p class="empty">還沒設定 Firebase：請在 wall.html 的 CONFIG.firebase 貼上設定</p>';
 })();
 </script>
 </body>

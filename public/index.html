@@ -119,10 +119,6 @@ input[type=text],input[type=number],textarea{width:100%;border:2px solid var(--l
 .done{display:flex;gap:12px;align-items:flex-start}
 .done img{width:88px;height:116px;object-fit:cover;border-radius:12px;border:3px solid #fff;flex:none}
 .said{margin-bottom:8px;line-height:1.6}
-.devtools{margin-top:28px;border:2px dashed var(--line);border-radius:18px;padding:10px 14px;font-size:.9rem}
-.devtools summary{cursor:pointer;color:var(--muted)}
-.devtools p{margin-top:10px}
-.devtools code{font-size:.78rem;word-break:break-all}
 
 /* 編輯器 */
 .bar{display:flex;align-items:center;gap:12px;margin-bottom:6px}
@@ -185,7 +181,6 @@ textarea{min-height:110px;resize:vertical}
 .donebar{position:sticky;bottom:0;margin:22px -16px -56px;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(to bottom,transparent,var(--bg) 24%);z-index:3}
 #pad{display:block;width:100%;height:auto;aspect-ratio:900/420;background:#fff;border-radius:18px;border:2px solid var(--line);touch-action:none;margin-top:12px}
 .said-hand{display:block;max-height:64px;max-width:100%;margin-bottom:8px}
-.wall-hand{display:block;max-width:100%;max-height:34vh}
 #cv{max-height:46vh}
 /* 劇情 */
 .story{min-height:calc(100vh - 128px);display:flex;flex-direction:column;gap:18px;padding-top:8px}
@@ -242,7 +237,6 @@ body.fullmode .toast{bottom:auto;top:calc(72px + env(safe-area-inset-top,0px))}
 .cam-view{position:relative;flex:1;min-height:0;overflow:hidden;background:#15111A}
 #vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #vid.mirror{transform:scaleX(-1)}
-#fakeCam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cam-grid{position:absolute;inset:0;pointer-events:none;background:
   linear-gradient(90deg,transparent 33.2%,rgba(255,255,255,.35) 33.2% 33.5%,transparent 33.5% 66.5%,rgba(255,255,255,.35) 66.5% 66.8%,transparent 66.8%),
   linear-gradient(180deg,transparent 33.2%,rgba(255,255,255,.35) 33.2% 33.5%,transparent 33.5% 66.5%,rgba(255,255,255,.35) 66.5% 66.8%,transparent 66.8%)}
@@ -304,7 +298,6 @@ body.fullmode .toast{bottom:auto;top:calc(72px + env(safe-area-inset-top,0px))}
 .toolbar button i{font-style:normal;font-size:1.45rem;line-height:1.25}
 .toolbar button[aria-pressed="true"]{background:var(--t-pink);color:var(--pink-d)}
 #pad{display:block;width:100%;height:auto;aspect-ratio:900/420;background:#fff;border-radius:18px;border:2px solid var(--line);touch-action:none}
-body:not(.test) .testonly{display:none!important}
 .skip-link{display:block;margin:12px auto 0;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#E8D3A6;font:inherit;font-size:.95rem;border-radius:999px;padding:8px 18px;cursor:pointer}
 .presets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 12px}
 .presets button{padding:0;border:3px solid transparent;border-radius:14px;overflow:hidden;cursor:pointer;background:none}
@@ -358,16 +351,8 @@ body.fullmode .scan-fab{display:none}
 .booth-bar .btn.soft{background:#2A2A2A;color:#fff;border-color:#3A3A3A;box-shadow:none;font-size:1rem;padding:8px}
 
 /* 投影牆 */
-#wall{position:fixed;inset:0;z-index:5;background:#1F1A26;color:#F6EEF6;display:flex;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px))}
-.wall-exit{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:14px;background:transparent;color:#B1A5BB;border:1px solid #3E3449;border-radius:999px;padding:6px 14px;font:inherit;font-size:.85rem;cursor:pointer}
-.wall-card{display:grid;gap:26px;align-items:center;max-width:1200px;margin:0;animation:fade .8s ease}
-.wall-card img{max-height:60vh;width:auto;max-width:100%;border-radius:8px;justify-self:center;box-shadow:0 10px 40px rgba(0,0,0,.4)}
-.wall-msg{font-size:clamp(1.5rem,3.4vw,3rem);line-height:1.5}
-.wall-by{margin-top:14px;color:#FF9DB6;font-size:clamp(.95rem,1.6vw,1.3rem)}
-.wall-empty{font-size:1.3rem;color:#B1A5BB;text-align:center;line-height:1.8}
-@media (min-aspect-ratio:1/1){.wall-card{grid-template-columns:auto minmax(0,1fr)}.wall-card img{max-height:84vh}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.wall-card,#flash.go{animation:none}}
+@media (prefers-reduced-motion:reduce){#flash.go{animation:none}}
 
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:18px;font-size:1.02rem;max-width:calc(100% - 32px);text-align:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
@@ -571,10 +556,6 @@ body.busy{overflow:hidden}
         <button class="btn wide" id="joinBtn">入場</button>
         <p class="center"><button class="linkbtn" data-act="intro">再看一次開場故事</button></p>
       </div>
-      <details class="devtools testonly">
-        <summary>原型測試工具（正式版會移除）</summary>
-        <div class="row wrapr" style="margin-top:10px"><button class="chip" data-act="cover">預覽封面</button><button class="chip" data-act="intro">預覽開場劇情</button><button class="chip" data-act="previewEnd">預覽結尾</button><button class="chip" data-act="previewInvite">只看入場券</button></div>
-      </details>
     </div>
   </section>
 
@@ -608,7 +589,6 @@ body.busy{overflow:hidden}
   </div>
   <div class="cam-view" id="camView">
     <video id="vid" playsinline muted autoplay></video>
-    <canvas id="fakeCam" hidden></canvas>
     <div class="cam-grid" id="camGrid" hidden></div>
     <div class="cam-prog" id="camProg"></div>
     <div class="cam-tip" id="camTip" hidden></div>
@@ -621,7 +601,6 @@ body.busy{overflow:hidden}
       <button class="btn" data-ed="retrycam">開啟相機</button>
       <label class="btn soft">改用手機相機拍<input class="vh" type="file" accept="image/*" capture="user" id="fCam"></label>
       <button class="linkbtn" style="color:#E8D3A6" data-ed="camhelp">打不開怎麼辦？</button>
-      <button class="btn soft small testonly" style="margin-top:8px;background:#2E2638;color:#FFE08A;border-color:#4A3F55" data-ed="fakecam">🧪 用測試假相機（測試版）</button>
     </div>
   </div>
   <div class="cam-bottom">
@@ -653,7 +632,6 @@ body.busy{overflow:hidden}
   </div>
   <div class="cam-bottom">
     <button class="skip-link" style="margin-top:4px" data-sc="manual">掃不到？輸入 QR Code 下方的點位代碼</button>
-    <div class="row wrapr testonly" id="scTest" style="justify-content:center;margin-top:10px"></div>
   </div>
 </section>
 
@@ -730,11 +708,6 @@ body.busy{overflow:hidden}
 
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 
-<section id="wall" class="view" hidden>
-  <button class="wall-exit" data-act="exitwall">離開投影</button>
-  <div id="wallStage"></div>
-</section>
-
 <div class="saving" id="saving" hidden role="alertdialog" aria-live="assertive" aria-label="儲存中">
   <div class="saving-box">
     <div class="spinner" aria-hidden="true"></div>
@@ -756,8 +729,6 @@ body.busy{overflow:hidden}
 
 /* ===================== 活動設定（之後改這裡就好） ===================== */
 const CONFIG = {
-  // 測試模式：true 會顯示「原型測試工具」與測試假相機；正式上線請改成 false（網址加 ?test=1 仍可臨時打開）
-  testMode: true,
   eventName: '雄女校友回娘家',
   // award 是這一站頒的獎項名稱（會出現在提名卡、獎章、相框底部和入場券）
   // riddle 是主頁上看到的提示（對應隨堂測驗卷），name 是找到之後才顯示的地點名稱；id 與 key 會寫進現場 QR Code 網址
@@ -803,7 +774,7 @@ const CONFIG = {
     // 投影牆用的版本：照片牆、五個祕境用「牆面版」（長邊 1000px），大結局愛心用「小圖」（長邊 220px）；放大特寫才用原圖
     wallSide: 1000, wallQuality: .86, tinySide: 220, tinyQuality: .8 },
   // 拍風景時的作品名稱與介紹範例
-  // 不想拍照的人：可以選準備好的照片（每個點位放 spots[].presets 圖檔網址；沒放就用示範圖）或貼便利貼祝福
+  // 不想拍照的人：可以選準備好的照片（每個點位放 spots[].presets 圖檔網址；沒放就不顯示這個選項）或貼便利貼祝福
   noteBlessings: ['祝大家今晚聚餐愉快！','雖然今晚不能到，心一直都在','大家幫我多吃一點、多笑一點','好想念妳們，下次一定見！','謝謝主辦的大家辛苦了','雄女的姊妹們，永遠青春美麗'],
   // 設計師提供的貼紙（去背 PNG）：放進 assets 資料夾後在這裡登記；程式會自動加上白色外框，像真的貼紙
   // cat 可以用現有分類 award / love / animal / fruit / school，或自己取新的分類名稱（例如 '雄女'）
@@ -866,8 +837,6 @@ function loadDB(){ try{ const r=localStorage.getItem(KEY); if(r) return JSON.par
 let S = DB.current && DB.players[DB.current] ? DB.players[DB.current] : null;
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); return true; }catch(e){ toast('手機空間不足，照片只會保留到關閉頁面為止'); return false; } }
 const $=s=>document.querySelector(s);
-const TEST = CONFIG.testMode || new URLSearchParams(location.search).get('test')==='1';
-if(TEST) document.body.classList.add('test');
 const esc=s=>String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let toastTimer;
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3000); }
@@ -994,8 +963,6 @@ function thumbOf(canvas,w=CONFIG.upload.thumbWidth){
 }
 
 /* 後端介面：模擬版與 Supabase 版用同一組函式 */
-const DEV={ offline:false };
-try{ DEV.offline = sessionStorage.getItem('kghs_offline')==='1'; }catch(_){}
 class NetError extends Error{}
 function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new NetError('無法載入 '+src)); document.head.appendChild(s); }); }
 /* Firebase（compat 版，從 CDN 載入，不用安裝） */
@@ -1019,7 +986,7 @@ function timeout(p,ms=25000){ return Promise.race([p, sleep(ms).then(()=>{ throw
 async function fbDo(fn,ms){ try{ return await timeout(fn(),ms); }catch(e){ throw fbErr(e); } }
 const API={
   get live(){ return !!(CONFIG.firebase && CONFIG.firebase.apiKey); },
-  async gate(){ if(!navigator.onLine) throw new NetError('offline'); if(!this.live){ if(DEV.offline) throw new NetError('模擬斷線'); await sleep(300+Math.random()*500); } },
+  async gate(){ if(!navigator.onLine) throw new NetError('offline'); if(!this.live) await sleep(300+Math.random()*500); },
   async registerPlayer(p){
     await this.gate();
     if(this.live) return fbDo(async()=>{
@@ -1131,7 +1098,7 @@ function syncBanner(){
   const el=$('#syncBar'); if(!el) return;
   if(!S || SYNC.pending===0){ el.hidden=true; return; }
   el.hidden=false;
-  $('#syncText').textContent = navigator.onLine && !DEV.offline
+  $('#syncText').textContent = navigator.onLine
     ? `有 ${SYNC.pending} 筆資料正在上傳…`
     : `目前沒有網路，${SYNC.pending} 筆資料先存在手機裡，連上網路後會自動上傳。`;
 }
@@ -1245,9 +1212,8 @@ function logout(){
   ['#jName','#jCls','#jL3'].forEach(q=>$(q).value=''); $('#jOk').checked=false; show('join');
 }
 
-let justStamped=null, resetArmed=false;
+let justStamped=null;
 function renderHome(){
-  const devOpen=!!document.querySelector('#home .devtools[open]');
   const p=S.player, spots=CONFIG.spots, n=spots.filter(s=>S.done[s.id]).length;
   $('#home').innerHTML=`
     <header class="pass">
@@ -1261,16 +1227,7 @@ function renderHome(){
     ${CONFIG.quizImage?`<button class="quizcard" data-act="quiz"><img src="${CONFIG.quizImage}" alt=""><span><b>隨堂測驗卷</b>五個地點的提示都在這張卷子上，點開看大圖</span></button>`:''}
     ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>打開上面的「隨堂測驗卷」，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「📷 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就拿下這座獎</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
     ${n===spots.length ? `<section class="unlock"><h2>五座獎都拿到了</h2><p>典禮入場券準備好了，聚餐地點寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
-    <section class="spots">${spots.map(spotHTML).join('')}</section>
-    <details class="devtools testonly" ${devOpen?'open':''}>
-      <summary>原型測試工具（正式版會移除）</summary>
-      <p>模擬在現場掃描點位 QR Code：</p>
-      <div class="row wrapr">${spots.map(s=>`<button class="chip" data-act="sim" data-id="${s.id}">掃描「${s.stamp}」</button>`).join('')}</div>
-      <div class="row wrapr" style="margin-top:6px"><button class="chip" data-act="cover">預覽封面</button><button class="chip" data-act="intro">預覽開場劇情</button><button class="chip" data-act="previewEnd">預覽結尾</button><button class="chip" data-act="previewInvite">只看入場券</button><button class="chip" data-act="wall">投影牆預覽</button><button class="chip" data-act="reset">${resetArmed?'再按一次確認清空':'清空所有測試資料'}</button></div>
-      <p class="tiny">後端：${API.live?'Firebase':'模擬伺服器（資料存在這支手機）'}</p>
-      <div class="row wrapr"><button class="chip" data-act="offline" aria-pressed="${DEV.offline}">模擬斷線：${DEV.offline?'開':'關'}</button><button class="chip" data-act="fakecam" aria-pressed="${FAKE.on}">測試假相機：${FAKE.on?'開':'關'}</button></div>
-      <p class="tiny">點位 QR Code 的網址格式：<code>${esc(location.origin+location.pathname)}?spot=s1&amp;k=q7k2</code></p>
-    </details>`;
+    <section class="spots">${spots.map(spotHTML).join('')}</section>`;
   justStamped=null; syncBanner();
 }
 function spotHTML(s){
@@ -1696,51 +1653,9 @@ async function startStream(){
   vid.srcObject=stream; vid.classList.toggle('mirror', facing==='user');
   await vid.play().catch(()=>{});
 }
-function stopStream(){ shooting=false; stream?.getTracks().forEach(t=>t.stop()); stream=null; stopFake(); }
+function stopStream(){ shooting=false; stream?.getTracks().forEach(t=>t.stop()); stream=null; }
 const vid=$('#vid');
-/* 測試假相機：沒有相機或權限被擋時，用動畫假畫面代替，按快門一樣會拍出照片（正式版可移除） */
-const FAKE={ on:false, raf:null, shift:0 };
-try{ FAKE.on = TEST && (sessionStorage.getItem('kghs_fakecam')==='1' || new URLSearchParams(location.search).get('fakecam')==='1'); }catch(_){}
-const fk=$('#fakeCam'), fkx=fk.getContext('2d'); fk.width=900; fk.height=1200;
-function drawFake(t){
-  const g=fkx, W=fk.width, H=fk.height, hue=(200+FAKE.shift*53)%360;
-  if(E.kind==='scene'){
-    const sky=g.createLinearGradient(0,0,0,H); sky.addColorStop(0,`hsl(${hue},70%,78%)`); sky.addColorStop(.7,'#FFF4E4'); sky.addColorStop(1,'#E9E1D3');
-    g.fillStyle=sky; g.fillRect(0,0,W,H);
-    g.fillStyle='rgba(255,230,150,.9)'; g.beginPath(); g.arc(W*.78,H*.16+Math.sin(t/900)*8,70,0,Math.PI*2); g.fill();
-    g.fillStyle=`hsl(${(hue+150)%360},35%,52%)`; g.fillRect(W*.08,H*.38,W*.5,H*.62);
-    g.fillStyle='rgba(255,255,255,.8)'; for(let r=0;r<5;r++) for(let k=0;k<3;k++) g.fillRect(W*(.13+k*.15),H*(.44+r*.1),W*.09,H*.06);
-    g.fillStyle='#6E5A44'; g.fillRect(W*.75,H*.5,W*.05,H*.5);
-    g.fillStyle='#5E9E62'; [[.78,.44,.17],[.68,.5,.12],[.88,.5,.12]].forEach(([a,b,r],i)=>{ g.beginPath(); g.arc(W*a+Math.sin(t/700+i)*4,H*b,W*r,0,Math.PI*2); g.fill(); });
-  } else {
-    const bg=g.createLinearGradient(0,0,W,H); bg.addColorStop(0,`hsl(${hue},75%,86%)`); bg.addColorStop(1,`hsl(${(hue+60)%360},70%,92%)`);
-    g.fillStyle=bg; g.fillRect(0,0,W,H);
-    const n=E.mode==='group'?3:1, cols=['#5B4A7A','#B23A5E','#2F5C8F'];
-    for(let i=0;i<n;i++){
-      const cx=W*(n===1?.5:.22+i*.28), by=H+Math.sin(t/500+i)*10, hr=n===1?150:95;
-      g.fillStyle=cols[(i+FAKE.shift)%3]; g.beginPath(); g.ellipse(cx,by,hr*2,hr*2.6,0,Math.PI,0); g.fill();
-      const hy=by-hr*3.3;
-      g.fillStyle='#F5D6C0'; g.beginPath(); g.arc(cx,hy,hr,0,Math.PI*2); g.fill();
-      g.fillStyle='#3A2E2A'; g.beginPath(); g.arc(cx,hy-hr*.2,hr*1.04,Math.PI*1.05,Math.PI*1.95); g.fill();
-      g.fillStyle='#3A2E2A'; g.beginPath(); g.arc(cx-hr*.35,hy+hr*.1,hr*.09,0,Math.PI*2); g.arc(cx+hr*.35,hy+hr*.1,hr*.09,0,Math.PI*2); g.fill();
-      g.strokeStyle='#C2456B'; g.lineWidth=hr*.08; g.lineCap='round'; g.beginPath(); g.arc(cx,hy+hr*.3,hr*.3,.15*Math.PI,.85*Math.PI); g.stroke();
-      g.fillStyle='rgba(255,143,171,.5)'; g.beginPath(); g.ellipse(cx-hr*.6,hy+hr*.35,hr*.16,hr*.1,0,0,Math.PI*2); g.ellipse(cx+hr*.6,hy+hr*.35,hr*.16,hr*.1,0,0,Math.PI*2); g.fill();
-    }
-  }
-  g.fillStyle='rgba(0,0,0,.45)'; g.fillRect(24,24,330,64);
-  g.fillStyle='#FFE08A'; g.font=`400 34px ${HF}`; g.textAlign='left'; g.textBaseline='middle';
-  g.fillText(`🧪 測試畫面・${facing==='user'?'前鏡頭':'後鏡頭'}`, 40, 56);
-}
-function fakeLoop(t){ drawFake(t||0); FAKE.raf=requestAnimationFrame(fakeLoop); }
-function startFake(){
-  FAKE.on=true; try{ sessionStorage.setItem('kghs_fakecam','1'); }catch(_){}
-  cancelAnimationFrame(FAKE.raf); vid.hidden=true; fk.hidden=false; $('#camFail').hidden=true;
-  fk.style.filter = LIVE_FILTER[E.filter] || 'none'; fakeLoop();
-  toast('現在是測試假相機，按快門就會拍出假照片');
-}
-function stopFake(){ cancelAnimationFrame(FAKE.raf); FAKE.raf=null; fk.hidden=true; vid.hidden=false; }
 async function startCam(){
-  if(FAKE.on){ startFake(); return; }
   if(!navigator.mediaDevices?.getUserMedia){ $('#camFail').hidden=false; return; }
   try{ await startStream(); camOK=true; $('#camFail').hidden=true; }
   catch(e){ $('#camFail').hidden=false; }
@@ -1748,7 +1663,7 @@ async function startCam(){
 function openCam(){
   show('cam'); duckMusic(true); syncCam(); $('#count').textContent='';
   let asked=false; try{ asked=!!sessionStorage.getItem('camAsked'); }catch(_){}
-  if(!camOK && !asked && !FAKE.on){
+  if(!camOK && !asked){
     try{ sessionStorage.setItem('camAsked','1'); }catch(_){}
     $('#camFail').hidden=false;
     askCameraFirst(startCam); return;
@@ -1764,7 +1679,7 @@ function setCamMode(m, silent){
   if(ideaSel>=0) ideaSel=-1;
   $('#camTip').hidden=true;
   renderIdeas(); renderQuick(); syncCam(); syncUI();
-  if(!silent && stream && !FAKE.raf && oldFacing!==facing) startStream().catch(()=>toast('無法切換鏡頭'));
+  if(!silent && stream && oldFacing!==facing) startStream().catch(()=>toast('無法切換鏡頭'));
 }
 function syncCam(){
   setSel('layout',E.layout,$('#camLayouts')); setSel('mode',E.mode,$('#camModes'));
@@ -1793,14 +1708,14 @@ function setLayout(k){
   renderFrames(); syncCam();
 }
 function snapTo(i){
-  const src = FAKE.raf ? fk : vid;
+  const src = vid;
   const snap=document.createElement('canvas'); snap.width=src.videoWidth||src.width; snap.height=src.videoHeight||src.height;
-  snap.getContext('2d').drawImage(src,0,0); setCellImage(i,snap); if(FAKE.raf) FAKE.shift++; E.cells[i].mini=miniOf(snap);
+  snap.getContext('2d').drawImage(src,0,0); setCellImage(i,snap); E.cells[i].mini=miniOf(snap);
   sfx.shutter(); const fl=$('#flash'); fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
 }
 async function shutter(){
   if(shooting) return;
-  if(!stream && !FAKE.raf){ $('#camFail').hidden=false; return; }
+  if(!stream){ $('#camFail').hidden=false; return; }
   const n=L().cells.length; if(E.shotK>=n) E.shotK=0;
   const auto = n>1 && E.timer>0;
   shooting=true; $('#shutter').disabled=true; $('#camTip').hidden=true;
@@ -2052,30 +1967,13 @@ function putHand(){
 
 /* ---------- 不想拍照：選準備好的照片／貼便利貼 ---------- */
 const NOTE_COLORS={ yellow:['#FFF1A8','#C9A227'], pink:['#FFD6E2','#D14B72'], blue:['#D9EAFF','#3B6FB6'], green:['#DDF3D3','#3E8A4E'] };
-const presetCache={};
-function demoPresets(spot){
-  if(presetCache[spot.id]) return presetCache[spot.id];
-  const out=[0,1,2,3].map(i=>{
-    const c=document.createElement('canvas'); c.width=800; c.height=1000; const g=c.getContext('2d');
-    const hue=(spot.id.charCodeAt(1)*40+i*70)%360, sky=g.createLinearGradient(0,0,0,1000);
-    sky.addColorStop(0,`hsl(${hue},65%,80%)`); sky.addColorStop(1,'#FFF6EA'); g.fillStyle=sky; g.fillRect(0,0,800,1000);
-    g.fillStyle=`hsl(${(hue+140)%360},30%,55%)`; g.fillRect(60+i*30,420,420,580);
-    g.fillStyle='rgba(255,255,255,.8)'; for(let r=0;r<4;r++) for(let k=0;k<3;k++) g.fillRect(100+i*30+k*130,480+r*120,80,60);
-    g.fillStyle='#6E5A44'; g.fillRect(620-i*20,560,36,440);
-    g.fillStyle='#5E9E62'; [[640,520,130],[560,580,90],[720,580,90]].forEach(([x,y,r])=>{ g.beginPath(); g.arc(x-i*20,y,r,0,Math.PI*2); g.fill(); });
-    g.fillStyle='rgba(0,0,0,.45)'; g.fillRect(30,30,380,64); g.fillStyle='#fff'; g.font=`400 34px ${HF}`; g.textBaseline='middle';
-    g.fillText(`示範照片｜${spot.name} ${i+1}`,48,62);
-    return c.toDataURL('image/jpeg',.85);
-  });
-  return presetCache[spot.id]=out;
-}
 function skipMenu(){
   if(shooting) return;
   modal(`<h2>不想拍照也沒關係</h2><p>選一種方式完成這一站：</p>`,
-    [{label:'🖼️ 選一張準備好的照片', fn:presetPicker}, {label:'📝 寫一張便利貼祝福大家', fn:()=>openNote()}, {label:'回去拍照', soft:true}]);
+    [...(E.spot.presets&&E.spot.presets.length?[{label:'🖼️ 選一張準備好的照片', fn:presetPicker}]:[]), {label:'📝 寫一張便利貼祝福大家', fn:()=>openNote()}, {label:'回去拍照', soft:true}]);
 }
 function presetPicker(){
-  const list=(E.spot.presets && E.spot.presets.length) ? E.spot.presets : demoPresets(E.spot);
+  const list=E.spot.presets||[];
   modal(`<h2>選一張喜歡的照片</h2><p>選好之後，一樣可以加相框、貼紙和留言。</p><div class="presets">${list.map((u,i)=>`<button data-preset="${i}"><img src="${u}" alt="照片 ${i+1}"></button>`).join('')}</div>`,
     [{label:'回去拍照', soft:true}]);
   $('#sheet').querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{
@@ -2162,8 +2060,7 @@ document.addEventListener('click', e=>{
   const b=e.target.closest('[data-ed]'); if(!b) return;
   const a=b.dataset.ed;
   if(a==='close'){ stopStream(); duckMusic(false); E.spot=null; backHome(); }
-  if(a==='flip'){ if(shooting) return; facing = facing==='user' ? 'environment' : 'user'; $('#fCam').setAttribute('capture',facing); if(!FAKE.raf) startStream().catch(()=>toast('無法切換鏡頭')); }
-  if(a==='fakecam') startFake();
+  if(a==='flip'){ if(shooting) return; facing = facing==='user' ? 'environment' : 'user'; $('#fCam').setAttribute('capture',facing); startStream().catch(()=>toast('無法切換鏡頭')); }
   if(a==='skip') skipMenu();
   if(a==='timer'){ const opts=[0,3,5,10]; E.timer=opts[(opts.indexOf(E.timer)+1)%opts.length]; syncCam(); }
   if(a==='retrycam') startCam().then(()=>{ if($('#camFail').hidden===false) camHelp(); });
@@ -2286,7 +2183,6 @@ function loadJsQR(){ return window.jsQR ? Promise.resolve() : loadScript('https:
 async function openScanner(){
   show('scan'); duckMusic(true); $('#scFail').hidden=true; $('#scTip').textContent='把牆上的 QR Code 放進框框裡';
   document.querySelector('.sc-box').classList.remove('ok');
-  $('#scTest').innerHTML = CONFIG.spots.map(s=>`<button class="chip" data-scsim="${s.id}">🧪 模擬掃到「${s.stamp}」</button>`).join('');
   if(!navigator.mediaDevices?.getUserMedia){ $('#scFail').hidden=false; return; }
   try{
     SC.stream=await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1280}, height:{ideal:720} }, audio:false });
@@ -2336,7 +2232,6 @@ function manualCode(){
   setTimeout(()=>document.getElementById('codeIn')?.focus(),80);
 }
 document.addEventListener('click', e=>{
-  const sim=e.target.closest('[data-scsim]'); if(sim){ const s=spotById(sim.dataset.scsim); closeScanner(); scanSpot(s.id,s.key); return; }
   const b=e.target.closest('[data-sc]'); if(!b) return;
   const a=b.dataset.sc;
   if(a==='open') openScanner();
@@ -2435,21 +2330,6 @@ async function openInvite(){
   $('#inviteImg').src=c.toDataURL('image/jpeg',.92);
 }
 
-/* ===================== 投影牆預覽（正式版另做 wall.html，讀資料庫裡所有人的照片） ===================== */
-let wallTimer=null;
-async function openWall(){
-  show('wall'); clearInterval(wallTimer);
-  $('#wallStage').innerHTML='<p class="wall-empty">讀取中…</p>';
-  let items=[];
-  try{ items=await API.listEntries(); }catch(e){ $('#wallStage').innerHTML='<p class="wall-empty">讀不到資料，請確認網路。</p>'; return; }
-  const nameOf=id=>(spotById(id)||{}).name||'';
-  if(!items.length){ $('#wallStage').innerHTML='<p class="wall-empty">還沒有照片。<br>校友集章完成的照片和留言，會輪流出現在這裡。</p>'; return; }
-  let i=0;
-  const step=()=>{ const it=items[i%items.length]; i++;
-    $('#wallStage').innerHTML=`<figure class="wall-card"><img src="${it.img}" alt=""><figcaption>${it.hand?`<img class="wall-hand" src="${it.hand}" alt="手寫留言">`:(it.msg?`<p class="wall-msg">「${esc(it.msg)}」</p>`:'')}${it.kind==='scene'?`<p class="wall-by">📷 攝影作品${it.title?`《${esc(it.title)}》`:''}</p>`:''}<p class="wall-by">${it.kind==='scene'?'攝影｜':''}${esc(it.name)}　第 ${esc(it.cls)} 屆　攝於${esc(nameOf(it.spot))}</p></figcaption></figure>`; };
-  step(); wallTimer=setInterval(step,6000);
-}
-
 /* ===================== 動作 ===================== */
 document.addEventListener('click', e=>{
   const b=e.target.closest('[data-act]'); if(!b) return;
@@ -2460,34 +2340,16 @@ document.addEventListener('click', e=>{
   if(a==='intro') playStory('intro', backHome);
   if(a==='quiz') openQuiz();
   if(a==='enter') enterCeremony();
-  if(a==='cover') openCover();
   if(a==='ending') playStory('ending', openInvite);
-  if(a==='previewEnd') playStory('ending', openInvite);
-  if(a==='previewInvite') openInvite();
   if(a==='shoot') openEditor(b.dataset.id);
   if(a==='invite') openInvite();
   if(a==='logout') logout();
-  if(a==='sim'){ const s=spotById(b.dataset.id); scanSpot(s.id,s.key); }
-  if(a==='wall') openWall();
-  if(a==='exitwall'){ clearInterval(wallTimer); boot(); }
-  if(a==='fakecam'){ FAKE.on=!FAKE.on; try{ sessionStorage.setItem('kghs_fakecam', FAKE.on?'1':'0'); }catch(_){} renderHome(); toast(FAKE.on?'之後拍照會直接用測試假相機':'已關閉測試假相機'); }
   if(a==='retry'){ SYNC.fails=0; processOutbox(); toast('重新上傳中…'); }
-  if(a==='offline'){ DEV.offline=!DEV.offline; try{ sessionStorage.setItem('kghs_offline', DEV.offline?'1':'0'); }catch(_){} renderHome(); if(!DEV.offline){ SYNC.fails=0; processOutbox(); } }
-  if(a==='reset'){
-    if(!resetArmed){ resetArmed=true; renderHome(); setTimeout(()=>{ resetArmed=false; if(!$('#home').hidden) renderHome(); },4000); return; }
-    resetArmed=false; DB={ current:null, players:{} }; S=null; try{ localStorage.removeItem(KEY); }catch(_){} IDB.clear('outbox'); IDB.clear('mock'); SYNC.pending=0;
-    logout();
-  }
 });
 
 fontsReady.then(()=>{ if(E.spot) draw(); });
 refreshPending().then(()=>processOutbox());
-const pv=params.get('preview');
-if(params.get('wall')) openWall();
-else if(pv==='intro') playStory('intro', boot);
-else if(pv==='end') playStory('ending', openInvite);
-else if(pv==='invite') openInvite();
-else boot();
+boot();
 </script>
 </body>
 </html>
