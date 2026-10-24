@@ -308,7 +308,7 @@ body:not(.test) .testonly{display:none!important}
 .skip-link{display:block;margin:12px auto 0;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#E8D3A6;font:inherit;font-size:.95rem;border-radius:999px;padding:8px 18px;cursor:pointer}
 .presets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 12px}
 .presets button{padding:0;border:3px solid transparent;border-radius:14px;overflow:hidden;cursor:pointer;background:none}
-.presets img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.presets img{display:block;width:100%;aspect-ratio:1200/1290;object-fit:cover}
 .note-prev{display:block;width:70%;max-width:260px;margin:4px auto 10px;border-radius:10px}
 .ncolors{display:flex;gap:12px;justify-content:center;margin:4px 0 10px}
 .ncolors button{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);cursor:pointer}
@@ -433,6 +433,83 @@ body.storymode .sound{background:#2A231E;color:#F3EADB;border-color:#3A302A}
 .sw i.magazine{background:linear-gradient(#8E1E2E 0 38%,#E9C9A0 38% 44%,#8E1E2E 44%)}
 .sw i.glitter{background:radial-gradient(circle at 30% 30%,#D2AC60 0 2px,transparent 3px),radial-gradient(circle at 70% 60%,#D2AC60 0 2px,transparent 3px),radial-gradient(circle at 45% 78%,#D2AC60 0 1.5px,transparent 2.5px),#F3E6EA}
 .sw i.lace{background:radial-gradient(circle,#FFF 0 35%,transparent 36%) 0 0/14px 14px,#E6D7C3}
+/* ===================== 封面：頒獎典禮開幕 ===================== */
+#cover{position:fixed;inset:0;z-index:12;overflow:hidden;background:#0D0A09;color:#F3EADB}
+.cv-stage{position:absolute;inset:0}
+/* 舞台後方：深色布幕＋頂光 */
+.cv-back{position:absolute;inset:0;background:
+  radial-gradient(ellipse 60% 42% at 50% 30%,rgba(233,207,143,.20),transparent 70%),
+  radial-gradient(ellipse 90% 40% at 50% 100%,rgba(142,30,46,.35),transparent 70%),
+  repeating-linear-gradient(90deg,#120D0C 0 22px,#1A1311 22px 30px,#120D0C 30px 46px)}
+/* 兩道聚光燈 */
+.cv-beam{position:absolute;top:-12%;width:70%;height:95%;pointer-events:none;mix-blend-mode:screen;opacity:.55;
+  background:linear-gradient(180deg,rgba(255,236,190,.55),rgba(255,236,190,0) 85%);
+  clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);filter:blur(6px);transform-origin:50% 0}
+.cv-beam.l{left:-22%;transform:rotate(-18deg);animation:sway 7s ease-in-out infinite alternate}
+.cv-beam.r{right:-22%;transform:rotate(18deg);animation:sway2 8s ease-in-out infinite alternate}
+@keyframes sway{to{transform:rotate(-9deg)}} @keyframes sway2{to{transform:rotate(10deg)}}
+/* 紅毯 */
+.cv-carpet{position:absolute;left:50%;bottom:-2px;width:150%;height:24%;transform:translateX(-50%);
+  background:linear-gradient(180deg,#5E0F1B,#8E1E2E 60%,#9E2636);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.cv-carpet::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 40%,rgba(217,189,126,.5) 41.5%,transparent 43%,transparent 57%,rgba(217,189,126,.5) 58.5%,transparent 60%)}
+/* 頂端垂幔與金穗 */
+.cv-valance{position:absolute;left:-2%;right:-2%;top:0;height:11vh;z-index:3;
+  background:repeating-linear-gradient(90deg,#6B1220 0 14px,#9A2434 14px 22px,#7A1626 22px 34px);
+  -webkit-mask:radial-gradient(circle at 50% 0,#000 70%,transparent 71%) 0 0/68px 100% repeat-x, linear-gradient(#000 0 0) top/100% 62% no-repeat;
+          mask:radial-gradient(circle at 50% 0,#000 70%,transparent 71%) 0 0/68px 100% repeat-x, linear-gradient(#000 0 0) top/100% 62% no-repeat;
+  box-shadow:0 6px 18px rgba(0,0,0,.6)}
+.cv-fringe{position:absolute;left:0;right:0;top:calc(11vh * .62 - 2px);height:3px;z-index:4;background:linear-gradient(90deg,#8F6A2C,#E9CF8F,#8F6A2C,#E9CF8F,#8F6A2C)}
+/* 左右布幕：點入場後拉開 */
+.cv-curtain{position:absolute;top:0;bottom:0;width:52%;z-index:2;transition:transform 1.5s cubic-bezier(.6,.05,.25,1);
+  background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,0) 30%,rgba(0,0,0,.45)),
+    repeating-linear-gradient(90deg,#5A0E19 0,#8E1E2E 16px,#B03446 24px,#7A1626 34px,#5A0E19 44px)}
+.cv-curtain.l{left:0;transform:translateX(-62%);border-right:2px solid rgba(217,189,126,.35)}
+.cv-curtain.r{right:0;transform:translateX(62%);border-left:2px solid rgba(217,189,126,.35)}
+#cover.pre .cv-curtain{transition:none;transform:translateX(0)}
+#cover.opening .cv-curtain.l{transform:translateX(-101%)} #cover.opening .cv-curtain.r{transform:translateX(101%)}
+/* 金粉 */
+#cvDust{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* 文字 */
+.cv-content{position:absolute;inset:11vh 0 0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 28px calc(14vh + env(safe-area-inset-bottom,0px));gap:min(2.4vh,18px);transition:opacity .6s,transform .9s}
+#cover.pre .cv-content{opacity:0;transform:scale(.96);transition:none}
+.cv-content{transition-delay:.5s}
+#cover.opening .cv-content{opacity:0;transform:scale(1.08);transition-delay:0s}
+.cv-year{font-family:var(--serif);font-weight:600;font-size:.98rem;letter-spacing:.42em;color:#D9BD7E;margin:0;padding-left:.42em}
+.cv-crest{position:relative;width:min(92vw,380px);padding:4px 0}
+.cv-laurel{position:absolute;top:50%;width:clamp(34px,11vw,54px);height:auto;transform:translateY(-50%);opacity:.95}
+.cv-laurel.l{left:0} .cv-laurel.r{right:0;transform:translateY(-50%) scaleX(-1)}
+.cv-title{margin:0;font-family:var(--serif);font-weight:900;font-size:clamp(2.6rem,12.5vw,3.6rem);line-height:1.12;letter-spacing:.08em;padding-left:.08em;
+  background:linear-gradient(100deg,#9C7634 0%,#F6E3AE 22%,#C9A158 40%,#FFF1C9 52%,#B88A3E 70%,#E9CF8F 100%);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(0,0,0,.6));animation:shine 5s ease-in-out infinite}
+@keyframes shine{0%,100%{background-position:0 0}50%{background-position:100% 0}}
+.cv-sub{margin:0;font-family:var(--serif);font-weight:600;font-size:1.35rem;letter-spacing:.5em;padding-left:.5em;color:#F3EADB}
+.cv-rule{width:120px;height:1px;background:linear-gradient(90deg,transparent,#D9BD7E,transparent)}
+.cv-awards{margin:0;font-family:var(--serif);font-weight:600;font-size:.95rem;line-height:1.9;color:#C9B48A;max-width:330px}
+.cv-awards span{white-space:nowrap}
+.cv-date{margin:0;font-size:.9rem;color:#A39279;letter-spacing:.06em}
+.cv-enter{position:relative;margin-top:min(1.6vh,12px);border:0;cursor:pointer;font-family:var(--serif);font-weight:900;font-size:1.45rem;letter-spacing:.4em;padding:18px 36px 18px calc(36px + .4em);color:#2A1E10;
+  background:linear-gradient(180deg,#F6E3AE,#D2AC60 55%,#A9843E);border-radius:6px;
+  box-shadow:inset 0 0 0 2px rgba(255,248,225,.7),inset 0 0 0 5px #C49A4E,inset 0 0 0 6px rgba(80,55,20,.5),0 10px 30px rgba(0,0,0,.6),0 0 40px rgba(233,207,143,.35);
+  animation:glow 2.4s ease-in-out infinite}
+.cv-enter::before,.cv-enter::after{content:"";position:absolute;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:#0D0A09}
+.cv-enter::before{left:-9px}.cv-enter::after{right:-9px}
+.cv-enter:focus-visible{outline:3px solid #fff;outline-offset:4px}
+@keyframes glow{50%{box-shadow:inset 0 0 0 2px rgba(255,248,225,.7),inset 0 0 0 5px #C49A4E,inset 0 0 0 6px rgba(80,55,20,.5),0 10px 30px rgba(0,0,0,.6),0 0 64px rgba(233,207,143,.6)}}
+.cv-hint{margin:0;font-size:.9rem;color:#8F806B}
+/* 入場時的閃光燈 */
+.cv-flash{position:absolute;z-index:6;width:46vmax;height:46vmax;margin:-23vmax 0 0 -23vmax;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,250,235,.4) 18%,transparent 60%)}
+.cv-flash.go{animation:pop .45s ease-out forwards}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}15%{opacity:1}100%{opacity:0;transform:scale(1.2)}}
+body.covermode{background:#0D0A09} body.covermode .sound{background:#2A231E;color:#F3EADB;border-color:#3A302A}
+@media (max-height:640px){.cv-awards{display:none}.cv-title{font-size:2.5rem}}
+@media (prefers-reduced-motion:reduce){.cv-beam,.cv-title,.cv-enter{animation:none}.cv-curtain,.cv-content{transition-duration:.01s}}
+/* 隨堂測驗卷 */
+.quizcard{display:flex;align-items:center;gap:14px;width:100%;margin:16px 0 4px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-shadow:inset 0 3px 0 #C8433A}
+.quizcard img{width:58px;height:82px;object-fit:cover;object-position:top;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.18);flex:none}
+.quizcard span{font-size:1rem;line-height:1.5;color:var(--muted)}
+.quizcard b{display:block;font-family:var(--serif);font-weight:600;font-size:1.2rem;color:#B3342C}
+.quizimg{display:block;width:100%;max-height:68vh;object-fit:contain;border-radius:8px;margin:6px 0}
 /* 儲存中 */
 .saving{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(20,16,14,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .saving-box{background:var(--stage);color:#F3EADB;border-radius:18px;padding:30px 34px 26px;text-align:center;min-width:240px;
@@ -459,6 +536,27 @@ body.busy{overflow:hidden}
 <main class="wrap">
   <div class="inapp" id="inapp" hidden>目前是在 App 裡開啟網頁，相機可能無法使用。請點右上角「⋯」，選「用瀏覽器開啟」。</div>
 
+  <section id="cover" class="view" hidden aria-label="封面">
+    <div class="cv-stage">
+      <div class="cv-back"></div>
+      <div class="cv-beam l"></div><div class="cv-beam r"></div>
+      <canvas id="cvDust" aria-hidden="true"></canvas>
+      <div class="cv-carpet"></div>
+      <div class="cv-curtain l"></div><div class="cv-curtain r"></div>
+      <div class="cv-valance"></div><div class="cv-fringe"></div>
+      <div class="cv-content">
+        <p class="cv-year" id="cvYear">2026 雄女校友回娘家</p>
+        <div class="cv-crest"><svg class="cv-laurel l" viewBox="0 0 60 140" aria-hidden="true"><g fill="none" stroke="#C9A158" stroke-width="2.2" stroke-linecap="round"><path d="M46 136C18 112 10 70 30 8"/></g><g fill="#C9A158"><ellipse cx="30" cy="16" rx="4.2" ry="10" transform="rotate(10 30 16)"/><ellipse cx="22" cy="30" rx="4.2" ry="10" transform="rotate(-30 22 30)"/><ellipse cx="36" cy="32" rx="4.2" ry="10" transform="rotate(40 36 32)"/><ellipse cx="17" cy="48" rx="4.2" ry="10" transform="rotate(-38 17 48)"/><ellipse cx="31" cy="52" rx="4.2" ry="10" transform="rotate(38 31 52)"/><ellipse cx="15" cy="68" rx="4.2" ry="10" transform="rotate(-42 15 68)"/><ellipse cx="29" cy="72" rx="4.2" ry="10" transform="rotate(34 29 72)"/><ellipse cx="17" cy="88" rx="4.2" ry="10" transform="rotate(-46 17 88)"/><ellipse cx="30" cy="92" rx="4.2" ry="10" transform="rotate(30 30 92)"/><ellipse cx="22" cy="108" rx="4.2" ry="10" transform="rotate(-52 22 108)"/><ellipse cx="35" cy="110" rx="4.2" ry="10" transform="rotate(24 35 110)"/><ellipse cx="31" cy="124" rx="4.2" ry="10" transform="rotate(-60 31 124)"/></g></svg><svg class="cv-laurel r" viewBox="0 0 60 140" aria-hidden="true"><g fill="none" stroke="#C9A158" stroke-width="2.2" stroke-linecap="round"><path d="M46 136C18 112 10 70 30 8"/></g><g fill="#C9A158"><ellipse cx="30" cy="16" rx="4.2" ry="10" transform="rotate(10 30 16)"/><ellipse cx="22" cy="30" rx="4.2" ry="10" transform="rotate(-30 22 30)"/><ellipse cx="36" cy="32" rx="4.2" ry="10" transform="rotate(40 36 32)"/><ellipse cx="17" cy="48" rx="4.2" ry="10" transform="rotate(-38 17 48)"/><ellipse cx="31" cy="52" rx="4.2" ry="10" transform="rotate(38 31 52)"/><ellipse cx="15" cy="68" rx="4.2" ry="10" transform="rotate(-42 15 68)"/><ellipse cx="29" cy="72" rx="4.2" ry="10" transform="rotate(34 29 72)"/><ellipse cx="17" cy="88" rx="4.2" ry="10" transform="rotate(-46 17 88)"/><ellipse cx="30" cy="92" rx="4.2" ry="10" transform="rotate(30 30 92)"/><ellipse cx="22" cy="108" rx="4.2" ry="10" transform="rotate(-52 22 108)"/><ellipse cx="35" cy="110" rx="4.2" ry="10" transform="rotate(24 35 110)"/><ellipse cx="31" cy="124" rx="4.2" ry="10" transform="rotate(-60 31 124)"/></g></svg><h1 class="cv-title">雄女<br>祕境集章</h1></div>
+        <p class="cv-sub">頒獎典禮</p>
+        <div class="cv-rule"></div>
+        <p class="cv-awards" id="cvAwards"></p>
+        <p class="cv-date" id="cvDate"></p>
+        <button class="cv-enter" data-act="enter">入場</button>
+        <p class="cv-hint">開啟聲音，典禮更有臨場感</p>
+      </div>
+    </div>
+  </section>
+
   <section id="join" class="view" hidden>
     <div class="cover">
       <p class="hello">2026 雄女校友回娘家</p>
@@ -475,7 +573,7 @@ body.busy{overflow:hidden}
       </div>
       <details class="devtools testonly">
         <summary>原型測試工具（正式版會移除）</summary>
-        <div class="row wrapr" style="margin-top:10px"><button class="chip" data-act="intro">預覽開場劇情</button><button class="chip" data-act="previewEnd">預覽結尾</button><button class="chip" data-act="previewInvite">只看入場券</button></div>
+        <div class="row wrapr" style="margin-top:10px"><button class="chip" data-act="cover">預覽封面</button><button class="chip" data-act="intro">預覽開場劇情</button><button class="chip" data-act="previewEnd">預覽結尾</button><button class="chip" data-act="previewInvite">只看入場券</button></div>
       </details>
     </div>
   </section>
@@ -662,26 +760,34 @@ const CONFIG = {
   testMode: true,
   eventName: '雄女校友回娘家',
   // award 是這一站頒的獎項名稱（會出現在提名卡、獎章、相框底部和入場券）
-  // 點位名稱、謎題、提示為範例，請換成實際的雄女祕境；id 與 key 會寫進現場 QR Code 網址
+  // riddle 是主頁上看到的提示（對應隨堂測驗卷），name 是找到之後才顯示的地點名稱；id 與 key 會寫進現場 QR Code 網址
+  // presets 是「不想拍照」時可以選的照片（放在 assets/presets 資料夾）
   spots: [
-    { id:'s1', award:'最佳時光獎', key:'q7k2', stamp:'鐘', name:'鐘聲之處', riddle:'三年裡妳聽我說了上千次「下課」，卻很少有人抬頭找過我在哪裡。', hint:'找找看上下課的鐘聲從哪裡傳出來。' },
-    { id:'s2', award:'最佳守候獎', key:'m3x9', stamp:'樹', name:'老樹底下', riddle:'每一屆的畢業照背後都有我。我比妳們每一屆都還要老。', hint:'校園裡最老的那棵樹。' },
-    { id:'s3', award:'最佳青春衝刺獎', key:'t8p4', stamp:'階', name:'遲到的階梯', riddle:'早自習鐘響的那一刻，妳在我身上數到第幾階？', hint:'通往教室最常跑的那段樓梯。' },
-    { id:'s4', award:'最佳榮耀獎', key:'r2w6', stamp:'榜', name:'榜單牆', riddle:'段考成績、社團招生、失物招領，我全都替妳們貼過。', hint:'穿堂附近的公布欄。' },
-    { id:'s5', award:'最佳下課十分鐘獎', key:'h5n1', stamp:'福', name:'下課十分鐘的終點', riddle:'鐘一響就有人朝我衝刺。熱狗、麵包和飲料，晚到就沒了。', hint:'買零食的地方。' }
+    { id:'s1', award:'最佳時光獎', key:'q7k2', stamp:'門', name:'校門口', riddle:'鐘聲迴響之地', hint:'每天清晨，大家都從這裡走進雄女。',
+      presets:['assets/presets/s1-1.jpg','assets/presets/s1-old.jpg'] },
+    { id:'s2', award:'最佳夢想獎', key:'m3x9', stamp:'科', name:'榕園', riddle:'科研繁茂之地', hint:'實驗中心旁那片榕樹綠蔭，以前有圓桌可以坐。',
+      presets:['assets/presets/s2-1.jpg','assets/presets/s2-old.jpg'] },
+    { id:'s3', award:'最佳書香獎', key:'t8p4', stamp:'書', name:'圖書館', riddle:'書香盤繞之地', hint:'找找那座迴旋梯，書都住在那裡。',
+      presets:['assets/presets/s3-1.jpg','assets/presets/s3-2.jpg','assets/presets/s3-old.jpg'] },
+    { id:'s4', award:'最佳人氣獎', key:'r2w6', stamp:'活', name:'學生活動中心', riddle:'熱鬧非凡之地', hint:'演講、社團、比賽都在這裡上演。',
+      presets:['assets/presets/s4-1.jpg','assets/presets/s4-old.jpg'] },
+    { id:'s5', award:'最佳青春熱血獎', key:'h5n1', stamp:'體', name:'體育館', riddle:'青春熱血之地', hint:'流汗、打球、上體育課的地方。',
+      presets:['assets/presets/s5-1.jpg','assets/presets/s5-old.jpg'] }
   ],
+  // 隨堂測驗卷：主頁和開場最後一頁會出現，點開看大圖；不用就留空 ''
+  quizImage: 'assets/quiz.jpg',
   // 開場與結尾劇情：一個 { } 是一頁；icon 用貼紙代號（trophy、reel、ticket、filmcam、gstar、rose、bell、camera…）；{name} 會換成玩家的稱呼
   story: {
     intro: [
       { icon:'reel', text:'今晚的雄女，\n要辦一場只屬於妳們的頒獎典禮。' },
-      { icon:'ticket', text:'校園裡藏著五座獎，\n每一座都是那幾年的妳留下的：\n鐘聲、樹影、跑過的階梯……' },
+      { icon:'ticket', text:'校園裡藏著五座獎，\n每一座都藏在妳們熟悉的地方：\n校門、圖書館、體育館……' },
       { icon:'filmcam', text:'找到它們，\n拍一張現在的妳，\n留一句得獎感言。' },
       { icon:'gstar', text:'不想入鏡也沒關係。\n當一次攝影師，\n拍下妳心中它最美的樣子。' },
       { icon:'trophy', text:'五座獎都拿到，\n典禮的入場券\n就會交到妳手上。' }
     ],
     introEnd: '進場',
     ending: [
-      { icon:'trophy', text:'鐘聲、老樹、階梯、榜單、福利社，\n五座獎都頒給妳了。' },
+      { icon:'trophy', text:'校門、榕園、圖書館、\n活動中心、體育館，\n五座獎都頒給妳了。' },
       { icon:'filmcam', text:'妳拍下的照片和得獎感言，\n今晚會在典禮現場放映。' },
       { icon:'rose', text:'{name}，\n歡迎回家。' }
     ],
@@ -747,7 +853,7 @@ const CONFIG = {
     date: '2026 年 12 月 19 日（六）晚上 6:00',
     place: '（聚餐餐廳名稱）',
     address: '（餐廳地址）',
-    note: '報到時請出示這張入場券'
+    note: ''   // 入場券最下方的小字（留空就不顯示）
   }
 };
 
@@ -765,7 +871,7 @@ if(TEST) document.body.classList.add('test');
 const esc=s=>String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let toastTimer;
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3000); }
-function show(id){ document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id); document.body.classList.toggle('fullmode', id==='cam'||id==='edit'||id==='scan'); document.body.classList.toggle('storymode', id==='story'); const fab=document.getElementById('scanFab'); if(fab) fab.hidden = id!=='home'; window.scrollTo(0,0); }
+function show(id){ document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id); document.body.classList.toggle('fullmode', id==='cam'||id==='edit'||id==='scan'); document.body.classList.toggle('storymode', id==='story'); document.body.classList.toggle('covermode', id==='cover'); if(id==='cover') coverStart(); else coverStop(); const fab=document.getElementById('scanFab'); if(fab) fab.hidden = id!=='home'; window.scrollTo(0,0); }
 const spotById=id=>CONFIG.spots.find(s=>s.id===id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function dateStr(){ const d=new Date(); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`; }
@@ -1070,14 +1176,55 @@ $('#joinBtn').addEventListener('click', async ()=>{
   if(!hadPending) askCameraFirst();
 });
 function boot(){
-  if(!S){
-    if(!DB.seenIntro) playStory('intro', ()=>{ DB.seenIntro=true; save(); show('join'); });
-    else show('join');
-    return;
-  }
+  if(!S){ openCover(); return; }
   show('home'); renderHome(); handlePending();
 }
 
+function openQuiz(){
+  modal(`<h2>隨堂測驗卷</h2><img src="${CONFIG.quizImage}" alt="隨堂測驗卷：五個地點的提示" class="quizimg"><p class="tiny center">用兩指放大看得更清楚</p>`, [{label:'知道了，出發', soft:false}]);
+}
+/* ===================== 封面 ===================== */
+const COVER={ raf:null, parts:[], busy:false };
+function openCover(){
+  const yr=(CONFIG.invite.date.match(/\d{4}/)||[new Date().getFullYear()])[0];
+  $('#cvYear').textContent=`${yr} ${CONFIG.eventName}`;
+  $('#cvAwards').innerHTML=CONFIG.spots.filter(s=>s.award).map(s=>`<span>${esc(s.award)}</span>`).join('　');
+  $('#cvDate').textContent=CONFIG.invite.date ? `典禮　${CONFIG.invite.date}` : '';
+  const cv=$('#cover'); cv.classList.remove('opening'); cv.classList.add('pre'); COVER.busy=false;
+  show('cover');
+  // 開場：布幕從中間拉開到兩側，再浮現標題
+  requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>cv.classList.remove('pre'),250)));
+}
+function coverStart(){
+  const c=$('#cvDust'); if(!c) return; cancelAnimationFrame(COVER.raf);
+  const reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fit=()=>{ const d=Math.min(2,devicePixelRatio||1); c.width=innerWidth*d; c.height=innerHeight*d; };
+  fit(); window.addEventListener('resize',fit);
+  const g=c.getContext('2d'), N=reduce?0:46;
+  COVER.parts=[...Array(N)].map(()=>({ x:Math.random(), y:Math.random(), r:.6+Math.random()*1.8, v:.00025+Math.random()*.0006, a:Math.random()*6.28, tw:.5+Math.random()*1.5 }));
+  const step=t=>{
+    g.clearRect(0,0,c.width,c.height); const k=c.width/innerWidth;
+    COVER.parts.forEach(p=>{ p.y-=p.v; p.x+=Math.sin(t/2000+p.a)*.0003; if(p.y<-.02){ p.y=1.02; p.x=Math.random(); }
+      const al=.35+.45*Math.sin(t/600*p.tw+p.a); g.globalAlpha=Math.max(0,al); g.fillStyle='#F2D896';
+      g.beginPath(); g.arc(p.x*c.width,p.y*c.height,p.r*k,0,Math.PI*2); g.fill(); });
+    g.globalAlpha=1; COVER.raf=requestAnimationFrame(step);
+  };
+  if(N) COVER.raf=requestAnimationFrame(step);
+}
+function coverStop(){ cancelAnimationFrame(COVER.raf); COVER.raf=null; }
+function enterCeremony(){
+  if(COVER.busy) return; COVER.busy=true;
+  try{ ac()?.resume?.(); startMusic(); sfx.fanfare(); }catch(_){}
+  const cv=$('#cover');
+  // 閃光燈：像記者在紅毯拍照
+  [[22,30,0],[78,42,180],[40,70,360],[66,22,520]].forEach(([x,y,d])=>setTimeout(()=>{
+    const f=document.createElement('div'); f.className='cv-flash'; f.style.left=x+'%'; f.style.top=y+'%'; cv.appendChild(f);
+    requestAnimationFrame(()=>f.classList.add('go')); setTimeout(()=>f.remove(),600);
+    try{ sfx.shutter(); }catch(_){}
+  },d));
+  setTimeout(()=>cv.classList.add('opening'), 650);
+  setTimeout(()=>playStory('intro', ()=>{ DB.seenIntro=true; save(); if(S) backHome(); else show('join'); }), 2200);
+}
 /* ===================== 劇情頁 ===================== */
 let ST=null;
 const stickerUri=k=>(STICKERS.find(s=>s.k===k)||{}).uri;
@@ -1111,14 +1258,15 @@ function renderHome(){
     <div class="syncbar" id="syncBar" hidden><span id="syncText"></span><button class="btn soft small" data-act="retry">立即重試</button></div>
     <div class="who-row"><span class="tiny" style="margin:0">找回進度用：末三碼 ${esc(p.l3)}</span><button class="btn soft small" data-act="logout">不是妳？</button></div>
     <div class="stamps" aria-label="已獲 ${n} / ${spots.length} 座獎">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
-    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>讀下面的謎題，猜猜是校園哪裡</li><li>走到那裡，點下方的「📷 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就拿下這座獎</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
+    ${CONFIG.quizImage?`<button class="quizcard" data-act="quiz"><img src="${CONFIG.quizImage}" alt=""><span><b>隨堂測驗卷</b>五個地點的提示都在這張卷子上，點開看大圖</span></button>`:''}
+    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>打開上面的「隨堂測驗卷」，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「📷 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就拿下這座獎</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
     ${n===spots.length ? `<section class="unlock"><h2>五座獎都拿到了</h2><p>典禮入場券準備好了，聚餐地點寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
     <section class="spots">${spots.map(spotHTML).join('')}</section>
     <details class="devtools testonly" ${devOpen?'open':''}>
       <summary>原型測試工具（正式版會移除）</summary>
       <p>模擬在現場掃描點位 QR Code：</p>
       <div class="row wrapr">${spots.map(s=>`<button class="chip" data-act="sim" data-id="${s.id}">掃描「${s.stamp}」</button>`).join('')}</div>
-      <div class="row wrapr" style="margin-top:6px"><button class="chip" data-act="intro">預覽開場劇情</button><button class="chip" data-act="previewEnd">預覽結尾</button><button class="chip" data-act="previewInvite">只看入場券</button><button class="chip" data-act="wall">投影牆預覽</button><button class="chip" data-act="reset">${resetArmed?'再按一次確認清空':'清空所有測試資料'}</button></div>
+      <div class="row wrapr" style="margin-top:6px"><button class="chip" data-act="cover">預覽封面</button><button class="chip" data-act="intro">預覽開場劇情</button><button class="chip" data-act="previewEnd">預覽結尾</button><button class="chip" data-act="previewInvite">只看入場券</button><button class="chip" data-act="wall">投影牆預覽</button><button class="chip" data-act="reset">${resetArmed?'再按一次確認清空':'清空所有測試資料'}</button></div>
       <p class="tiny">後端：${API.live?'Firebase':'模擬伺服器（資料存在這支手機）'}</p>
       <div class="row wrapr"><button class="chip" data-act="offline" aria-pressed="${DEV.offline}">模擬斷線：${DEV.offline?'開':'關'}</button><button class="chip" data-act="fakecam" aria-pressed="${FAKE.on}">測試假相機：${FAKE.on?'開':'關'}</button></div>
       <p class="tiny">點位 QR Code 的網址格式：<code>${esc(location.origin+location.pathname)}?spot=s1&amp;k=q7k2</code></p>
@@ -2280,9 +2428,10 @@ async function openInvite(){
   const by=Math.max(y+10, IH-300);
   g.setLineDash([16,12]); g.strokeStyle='rgba(217,189,126,.6)'; g.lineWidth=3; g.beginPath(); g.moveTo(80,by); g.lineTo(IW-80,by); g.stroke(); g.setLineDash([]);
   g.fillStyle='#F1EBE1'; [40,IW-40].forEach(x=>{ g.beginPath(); g.arc(x,by,26,0,Math.PI*2); g.fill(); });
-  g.textAlign='center'; g.fillStyle=GOLD; g.font=`600 84px ${SF}`; g.fillText('敬 候 光 臨', IW/2, by+140);
-  g.fillStyle=GOLD2; ornament(g,'diamond',IW/2-250,by+112,12,-1); ornament(g,'diamond',IW/2+250,by+112,12,1);
-  g.fillStyle='#C9BBA5'; g.font=`400 32px ${NF}`; g.fillText(inv.note, IW/2, IH-72);
+  const cy = inv.note ? by+140 : (by+IH-56)/2+30;
+  g.textAlign='center'; g.fillStyle=GOLD; g.font=`600 84px ${SF}`; g.fillText('敬 候 光 臨', IW/2, cy);
+  g.fillStyle=GOLD2; ornament(g,'diamond',IW/2-250,cy-28,12,-1); ornament(g,'diamond',IW/2+250,cy-28,12,1);
+  if(inv.note){ g.fillStyle='#C9BBA5'; g.font=`400 32px ${NF}`; g.fillText(inv.note, IW/2, IH-72); }
   $('#inviteImg').src=c.toDataURL('image/jpeg',.92);
 }
 
@@ -2309,6 +2458,9 @@ document.addEventListener('click', e=>{
   if(a==='storynext') storyNext();
   if(a==='storyskip') storySkip();
   if(a==='intro') playStory('intro', backHome);
+  if(a==='quiz') openQuiz();
+  if(a==='enter') enterCeremony();
+  if(a==='cover') openCover();
   if(a==='ending') playStory('ending', openInvite);
   if(a==='previewEnd') playStory('ending', openInvite);
   if(a==='previewInvite') openInvite();
