@@ -2413,10 +2413,12 @@ async function openInvite(){
   // 黑底＋若隱若現的方塊紋理（仿主視覺）
   g.fillStyle='#0C0A09'; g.fillRect(0,0,IW,IH);
   let seed=7; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  g.save(); g.beginPath(); g.rect(30,30,IW-60,IH-60); g.clip();
   for(let k=0;k<46;k++){ g.fillStyle=`rgba(217,189,126,${(.025+rnd()*.05).toFixed(3)})`; g.fillRect(rnd()*IW-60, rnd()*IH, 80+rnd()*240, 40+rnd()*120); }
+  g.restore();
   // 外框與四角
   g.strokeStyle='rgba(217,189,126,.75)'; g.lineWidth=2; g.strokeRect(28,28,IW-56,IH-56);
-  [[28,28,1,1],[IW-28,28,-1,1],[28,IH-28,1,-1],[IW-28,IH-28,-1,-1]].forEach(([x,y,sx,sy])=>{ g.save(); g.translate(x,y); g.scale(sx,sy); g.strokeStyle=GOLD; g.lineWidth=1.5; g.strokeRect(0,0,64,64); g.beginPath(); g.moveTo(0,0); g.lineTo(64,64); g.moveTo(64,0); g.lineTo(18,46); g.moveTo(0,64); g.lineTo(46,18); g.stroke(); g.restore(); });
+  [[28,28,1,1],[IW-28,28,-1,1],[28,IH-28,1,-1],[IW-28,IH-28,-1,-1]].forEach(([x,y,sx,sy])=>{ g.save(); g.translate(x,y); g.scale(sx,sy); g.strokeStyle=GOLD; g.lineWidth=1.5; g.beginPath(); g.moveTo(10,66); g.lineTo(10,10); g.lineTo(66,10); g.moveTo(20,46); g.lineTo(20,20); g.lineTo(46,20); g.stroke(); g.beginPath(); g.arc(20,20,40,0,Math.PI/2); g.stroke(); g.lineWidth=1; g.beginPath(); for(let a=8;a<90;a+=8){ const r=a*Math.PI/180; g.moveTo(20+Math.cos(r)*14,20+Math.sin(r)*14); g.lineTo(20+Math.cos(r)*36,20+Math.sin(r)*36); } g.stroke(); g.fillStyle=GOLD; g.beginPath(); g.arc(20,20,3.5,0,Math.PI*2); g.fill(); g.restore(); });
   // 上下金色琴鍵飾帶
   const bars=(y0,h)=>{ const pat=[14,11,8,4,1.6,0,1.6,4,8,11,14]; let x=104; while(x<IW-104){ for(const w of pat){ if(x>IW-104) break; if(w){ g.fillStyle=gold(x,x+w); rr(g,x,y0,w,h,Math.min(3,w/2)); g.fill(); x+=w+6; } else x+=18; } x+=14; } };
   bars(46,62); bars(IH-108,62);
