@@ -544,6 +544,10 @@ body.busy{overflow:hidden}
 </style>
 </head>
 <body>
+<script>
+/* 太舊的手機（iOS 13.4 以前）看不懂這個網頁的寫法，會整頁空白；先檢查，看不懂就顯示提示 */
+try{ new Function('var a=null; return a?.b ?? 1'); }catch(e){ document.addEventListener('DOMContentLoaded',function(){ document.body.innerHTML='<div style="padding:40px 24px;font:18px/1.8 sans-serif;color:#1E1915;background:#F1EBE1;min-height:100vh">這支手機的系統版本太舊，沒辦法開啟遊戲。<br><br>請到「設定 → 一般 → 軟體更新」把 iOS 更新到 15 以上，或借用其他手機一起玩。</div>'; }); }
+</script>
 <button class="sound" id="soundBtn" aria-pressed="true"><span data-ic="soundOn"></span> 聲音開</button>
 <main class="wrap">
   <div class="inapp" id="inapp" hidden>目前是在 App 裡開啟網頁，相機可能無法使用。請點右上角「⋯」，選「用瀏覽器開啟」。</div>
@@ -1009,14 +1013,17 @@ const IDB={ db:null, mem:{ outbox:new Map(), mock:new Map() }, broken:false,
 };
 
 /* 壓縮 */
+/* iOS Safari 的畫布總記憶體有上限，用完的畫布把尺寸設成 0 立刻釋放 */
+function freeCanvas(c){ if(c && c.getContext && c!==cv){ c.width=0; c.height=0; } }
 function toBlob(c,q,type='image/jpeg'){ return new Promise(r=>{ try{ c.toBlob(b=>r(b),type,q); }catch(e){ r(null); } }); }
 async function compressCanvas(canvas){
   const C=CONFIG.upload; let src=canvas, q=C.quality, b=await toBlob(src,q), guard=0;
   while(b && b.size>C.maxBytes && guard++<12){
     if(q-.03>=C.minQuality) q-=.03;
-    else { const s=document.createElement('canvas'); s.width=Math.round(src.width*.9); s.height=Math.round(src.height*.9); const g=s.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,s.width,s.height); src=s; q=C.quality-.04; }
+    else { const s=document.createElement('canvas'); s.width=Math.round(src.width*.9); s.height=Math.round(src.height*.9); const g=s.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,s.width,s.height); if(src!==canvas) freeCanvas(src); src=s; q=C.quality-.04; }
     b=await toBlob(src,q);
   }
+  if(src!==canvas) freeCanvas(src);
   return b;
 }
 /* 依長邊縮小成指定尺寸（分兩段縮，邊緣比較銳利） */
@@ -1024,17 +1031,19 @@ function scaledTo(canvas, side){
   let src=canvas;
   const k=Math.min(1, side/Math.max(canvas.width,canvas.height));
   const tw=Math.round(canvas.width*k), th=Math.round(canvas.height*k);
-  while(src.width/2>=tw*1.2){ const h=document.createElement('canvas'); h.width=Math.round(src.width/2); h.height=Math.round(src.height/2); const g=h.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,h.width,h.height); src=h; }
-  const c=document.createElement('canvas'); c.width=tw; c.height=th; const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,tw,th);
+  while(src.width/2>=tw*1.2){ const h=document.createElement('canvas'); h.width=Math.round(src.width/2); h.height=Math.round(src.height/2); const g=h.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,h.width,h.height); if(src!==canvas) freeCanvas(src); src=h; }
+  const c=document.createElement('canvas'); c.width=tw; c.height=th; const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,tw,th); if(src!==canvas) freeCanvas(src);
   return c;
 }
 async function displayVersions(canvas){
   const U=CONFIG.upload;
-  return { wall: await toBlob(scaledTo(canvas,U.wallSide), U.wallQuality), tiny: await toBlob(scaledTo(canvas,U.tinySide), U.tinyQuality) };
+  const w=scaledTo(canvas,U.wallSide), wall=await toBlob(w,U.wallQuality); freeCanvas(w);
+  const t=scaledTo(canvas,U.tinySide), tiny=await toBlob(t,U.tinyQuality); freeCanvas(t);
+  return { wall, tiny };
 }
 function thumbOf(canvas,w=CONFIG.upload.thumbWidth){
   const s=document.createElement('canvas'); s.width=w; s.height=Math.round(canvas.height*w/canvas.width);
-  s.getContext('2d').drawImage(canvas,0,0,s.width,s.height); return s.toDataURL('image/jpeg',.72);
+  s.getContext('2d').drawImage(canvas,0,0,s.width,s.height); const u=s.toDataURL('image/jpeg',.72); freeCanvas(s); return u;
 }
 
 /* 後端介面：模擬版與 Supabase 版用同一組函式 */
@@ -1490,7 +1499,7 @@ function applyFilter(src,f){
 
 /* ===================== 貼紙圖庫 ===================== */
 const LINE='#3A2E28';
-const svgURI=inner=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">${inner}</svg>`);
+const svgURI=inner=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 120 120">${inner}</svg>`);
 const mk=(shape,detail='')=>svgURI(`<defs><g id="s">${shape}</g></defs><use href="#s" fill="#fff" stroke="#fff" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/><use href="#s" stroke="${LINE}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${detail}`);
 const HEART='M60 102C24 78 12 56 22 38C32 20 52 22 60 38C68 22 88 20 98 38C108 56 96 78 60 102Z';
 const SPARK='M60 10C63 45 75 57 110 60C75 63 63 75 60 110C57 75 45 63 10 60C45 57 57 45 60 10Z';
@@ -1760,9 +1769,10 @@ function setCellImage(i,src){
   const k=Math.min(1,max/Math.max(sw,sh));
   const raw=document.createElement('canvas'); raw.width=Math.round(sw*k); raw.height=Math.round(sh*k);
   raw.getContext('2d').drawImage(src,0,0,raw.width,raw.height);
+  const old=E.cells[i]; if(old){ freeCanvas(old.raw); if(old.img!==old.raw) freeCanvas(old.img); }
   E.cells[i]={ raw, img:applyFilter(raw,E.filter), zoom:1, ox:0, oy:0 };
 }
-function setFilter(f){ E.filter=f; E.cells.forEach(c=>{ if(c.raw) c.img=applyFilter(c.raw,f); }); syncUI(); draw(); }
+function setFilter(f){ E.filter=f; E.cells.forEach(c=>{ if(c.raw){ if(c.img!==c.raw) freeCanvas(c.img); c.img=applyFilter(c.raw,f); } }); syncUI(); draw(); }
 function loadImgFile(f){ return new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=URL.createObjectURL(f); }); }
 function tplPreview(t){
   const f=FRAMES[t.frame]||FRAMES[DEF_FRAME];
@@ -2421,6 +2431,7 @@ function setSound(on){
 function unlockAudio(){ if(!SND.on) return; const c=ac(); c?.resume?.(); startMusic(); }
 ['pointerdown','touchend','click'].forEach(ev=>document.addEventListener(ev, unlockAudio, {passive:true}));
 document.addEventListener('visibilitychange', ()=>{
+  if(!document.hidden && !$('#cam').hidden && (!stream || stream.getVideoTracks().some(t=>t.readyState==='ended'))){ stream=null; startCam(); }
   if(document.hidden){ SND.ctx?.suspend?.(); SND.el?.pause(); }
   else if(SND.on){ SND.ctx?.resume?.(); SND.el?.play().catch(()=>{}); }
 });
