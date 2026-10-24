@@ -111,9 +111,6 @@ input[type=text],input[type=number],textarea{width:100%;border:2px solid var(--l
 .spot h3{font-size:1.3rem}
 .spot h3.unknown{color:var(--muted);letter-spacing:.2em}
 .riddle{line-height:1.9;margin:10px 0}
-.hint{margin-bottom:10px}
-.hint summary{cursor:pointer;color:var(--pink);display:inline-block;padding:4px 0}
-.hint p{margin-top:4px;color:var(--muted)}
 .status{color:var(--muted);margin-bottom:12px;font-size:1rem}
 .status.ok{color:var(--pink)}
 .done{display:flex;gap:12px;align-items:flex-start}
@@ -295,7 +292,10 @@ body.fullmode .toast{bottom:auto;top:calc(72px + env(safe-area-inset-top,0px))}
 .fl[aria-pressed="true"] img,.fl[aria-pressed="true"] .ph{border-color:var(--pink)}
 .toolbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
 .toolbar button{border:0;background:none;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.8rem;padding:6px 0;cursor:pointer;border-radius:12px}
-.toolbar button i{font-style:normal;font-size:1.45rem;line-height:1.25}
+.toolbar button i{font-style:normal;font-size:1.45rem;line-height:1.25;display:grid;place-items:center;height:1.25em}
+.ic{width:1.15em;height:1.15em;flex:none;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.toolbar .ic,.side-btn .thumb .ic{width:1.05em;height:1.05em}
+.ico-btn{display:inline-grid;place-items:center}
 .toolbar button[aria-pressed="true"]{background:var(--t-pink);color:var(--pink-d)}
 #pad{display:block;width:100%;height:auto;aspect-ratio:900/420;background:#fff;border-radius:18px;border:2px solid var(--line);touch-action:none}
 .skip-link{display:block;margin:12px auto 0;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#E8D3A6;font:inherit;font-size:.95rem;border-radius:999px;padding:8px 18px;cursor:pointer}
@@ -489,12 +489,28 @@ body.storymode .sound{background:#2A231E;color:#F3EADB;border-color:#3A302A}
 body.covermode{background:#0D0A09} body.covermode .sound{background:#2A231E;color:#F3EADB;border-color:#3A302A}
 @media (max-height:640px){.cv-awards{display:none}.cv-title{font-size:2.5rem}}
 @media (prefers-reduced-motion:reduce){.cv-beam,.cv-title,.cv-enter{animation:none}.cv-curtain,.cv-content{transition-duration:.01s}}
-/* 隨堂測驗卷 */
-.quizcard{display:flex;align-items:center;gap:14px;width:100%;margin:16px 0 4px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-shadow:inset 0 3px 0 #C8433A}
-.quizcard img{width:58px;height:82px;object-fit:cover;object-position:top;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.18);flex:none}
-.quizcard span{font-size:1rem;line-height:1.5;color:var(--muted)}
-.quizcard b{display:block;font-family:var(--serif);font-weight:600;font-size:1.2rem;color:#B3342C}
-.quizimg{display:block;width:100%;max-height:68vh;object-fit:contain;border-radius:8px;margin:6px 0}
+/* 提示卡：點一下翻面 */
+.clues{margin:18px 0 4px}
+.clues-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-family:var(--serif);font-weight:600;font-size:1.2rem;margin:0 2px 10px}
+.clues-h span{font-family:var(--round);font-weight:400;font-size:.9rem;color:var(--muted)}
+.clue-row{display:grid;grid-auto-flow:column;grid-auto-columns:min(68%,240px);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;margin:0 -2px;scrollbar-width:none}
+.clue-row::-webkit-scrollbar{display:none}
+.clue{scroll-snap-align:start;height:232px;padding:0;border:0;background:none;font:inherit;color:inherit;text-align:center;cursor:pointer;perspective:900px;-webkit-tap-highlight-color:transparent}
+.clue:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:14px}
+.clue-in{position:relative;display:block;height:100%;transition:transform .6s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.clue[aria-pressed="true"] .clue-in{transform:rotateY(180deg)}
+.clue-f,.clue-b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 16px;border-radius:14px;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.clue-f{background:var(--stage);color:#F3EADB;box-shadow:inset 0 0 0 1px rgba(217,189,126,.55),inset 0 0 0 7px var(--stage),inset 0 0 0 8px rgba(217,189,126,.28),0 8px 18px rgba(27,22,19,.18)}
+.clue-b{background:var(--card);color:var(--ink);transform:rotateY(180deg);box-shadow:inset 0 0 0 1px var(--line),inset 0 3px 0 var(--gold),0 8px 18px rgba(27,22,19,.1)}
+.clue-no{font-family:var(--serif);font-weight:600;font-size:.85rem;letter-spacing:.3em;padding-left:.3em;color:var(--gold-hi)}
+.clue-aw{font-family:var(--serif);font-weight:600;font-size:.95rem;color:#C9BBA5}
+.clue-rd{font-family:var(--serif);font-weight:900;font-size:1.55rem;line-height:1.35;letter-spacing:.06em;color:#FBF3E4}
+.clue-tap{display:flex;align-items:center;gap:6px;font-size:.85rem;color:#A39279;margin-top:4px}
+.clue-b .clue-no{color:var(--gold)}
+.clue-ht{font-size:1.05rem;line-height:1.7}
+.clue-ans{display:flex;align-items:center;gap:6px;font-family:var(--serif);font-weight:600;color:var(--velvet);margin-top:2px}
+.clue.found .clue-f::after{content:"";position:absolute;top:14px;right:14px;width:12px;height:12px;border-radius:50%;background:var(--gold-hi);box-shadow:0 0 0 3px rgba(217,189,126,.25)}
+@media (prefers-reduced-motion:reduce){.clue-in{transition:none}}
 /* 儲存中 */
 .saving{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(20,16,14,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .saving-box{background:var(--stage);color:#F3EADB;border-radius:18px;padding:30px 34px 26px;text-align:center;min-width:240px;
@@ -517,7 +533,7 @@ body.busy{overflow:hidden}
 </style>
 </head>
 <body>
-<button class="sound" id="soundBtn" aria-pressed="true">🔊 聲音開</button>
+<button class="sound" id="soundBtn" aria-pressed="true"><span data-ic="soundOn"></span> 聲音開</button>
 <main class="wrap">
   <div class="inapp" id="inapp" hidden>目前是在 App 裡開啟網頁，相機可能無法使用。請點右上角「⋯」，選「用瀏覽器開啟」。</div>
 
@@ -581,7 +597,7 @@ body.busy{overflow:hidden}
 
 <section id="cam" class="view full" hidden>
   <div class="cam-top">
-    <button class="ico-btn" data-ed="close" aria-label="離開">✕</button>
+    <button class="ico-btn" data-ed="close" aria-label="離開"><span data-ic="close"></span></button>
     <div class="lay-seg" id="camLayouts">
       <button data-layout="single">單張</button><button data-layout="strip">四格條</button><button data-layout="grid">四格方</button>
     </div>
@@ -609,16 +625,16 @@ body.busy{overflow:hidden}
       <button data-mode="selfie">自拍</button><button data-mode="group">請人幫拍</button><button data-mode="scene">拍風景</button>
     </div>
     <div class="cam-row">
-      <label class="side-btn"><span class="thumb" id="galThumb">🖼️</span>相簿<input class="vh" type="file" accept="image/*" id="fLib"></label>
+      <label class="side-btn"><span class="thumb" id="galThumb"><span data-ic="image"></span></span>相簿<input class="vh" type="file" accept="image/*" id="fLib"></label>
       <button class="shutter" id="shutter" aria-label="拍照"><span></span></button>
-      <button class="side-btn" data-ed="timer"><span class="thumb">⏱</span><b id="timerLbl">3 秒</b></button>
+      <button class="side-btn" data-ed="timer"><span class="thumb"><span data-ic="timer"></span></span><b id="timerLbl">3 秒</b></button>
     </div>
     <button class="skip-link" data-ed="skip">不想拍照？選照片或貼便利貼</button>
   </div>
 </section>
 
 <section id="scan" class="view full" hidden>
-  <div class="cam-top"><button class="ico-btn" data-sc="close" aria-label="離開">✕</button><p class="sc-title">掃描點位 QR Code</p><span style="width:46px"></span></div>
+  <div class="cam-top"><button class="ico-btn" data-sc="close" aria-label="離開"><span data-ic="close"></span></button><p class="sc-title">掃描點位 QR Code</p><span style="width:46px"></span></div>
   <div class="cam-view">
     <video id="scVid" playsinline muted autoplay></video>
     <div class="sc-mask"><div class="sc-box"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><div class="sc-line"></div></div></div>
@@ -635,7 +651,7 @@ body.busy{overflow:hidden}
   </div>
 </section>
 
-<button class="scan-fab" id="scanFab" data-sc="open" hidden>📷 掃描 QR Code</button>
+<button class="scan-fab" id="scanFab" data-sc="open" hidden><span data-ic="scan"></span> 掃描 QR Code</button>
 
 <section id="edit" class="view full" hidden>
   <div class="ed-top">
@@ -646,7 +662,7 @@ body.busy{overflow:hidden}
   <div class="ed-stage" id="edStage"><canvas id="cv" aria-label="照片編輯區"></canvas></div>
   <p class="ed-hint" id="edHint"></p>
   <div class="panel-sheet" id="panel" hidden>
-    <div class="ps-head"><b id="psTitle"></b><button class="ps-ok" data-ed="closetool">✓ 好了</button></div>
+    <div class="ps-head"><b id="psTitle"></b><button class="ps-ok" data-ed="closetool"><span data-ic="check"></span> 好了</button></div>
     <div class="ps-body">
       <div class="tp" id="t-tpl"><div class="hrow" id="tpls"></div></div>
       <div class="tp" id="t-frame">
@@ -696,13 +712,13 @@ body.busy{overflow:hidden}
     </div>
   </div>
   <nav class="toolbar" id="toolbar">
-    <button data-tool="tpl"><i>✨</i>範例</button>
-    <button data-tool="frame"><i>🖼️</i>相框</button>
-    <button data-tool="filter"><i>🌸</i>美顏</button>
-    <button data-tool="sticker"><i>🎀</i>貼紙</button>
-    <button data-tool="word"><i>🔤</i>文字</button>
-    <button data-tool="pen"><i>✏️</i>塗鴉</button>
-    <button data-tool="msg"><i>💬</i><span id="msgTabLbl">留言</span></button>
+    <button data-tool="tpl"><i data-ic="sparkle"></i>範例</button>
+    <button data-tool="frame"><i data-ic="frame"></i>相框</button>
+    <button data-tool="filter"><i data-ic="filter"></i>美顏</button>
+    <button data-tool="sticker"><i data-ic="sticker"></i>貼紙</button>
+    <button data-tool="word"><i data-ic="text"></i>文字</button>
+    <button data-tool="pen"><i data-ic="pen"></i>塗鴉</button>
+    <button data-tool="msg"><i data-ic="chat"></i><span id="msgTabLbl">留言</span></button>
   </nav>
 </section>
 
@@ -727,11 +743,48 @@ body.busy{overflow:hidden}
   }catch(e){}
 })();
 
+/* ===================== 線條圖示（SVG，顏色跟著文字走） ===================== */
+const ICONS={
+  soundOn:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+  soundOff:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9.5 5 5"/><path d="m21 9.5-5 5"/>',
+  close:'<path d="M6 6l12 12"/><path d="M18 6 6 18"/>',
+  check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  image:'<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m4 17.5 5-5 4 4 2.5-2.5 5 4.5"/>',
+  timer:'<circle cx="12" cy="13.5" r="7"/><path d="M12 10v3.8l2.5 1.6"/><path d="M9.5 3.5h5"/><path d="M12 3.5v3"/>',
+  camera:'<path d="M4 8.5A2 2 0 0 1 6 6.5h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/>',
+  scan:'<path d="M4 8.5V6a2 2 0 0 1 2-2h2.5"/><path d="M15.5 4H18a2 2 0 0 1 2 2v2.5"/><path d="M20 15.5V18a2 2 0 0 1-2 2h-2.5"/><path d="M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><rect x="8" y="8" width="3" height="3"/><rect x="13" y="8" width="3" height="3"/><rect x="8" y="13" width="3" height="3"/><path d="M13 13h3v3"/>',
+  sparkle:'<path d="M12 3.5c.6 4.2 2.3 5.9 6.5 6.5-4.2.6-5.9 2.3-6.5 6.5-.6-4.2-2.3-5.9-6.5-6.5 4.2-.6 5.9-2.3 6.5-6.5z"/><path d="M18.5 15.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z"/>',
+  frame:'<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><rect x="7" y="7" width="10" height="10"/>',
+  filter:'<circle cx="9" cy="10" r="5"/><circle cx="15" cy="10" r="5"/><circle cx="12" cy="15" r="5"/>',
+  sticker:'<path d="M20 12.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6.5z"/><path d="M12.5 20c0-4.2 3.3-7.5 7.5-7.5"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14.5c.9.8 1.9 1.2 3 1.2"/>',
+  text:'<path d="M5 7V5h14v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',
+  pen:'<path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 0l.5.5a2.1 2.1 0 0 1 0 3L8.5 19z"/><path d="m13.5 7 3.5 3.5"/>',
+  chat:'<path d="M5 5h14a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 17h-8l-4.5 3.5V17H5a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 5 5z"/><path d="M8 10h8"/><path d="M8 13.2h5"/>',
+  bulb:'<path d="M9 17.5h6"/><path d="M10 20.5h4"/><path d="M8.5 14.5a6 6 0 1 1 7 0c-.7.6-1 1.4-1 2.3v.7h-5v-.7c0-.9-.3-1.7-1-2.3z"/>',
+  note:'<path d="M5 4h14v10.5L13.5 20H5z"/><path d="M13.5 20v-5.5H19"/><path d="M8.5 8.5h7"/><path d="M8.5 11.5h4"/>',
+  heart:'<path d="M12 19.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/>',
+  peace:'<path d="M9 12.5 7 4.8a1.4 1.4 0 0 1 2.7-.7l2 7"/><path d="m11.7 11 1.6-7a1.4 1.4 0 0 1 2.7.6l-1.4 7.2"/><path d="M8 12.5c-1 .4-1.5 1.3-1.2 2.6l.6 2.2A4 4 0 0 0 11.3 20h2.2a4 4 0 0 0 4-4v-2.5a1.4 1.4 0 0 0-2.8 0"/><path d="M14.7 13.5v-1a1.4 1.4 0 0 0-2.8 0v1"/>',
+  back:'<circle cx="12" cy="6.5" r="3"/><path d="M6 20.5v-4a6 6 0 0 1 12 0v4"/><path d="M10 13v7.5"/><path d="M14 13v7.5"/>',
+  bag:'<path d="M6 9a6 6 0 0 1 12 0v9.5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M9 4.5V4a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 4v.5"/><path d="M9 13h6v4H9z"/>',
+  eye:'<path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  selfie:'<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M8.8 16.5a3.6 3.6 0 0 1 6.4 0"/>',
+  up:'<path d="M12 20V5"/><path d="m6 11 6-6 6 6"/>',
+  window:'<rect x="4.5" y="3.5" width="15" height="17" rx="1"/><path d="M12 3.5v17"/><path d="M4.5 12h15"/>',
+  sky:'<circle cx="9" cy="8.5" r="3"/><path d="M9 2.5v1"/><path d="M3 8.5h1"/><path d="m4.8 4.3.7.7"/><path d="m13.2 4.3-.7.7"/><path d="M8 19.5h9a3.5 3.5 0 0 0 .3-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 8 19.5z"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5.5 5.5"/>',
+  walk:'<circle cx="13" cy="4.5" r="2"/><path d="m10 21 2.5-6.5L15 17v4"/><path d="M7.5 12.5 9.5 9l3.5-1.5 2.5 3.5 3 1"/><path d="m12.5 14.5.5-7"/>',
+  leaf:'<path d="M5 19C5 10 10 5 20 4c-1 10-6 15-15 15z"/><path d="M5 19 13 11"/>',
+  flip:'<path d="M4 9a8 8 0 0 1 14-3.5L20 8"/><path d="M20 3.5V8h-4.5"/><path d="M20 15a8 8 0 0 1-14 3.5L4 16"/><path d="M4 20.5V16h4.5"/>',
+  pin:'<path d="M12 21s-6.5-6.2-6.5-11.5a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/>'
+};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
+document.querySelectorAll('[data-ic]').forEach(el=>el.innerHTML=ic(el.dataset.ic));
+
 /* ===================== 活動設定（之後改這裡就好） ===================== */
 const CONFIG = {
   eventName: '雄女校友回娘家',
   // award 是這一站頒的獎項名稱（會出現在提名卡、獎章、相框底部和入場券）
-  // riddle 是主頁上看到的提示（對應隨堂測驗卷），name 是找到之後才顯示的地點名稱；id 與 key 會寫進現場 QR Code 網址
+  // 提示卡：riddle 是正面的謎題，hint 是翻到背面的提示；name 是找到之後才顯示的地點名稱；id 與 key 會寫進現場 QR Code 網址
   // presets 是「不想拍照」時可以選的照片（放在 assets/presets 資料夾）
   spots: [
     { id:'s1', award:'最佳時光獎', key:'q7k2', stamp:'門', name:'校門口', riddle:'鐘聲迴響之地', hint:'每天清晨，大家都從這裡走進雄女。',
@@ -745,8 +798,6 @@ const CONFIG = {
     { id:'s5', award:'最佳青春熱血獎', key:'h5n1', stamp:'體', name:'體育館', riddle:'青春熱血之地', hint:'流汗、打球、上體育課的地方。',
       presets:['assets/presets/s5-1.jpg','assets/presets/s5-old.jpg'] }
   ],
-  // 隨堂測驗卷：主頁和開場最後一頁會出現，點開看大圖；不用就留空 ''
-  quizImage: 'assets/quiz.jpg',
   // 開場與結尾劇情：一個 { } 是一頁；icon 用貼紙代號（trophy、reel、ticket、filmcam、gstar、rose、bell、camera…）；{name} 會換成玩家的稱呼
   story: {
     intro: [
@@ -792,23 +843,23 @@ const CONFIG = {
     '給學妹': ['學妹加油，青春要好好玩', '妳們現在走的路，我們也走過', '雄女永遠是我們的家'],
     '俏皮': ['青春不散場！', '我還是當年那個少女', '鐘聲一響，腳還是會想衝', '福利社，我回來了！']
   },
-  // 拍照靈感：msg / title 會在玩家還沒寫留言時，自動幫她填好
+  // 拍照靈感：icon 是線條圖示代號（ICONS 裡的名稱）；msg / title 會在玩家還沒寫留言時，自動幫她填好
   ideas: {
     selfie: [
-      { icon:'🫶', name:'一起比愛心', tip:'和同學一起用手比一個大愛心，最簡單也最可愛。', msg:'我們的愛心，跟當年一樣大' },
-      { icon:'✌️', name:'經典比 YA', tip:'回到高中時的招牌姿勢，笑得越燦爛越好。', msg:'青春不散場！' },
-      { icon:'🙈', name:'害羞就拍背影', tip:'背對鏡頭看向祕境，請同學從後面幫妳拍。', msg:'回頭看，這裡一點都沒變' },
-      { icon:'🎒', name:'重現上學的樣子', tip:'像當年一樣，假裝背著書包從這裡走過去。', msg:'今天也是準時到校的一天' },
-      { icon:'👀', name:'一起看向遠方', tip:'大家一起看向同一個方向，像畢業照的側臉。', msg:'我們看的，是同一片天空' },
-      { icon:'🤳', name:'跟祕境合照', tip:'把祕境放在妳身後，讓它也入鏡。', msg:'好久不見，我回來看妳了' }
+      { icon:'heart', name:'一起比愛心', tip:'和同學一起用手比一個大愛心，最簡單也最可愛。', msg:'我們的愛心，跟當年一樣大' },
+      { icon:'peace', name:'經典比 YA', tip:'回到高中時的招牌姿勢，笑得越燦爛越好。', msg:'青春不散場！' },
+      { icon:'back', name:'害羞就拍背影', tip:'背對鏡頭看向祕境，請同學從後面幫妳拍。', msg:'回頭看，這裡一點都沒變' },
+      { icon:'bag', name:'重現上學的樣子', tip:'像當年一樣，假裝背著書包從這裡走過去。', msg:'今天也是準時到校的一天' },
+      { icon:'eye', name:'一起看向遠方', tip:'大家一起看向同一個方向，像畢業照的側臉。', msg:'我們看的，是同一片天空' },
+      { icon:'selfie', name:'跟祕境合照', tip:'把祕境放在妳身後，讓它也入鏡。', msg:'好久不見，我回來看妳了' }
     ],
     scene: [
-      { icon:'⬆️', name:'蹲低往上拍', tip:'蹲低一點往上拍，樹和建築會看起來更高、更有氣勢。', title:'抬頭看見的雄女', msg:'當年抬頭就看得到它，現在換我蹲下來拍它' },
-      { icon:'🪟', name:'從窗框裡取景', tip:'找一個窗戶、門框或走廊柱子，把風景框在裡面。', title:'框住的那年', msg:'從這裡看出去，就是我們的高中' },
-      { icon:'🌤️', name:'讓天空佔一半', tip:'把地平線放在畫面中間，天空留一大片，照片會很乾淨。', title:'雄女的天空', msg:'這片天空，我們一起看了三年' },
-      { icon:'🔍', name:'拍一個小細節', tip:'靠近拍一個小東西：門把、黑板角落、磨石子地、舊公告。', title:'藏在角落的回憶', msg:'只有我們才知道這個小地方' },
-      { icon:'🚶', name:'走廊的盡頭', tip:'站在走廊一端，往另一端拍，線條會把視線帶到最遠處。', title:'回家的路', msg:'走過無數次的走廊，今天走得特別慢' },
-      { icon:'🌿', name:'光和影子', tip:'找有陽光灑下來、影子很漂亮的地方。', title:'午後的光', msg:'光線跟三十年前一模一樣' }
+      { icon:'up', name:'蹲低往上拍', tip:'蹲低一點往上拍，樹和建築會看起來更高、更有氣勢。', title:'抬頭看見的雄女', msg:'當年抬頭就看得到它，現在換我蹲下來拍它' },
+      { icon:'window', name:'從窗框裡取景', tip:'找一個窗戶、門框或走廊柱子，把風景框在裡面。', title:'框住的那年', msg:'從這裡看出去，就是我們的高中' },
+      { icon:'sky', name:'讓天空佔一半', tip:'把地平線放在畫面中間，天空留一大片，照片會很乾淨。', title:'雄女的天空', msg:'這片天空，我們一起看了三年' },
+      { icon:'search', name:'拍一個小細節', tip:'靠近拍一個小東西：門把、黑板角落、磨石子地、舊公告。', title:'藏在角落的回憶', msg:'只有我們才知道這個小地方' },
+      { icon:'walk', name:'走廊的盡頭', tip:'站在走廊一端，往另一端拍，線條會把視線帶到最遠處。', title:'回家的路', msg:'走過無數次的走廊，今天走得特別慢' },
+      { icon:'leaf', name:'光和影子', tip:'找有陽光灑下來、影子很漂亮的地方。', title:'午後的光', msg:'光線跟三十年前一模一樣' }
     ]
   },
   // 一鍵套用的範例樣式：x、y 是位置（0～1），s 是大小，r 是角度；k 是貼紙代號，w 是文字貼紙
@@ -1147,9 +1198,6 @@ function boot(){
   show('home'); renderHome(); handlePending();
 }
 
-function openQuiz(){
-  modal(`<h2>隨堂測驗卷</h2><img src="${CONFIG.quizImage}" alt="隨堂測驗卷：五個地點的提示" class="quizimg"><p class="tiny center">用兩指放大看得更清楚</p>`, [{label:'知道了，出發', soft:false}]);
-}
 /* ===================== 封面 ===================== */
 const COVER={ raf:null, parts:[], busy:false };
 function openCover(){
@@ -1213,6 +1261,7 @@ function logout(){
 }
 
 let justStamped=null;
+const FLIPPED=new Set();
 function renderHome(){
   const p=S.player, spots=CONFIG.spots, n=spots.filter(s=>S.done[s.id]).length;
   $('#home').innerHTML=`
@@ -1224,18 +1273,26 @@ function renderHome(){
     <div class="syncbar" id="syncBar" hidden><span id="syncText"></span><button class="btn soft small" data-act="retry">立即重試</button></div>
     <div class="who-row"><span class="tiny" style="margin:0">找回進度用：末三碼 ${esc(p.l3)}</span><button class="btn soft small" data-act="logout">不是妳？</button></div>
     <div class="stamps" aria-label="已獲 ${n} / ${spots.length} 座獎">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
-    ${CONFIG.quizImage?`<button class="quizcard" data-act="quiz"><img src="${CONFIG.quizImage}" alt=""><span><b>隨堂測驗卷</b>五個地點的提示都在這張卷子上，點開看大圖</span></button>`:''}
-    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>打開上面的「隨堂測驗卷」，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「📷 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就拿下這座獎</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
+    <section class="clues" aria-label="提示卡"><h2 class="clues-h">提示卡<span>點一下翻面</span></h2><div class="clue-row">${spots.map(clueHTML).join('')}</div></section>
+    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>翻開上面的提示卡，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「${ic('scan')} 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就拿下這座獎</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
     ${n===spots.length ? `<section class="unlock"><h2>五座獎都拿到了</h2><p>典禮入場券準備好了，聚餐地點寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
     <section class="spots">${spots.map(spotHTML).join('')}</section>`;
   justStamped=null; syncBanner();
 }
+function clueHTML(s,i){
+  const found=!!(S.done[s.id]||S.scanned[s.id]), flip=FLIPPED.has(s.id);
+  return `<button class="clue ${found?'found':''}" data-act="flip" data-id="${s.id}" aria-pressed="${flip}" aria-label="第 ${i+1} 張提示卡：${esc(s.riddle)}">
+    <span class="clue-in">
+      <span class="clue-f"><span class="clue-no">No.${i+1}</span>${s.award?`<span class="clue-aw">${esc(s.award)}</span>`:''}<span class="clue-rd">${esc(s.riddle)}</span><span class="clue-tap">${ic('flip')} 翻面看提示</span></span>
+      <span class="clue-b"><span class="clue-no">No.${i+1}　提示</span><span class="clue-ht">${esc(s.hint)}</span>${found?`<span class="clue-ans">${ic('pin')} ${esc(s.name)}</span>`:''}</span>
+    </span></button>`;
+}
 function spotHTML(s){
   const d=S.done[s.id], sc=S.scanned[s.id], known=d||sc;
   let foot;
-  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已得獎　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 ✓',failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">📷 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?'<p class="work">📝 便利貼祝福</p>':''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
+  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已得獎　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 '+ic('check'),failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">${ic('camera')} 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?`<p class="work">${ic('note')} 便利貼祝福</p>`:''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
   else if(sc) foot=`<p class="status ok">找到了！可以拍照了</p><button class="btn wide" data-act="shoot" data-id="${s.id}">去拍照</button>`;
-  else foot=`<details class="hint"><summary>猜不到？看提示</summary><p>${esc(s.hint)}</p></details><button class="btn soft wide scanbtn" data-sc="open">📷 到了！掃描 QR Code</button>`;
+  else foot=`<button class="btn soft wide scanbtn" data-sc="open">${ic('scan')} 到了！掃描 QR Code</button>`;
   return `<article class="spot ${d?'won':''}">${s.award?`<p class="award">${esc(s.award)}</p>`:''}<div class="head"><span class="mark">${s.stamp}</span><h3 class="${known?'':'unknown'}">${known?esc(s.name):'？？？'}</h3></div><p class="riddle">${esc(s.riddle)}</p>${foot}</article>`;
 }
 /* ===================== 版型、相框、美顏 ===================== */
@@ -1690,7 +1747,7 @@ function syncCam(){
   const n=L().cells.length;
   if(!shooting) $('#shotInfo').textContent = n>1 ? (E.timer ? `按一下快門，自動連拍 ${n} 張` : `第 ${Math.min(E.shotK+1,n)} / ${n} 張，一張一張按快門`) : (E.timer ? `按快門後倒數 ${E.timer} 秒` : '');
   const last=E.cells.filter(c=>c.mini).pop();
-  $('#galThumb').style.backgroundImage = last ? `url(${last.mini})` : ''; $('#galThumb').textContent = last ? '' : '🖼️';
+  $('#galThumb').style.backgroundImage = last ? `url(${last.mini})` : ''; if(!last) $('#galThumb').innerHTML=ic('image'); else $('#galThumb').textContent='';
 }
 function renderProg(){
   const n=L().cells.length;
@@ -1771,7 +1828,7 @@ function syncUI(){
   if(!E.spot) return;
   setSel('tool',E.tool,$('#toolbar')); setSel('frame',E.frame); setSel('filter',E.filter); setSel('pen',E.pen); setSel('psize',E.penSize);
   setSel('tstyle',E.textStyle); setSel('mode2',E.msgMode); setSel('place',E.msgPlace); setSel('padc',E.handColor); setSel('tpl',tplSel);
-  $('#msgTabLbl').textContent = hasMsg() ? '留言 ✓' : '留言';
+  $('#msgTabLbl').innerHTML = hasMsg() ? '留言 '+ic('check') : '留言';
   $('#edHint').textContent=hint();
   const multi=L().cells.length>1, c=E.cells[E.cur];
   $('#zoomrow').hidden=!(c && c.img);
@@ -1816,7 +1873,7 @@ function renderQuick(){
 }
 function renderIdeas(){
   const list=CONFIG.ideas[E.kind]||[];
-  $('#camIdeas').innerHTML=`<button disabled style="opacity:.7;border:0;background:none;padding-left:0">💡 靈感</button>`+list.map((d,i)=>`<button data-idea="${i}" aria-pressed="${i===ideaSel}">${d.icon} ${esc(d.name)}</button>`).join('');
+  $('#camIdeas').innerHTML=`<button disabled style="opacity:.7;border:0;background:none;padding-left:0">${ic('bulb')} 靈感</button>`+list.map((d,i)=>`<button data-idea="${i}" aria-pressed="${i===ideaSel}">${ic(d.icon)} ${esc(d.name)}</button>`).join('');
 }
 function renderAllPanels(){
   renderFrames(); renderTemplates(); renderStk('award'); renderQuick(); renderIdeas();
@@ -1833,7 +1890,7 @@ function pickIdea(i){
   ideaSel = ideaSel===i ? -1 : i; renderIdeas();
   const d=(CONFIG.ideas[E.kind]||[])[ideaSel];
   $('#camTip').hidden=!d; if(!d) return;
-  $('#camTip').innerHTML=`<b>${d.icon} ${esc(d.name)}</b>　${esc(d.tip)}`;
+  $('#camTip').innerHTML=`<b>${ic(d.icon)} ${esc(d.name)}</b>　${esc(d.tip)}`;
   if(d.msg && !E.msg.trim()){ E.msg=d.msg; $('#msg').value=E.msg; }
   if(E.kind==='scene' && d.title && !E.title.trim()){ E.title=d.title; $('#title').value=E.title; }
 }
@@ -1970,7 +2027,7 @@ const NOTE_COLORS={ yellow:['#FFF1A8','#C9A227'], pink:['#FFD6E2','#D14B72'], bl
 function skipMenu(){
   if(shooting) return;
   modal(`<h2>不想拍照也沒關係</h2><p>選一種方式完成這一站：</p>`,
-    [...(E.spot.presets&&E.spot.presets.length?[{label:'🖼️ 選一張準備好的照片', fn:presetPicker}]:[]), {label:'📝 寫一張便利貼祝福大家', fn:()=>openNote()}, {label:'回去拍照', soft:true}]);
+    [...(E.spot.presets&&E.spot.presets.length?[{label:ic('image')+' 選一張準備好的照片', fn:presetPicker}]:[]), {label:ic('note')+' 寫一張便利貼祝福大家', fn:()=>openNote()}, {label:'回去拍照', soft:true}]);
 }
 function presetPicker(){
   const list=E.spot.presets||[];
@@ -2161,7 +2218,7 @@ function setSound(on){
   SND.on=on; try{ localStorage.setItem('kghs_sound', on?'1':'0'); }catch(_){}
   if(SND.master && SND.ctx) SND.master.gain.setTargetAtTime(on?1:0, SND.ctx.currentTime, .05);
   if(on){ ac()?.resume?.(); startMusic(); } else stopMusic();
-  $('#soundBtn').textContent = on ? '🔊 聲音開' : '🔇 聲音關';
+  $('#soundBtn').innerHTML = on ? ic('soundOn')+' 聲音開' : ic('soundOff')+' 聲音關';
   $('#soundBtn').setAttribute('aria-pressed', on);
 }
 /* 手機瀏覽器規定：要等使用者先碰一下畫面才能出聲 */
@@ -2172,7 +2229,7 @@ document.addEventListener('visibilitychange', ()=>{
   else if(SND.on){ SND.ctx?.resume?.(); SND.el?.play().catch(()=>{}); }
 });
 $('#soundBtn').addEventListener('click', ()=>setSound(!SND.on));
-$('#soundBtn').textContent = SND.on ? '🔊 聲音開' : '🔇 聲音關'; $('#soundBtn').setAttribute('aria-pressed', SND.on);
+$('#soundBtn').innerHTML = SND.on ? ic('soundOn')+' 聲音開' : ic('soundOff')+' 聲音關'; $('#soundBtn').setAttribute('aria-pressed', SND.on);
 
 /* ===================== 掃描 QR Code（網頁內掃描框） =====================
    只有在掃描畫面時才開相機；掃到或離開就立刻關閉。
@@ -2338,7 +2395,7 @@ document.addEventListener('click', e=>{
   if(a==='storynext') storyNext();
   if(a==='storyskip') storySkip();
   if(a==='intro') playStory('intro', backHome);
-  if(a==='quiz') openQuiz();
+  if(a==='flip'){ const on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',on); on?FLIPPED.add(b.dataset.id):FLIPPED.delete(b.dataset.id); sfx.page(); }
   if(a==='enter') enterCeremony();
   if(a==='ending') playStory('ending', openInvite);
   if(a==='shoot') openEditor(b.dataset.id);

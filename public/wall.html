@@ -71,6 +71,7 @@ p,h1,h2{margin:0} h1,h2{font-weight:400}
 .spot .big{background:#fff;padding:1vh;border-radius:6px;box-shadow:0 2vh 6vh rgba(0,0,0,.6);rotate:-2deg}
 .spot .big img{display:block;max-height:70vh;max-width:44vw;border-radius:3px}
 .spot .words{max-width:40vw}
+.ic{width:1.1em;height:1.1em;vertical-align:-.18em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .chip{display:inline-block;background:var(--pink);color:#fff;border-radius:999px;padding:.5vh 1.2vw;font-size:clamp(12px,1.2vw,24px);margin-bottom:2.4vh}
 .spot .msg{font-size:clamp(22px,3.2vw,68px);line-height:1.45}
 .spot .hand{display:block;max-width:100%;max-height:30vh}
@@ -254,6 +255,13 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const spotName=id=>(CONFIG.spots.find(s=>s.id===id)||{}).name||'';
 const spotAward=id=>(CONFIG.spots.find(s=>s.id===id)||{}).award||'';
+const ICONS={
+  camera:'<path d="M4 8.5A2 2 0 0 1 6 6.5h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/>',
+  note:'<path d="M5 4h14v10.5L13.5 20H5z"/><path d="M13.5 20v-5.5H19"/><path d="M8.5 8.5h7"/><path d="M8.5 11.5h4"/>',
+  hourglass:'<path d="M7 3.5h10"/><path d="M7 20.5h10"/><path d="M8 3.5c0 4.5 4 5.5 4 8.5s-4 4-4 8.5"/><path d="M16 3.5c0 4.5-4 5.5-4 8.5s4 4 4 8.5"/>',
+  sparkle:'<path d="M12 3.5c.6 4.2 2.3 5.9 6.5 6.5-4.2.6-5.9 2.3-6.5 6.5-.6-4.2-2.3-5.9-6.5-6.5 4.2-.6 5.9-2.3 6.5-6.5z"/>'
+};
+const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LIVE=!!(CONFIG.firebase && CONFIG.firebase.apiKey);
 const shuffle=a=>{ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
@@ -319,14 +327,14 @@ function cardHTML(it){
   if(it.kind==='note') return `<div class="notecard">${noteHTML(it)}</div>`;
   const say = it.hand ? `<img src="${it.hand}" alt="手寫留言">` : esc(it.msg);
   const scene=it.kind==='scene';
-  const head = scene ? `<p class="who work">📷 ${it.title?`《${esc(it.title)}》`:esc(spotName(it.spot))}</p><p class="who">攝影｜${esc(it.name)}<em>第 ${esc(it.cls)} 屆</em></p>`
+  const head = scene ? `<p class="who work">${ic('camera')} ${it.title?`《${esc(it.title)}》`:esc(spotName(it.spot))}</p><p class="who">攝影｜${esc(it.name)}<em>第 ${esc(it.cls)} 屆</em></p>`
                      : `<p class="who">${esc(it.name)}<em>第 ${esc(it.cls)} 屆・${esc(spotName(it.spot))}</em></p>`;
   return `<div class="card ${scene?'scene':''}"><div class="ph"><img src="${it.img}" alt="" loading="lazy"></div><div class="cap">${head}${it.msg||it.hand?`<p class="say">${say}</p>`:''}</div></div>`;
 }
 function people(){ const m=new Map(); items.forEach(x=>{ const k=x.cls+'|'+x.name; m.set(k,(m.get(k)||new Set()).add(x.spot)); }); return m; }
 function renderStats(){
   const m=people(), done=[...m.values()].filter(s=>s.size>=CONFIG.spots.length).length;
-  const pl = PRE.total && PRE.done<PRE.total ? `<span class="stat" title="背景預先載入照片">⏳ 預載 <b>${PRE.done}</b>/ ${PRE.total}</span>` : '';
+  const pl = PRE.total && PRE.done<PRE.total ? `<span class="stat" title="背景預先載入照片">${ic('hourglass')} 預載 <b>${PRE.done}</b>/ ${PRE.total}</span>` : '';
   $('#stats').innerHTML=`${pl}<span class="stat"><b>${m.size}</b>位校友參加</span><span class="stat"><b>${done}</b>位拿下五座獎</span><span class="stat"><b>${items.length}</b>張照片</span>`;
 }
 /* 預先載入：開頁後在背景把所有照片的牆面版與小圖下載好（同時 6 張），播放時就不會出現空格。
@@ -345,7 +353,7 @@ function pump(){
   }
 }
 let noticeTimer=null;
-function notice(t){ const n=$('#notice'); n.textContent='🎉 '+t; n.classList.add('show'); clearTimeout(noticeTimer); noticeTimer=setTimeout(()=>n.classList.remove('show'),5000); }
+function notice(t){ const n=$('#notice'); n.innerHTML=ic('sparkle')+' '+esc(t); n.classList.add('show'); clearTimeout(noticeTimer); noticeTimer=setTimeout(()=>n.classList.remove('show'),5000); }
 function tick(){ const d=new Date(); $('#clock').textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
 
 /* ===================== 模式一：拼貼照片牆 =====================
@@ -373,7 +381,7 @@ function nextOfShape(shape){
 function tileInner(it){
   const tag = it.kind==='note' ? '' :
     shapeOf(it)==='strip' ? '' :
-    it.kind==='scene' ? (it.msg ? `<p class="tag work">📷 「${esc(it.msg)}」</p>` : '') :
+    it.kind==='scene' ? (it.msg ? `<p class="tag work">${ic('camera')} 「${esc(it.msg)}」</p>` : '') :
     (it.msg ? `<p class="tag">「${esc(it.msg)}」<b>${esc(it.name)}</b></p>` : '');
   return `<div class="pic"><img src="${it.img}" alt="${esc(it.name)}的照片" loading="lazy"></div>${tag}`;
 }
@@ -423,12 +431,12 @@ function feature(it){
   if(!it){ const slots=[...document.querySelectorAll('.tile2')]; if(!slots.length) return; const s=slots[Math.floor(Math.random()*slots.length)]; it=items.find(x=>x.id===s.dataset.id); }
   if(!it) return;
   if(it.kind==='note'){
-    $('#spotInner').innerHTML=`${noteHTML(it,true)}<div class="words"><span class="chip notechip">📝 便利貼祝福</span><p class="by" style="margin-top:1vh">寫於「${esc(spotName(it.spot))}」</p></div>`;
+    $('#spotInner').innerHTML=`${noteHTML(it,true)}<div class="words"><span class="chip notechip">${ic('note')} 便利貼祝福</span><p class="by" style="margin-top:1vh">寫於「${esc(spotName(it.spot))}」</p></div>`;
     $('#spot').classList.add('show'); clearTimeout(feature.t); feature.t=setTimeout(()=>$('#spot').classList.remove('show'), 6500); return;
   }
   const words = it.hand ? `<img class="hand" src="${it.hand}" alt="手寫留言">` : `<p class="msg ${it.kind==='scene'?'small':''}">「${esc(it.msg)}」</p>`;
   const scene=it.kind==='scene';
-  const top = scene ? `<span class="chip work">📷 攝影作品・${esc(spotName(it.spot))}</span>${it.title?`<p class="ttl">《${esc(it.title)}》</p>`:''}` : `<span class="chip">${esc(spotAward(it.spot)||spotName(it.spot))}</span>${spotAward(it.spot)?`<p class="where">攝於${esc(spotName(it.spot))}</p>`:''}`;
+  const top = scene ? `<span class="chip work">${ic('camera')} 攝影作品・${esc(spotName(it.spot))}</span>${it.title?`<p class="ttl">《${esc(it.title)}》</p>`:''}` : `<span class="chip">${esc(spotAward(it.spot)||spotName(it.spot))}</span>${spotAward(it.spot)?`<p class="where">攝於${esc(spotName(it.spot))}</p>`:''}`;
   const body = it.hand ? words : (it.msg ? words : '');
   $('#spotInner').innerHTML=`<div class="big"><img id="bigImg" src="${it.img}" alt=""></div><div class="words">${top}${body}<p class="by">${scene?'攝影｜':''}<b>${esc(it.name)}</b>　第 ${esc(it.cls)} 屆</p></div>`;
   $('#spot').classList.add('show');
