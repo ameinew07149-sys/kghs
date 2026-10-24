@@ -830,6 +830,7 @@ const CONFIG = {
   // 設計師提供的貼紙（去背 PNG）：放進 assets 資料夾後在這裡登記；程式會自動加上白色外框，像真的貼紙
   // cat 可以用現有分類 award / love / animal / fruit / school，或自己取新的分類名稱（例如 '雄女'）
   customStickers: [
+    { k:'logo', cat:'s1', src:'assets/brand/logo-gold.png' },
     // { k:'uniform', cat:'school', src:'assets/stk-school-uniform.png' },
   ],
   // 自動白邊：width 是外框粗細（以 600px 寬的圖為準，會依圖片大小等比例調整），color 是外框顏色；width 設 0 就不加
@@ -1472,9 +1473,55 @@ const STICKERS=[
   {k:'pencil',cat:'school',uri:mk(`<g transform="rotate(-35 60 60)"><rect fill="#FFE066" x="22" y="48" width="64" height="24" rx="4"/><path fill="#F6D7B0" d="M86 48L108 60L86 72Z"/><rect fill="#FF8FAB" x="10" y="48" width="16" height="24" rx="6"/></g>`,`<g transform="rotate(-35 60 60)"><path d="M100 56L108 60L100 64Z" fill="${LINE}"/></g>`)},
   {k:'camera',cat:'school',uri:mk(`<rect fill="#C9B6FF" x="34" y="24" width="26" height="18" rx="6"/><rect fill="#C9B6FF" x="12" y="36" width="96" height="64" rx="16"/>`,`<circle cx="60" cy="68" r="21" fill="#fff" stroke="${LINE}" stroke-width="3"/><circle cx="60" cy="68" r="12" fill="#8E80C4"/><circle cx="55" cy="63" r="4" fill="#fff"/><circle cx="92" cy="50" r="5" fill="#FFE066"/>`)},
   {k:'bell',cat:'school',uri:mk(`<path fill="#FFD43B" d="M60 16Q66 16 66 24Q90 32 90 64V82L100 92H20L30 82V64Q30 32 54 24Q54 16 60 16Z"/><circle fill="#FFD43B" cx="60" cy="100" r="9"/>`,shine(44,46))},
-  {k:'book',cat:'school',uri:mk(`<path fill="#8EC2FF" d="M10 32Q36 22 60 34Q84 22 110 32V96Q84 86 60 98Q36 86 10 96Z"/>`,`<path d="M18 38Q38 30 56 40V88Q38 80 18 86Z" fill="#fff"/><path d="M102 38Q82 30 64 40V88Q82 80 102 86Z" fill="#fff"/><path d="M26 50h22M26 60h22M72 50h22M72 60h22" stroke="#C6D6EA" stroke-width="3" stroke-linecap="round"/>`)}
+  {k:'book',cat:'school',uri:mk(`<path fill="#8EC2FF" d="M10 32Q36 22 60 34Q84 22 110 32V96Q84 86 60 98Q36 86 10 96Z"/>`,`<path d="M18 38Q38 30 56 40V88Q38 80 18 86Z" fill="#fff"/><path d="M102 38Q82 30 64 40V88Q82 80 102 86Z" fill="#fff"/><path d="M26 50h22M26 60h22M72 50h22M72 60h22" stroke="#C6D6EA" stroke-width="3" stroke-linecap="round"/>`)},
+  // ---------- 五個祕境的主題貼紙（cat 用點位 id，會排在最前面；在哪一站拍照就先打開那一站） ----------
+  // 校門口
+  {k:'schoolbag',cat:'s1',uri:mk(`<path fill="none" d="M28 52Q26 10 60 10Q94 10 92 52"/><rect fill="#C8333A" x="14" y="44" width="92" height="64" rx="9"/><path fill="#B02A32" d="M14 54Q14 44 24 44H96Q106 44 106 54V80Q60 88 14 80Z"/>`,
+    `<path d="M22 102L40 80M30 106L48 84M38 108L54 88" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><text x="70" y="70" font-size="13.5" font-weight="900" fill="#fff" text-anchor="middle" font-family="sans-serif" transform="rotate(-10 70 70)">高雄女中</text><rect x="54" y="78" width="12" height="8" rx="2" fill="#E9C77A"/>`)},
+  {k:'bandflag',cat:'s1',uri:mk(`<rect fill="#EDE7DB" x="18" y="12" width="7" height="102" rx="3"/><path fill="${GOLD}" d="M21.5 2L27 13H16Z"/><path fill="#3E7FD6" d="M25 18Q62 8 106 22V78Q66 66 25 76Z"/>`,
+    `<path fill="#fff" d="M50 30H80V54Q80 64 65 70Q50 64 50 54Z"/><path d="M53 33H77V53Q77 61 65 66Q53 61 53 53Z" fill="none" stroke="#3E7FD6" stroke-width="1.6"/><text x="65" y="49" font-size="10.5" font-weight="900" fill="#C8333A" text-anchor="middle" font-family="sans-serif">雄高</text><text x="65" y="61" font-size="10.5" font-weight="900" fill="#C8333A" text-anchor="middle" font-family="sans-serif">女中</text><path d="M30 22Q62 13 102 25" stroke="#fff" stroke-width="2" fill="none" opacity=".5"/>`)},
+  // 榕園
+  {k:'microscope',cat:'s2',uri:mk(`<rect fill="${DARK}" x="22" y="98" width="72" height="12" rx="4"/><path fill="#5B6C8A" d="M72 98V70Q72 48 54 42L60 30Q86 40 86 70V98Z"/><rect fill="#5B6C8A" x="28" y="74" width="48" height="8" rx="3"/><rect fill="#E3DDD2" x="34" y="10" width="18" height="52" rx="4" transform="rotate(-24 43 36)"/>`,
+    `<rect x="31" y="9" width="18" height="7" rx="2" fill="${DARK}" transform="rotate(-24 43 36)"/><circle cx="52" cy="74" r="3" fill="#9FD3FF"/><circle cx="79" cy="72" r="5" fill="#E3DDD2"/>`)},
+  {k:'bento',cat:'s2',uri:mk(`<rect fill="#C9CED6" x="10" y="30" width="100" height="74" rx="13"/><path fill="none" d="M26 26L100 8M30 30L104 14"/>`,
+    `<rect x="18" y="38" width="54" height="58" rx="7" fill="#fff"/><circle cx="45" cy="64" r="7" fill="#E04B5A"/><rect x="77" y="38" width="25" height="27" rx="6" fill="#6CCB8B"/><circle cx="84" cy="48" r="5" fill="#4FA56C"/><circle cx="94" cy="54" r="5" fill="#4FA56C"/><rect x="77" y="69" width="25" height="27" rx="6" fill="#FFE08A"/><ellipse cx="89" cy="82" rx="7" ry="6" fill="#FFB347"/><path d="M26 26L100 8M30 30L104 14" stroke="#B5763B" stroke-width="4" stroke-linecap="round"/>`)},
+  {k:'banyan',cat:'s2',uri:mk(`<path fill="#8A6446" d="M53 62H67V90Q71 102 86 108H34Q49 102 53 90Z"/><path fill="#5E9E62" d="M20 60C6 58 6 36 22 32C22 14 44 8 54 20C62 6 86 8 90 24C106 22 116 42 102 54C108 68 90 76 80 66C72 74 50 74 42 66C34 72 20 70 20 60Z"/>`,
+    `<path d="M36 64V90M44 68V82M80 68V88M88 62V78" stroke="#8A6446" stroke-width="2.4" stroke-linecap="round"/><path d="M32 40q8-8 16-2M64 28q8-6 16 0M78 46q8-6 14 2" stroke="#8FD49A" stroke-width="3" fill="none" stroke-linecap="round"/>`)},
+  {k:'beaker',cat:'s2',uri:mk(`<path fill="#EAF4FF" d="M47 16H73V46L98 98Q102 108 92 108H28Q18 108 22 98L47 46Z"/>`,
+    `<path d="M35 74H85L95 98Q97 104 91 104H29Q23 104 25 98Z" fill="#7FD6AE"/><circle cx="52" cy="88" r="4" fill="#fff" opacity=".8"/><circle cx="66" cy="94" r="3" fill="#fff" opacity=".8"/><circle cx="60" cy="60" r="3" fill="#7FD6AE"/><circle cx="66" cy="50" r="2" fill="#7FD6AE"/><rect x="43" y="11" width="34" height="7" rx="3" fill="#C6D6EA"/><path d="M52 30H62M52 38H58" stroke="#9AB3CF" stroke-width="2.5" stroke-linecap="round"/>`)},
+  // 圖書館
+  {k:'books',cat:'s3',uri:mk(`<rect fill="#8E1E2E" x="16" y="82" width="88" height="20" rx="3"/><rect fill="#3E7FD6" x="24" y="62" width="78" height="20" rx="3"/><rect fill="${GOLD}" x="14" y="42" width="82" height="20" rx="3"/><path fill="#5E9E62" d="M30 22H86V42H30Z"/>`,
+    `<path d="M24 88V96M28 88V96M94 88V96M32 68V76M92 68V76M22 48V56M86 48V56M38 26V38M80 26V38" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>`)},
+  {k:'glasses',cat:'s3',uri:mk(`<circle fill="#EAF4FF" cx="36" cy="64" r="21"/><circle fill="#EAF4FF" cx="84" cy="64" r="21"/><path fill="none" d="M57 60Q60 53 63 60M15 58L6 46M105 58L114 46"/>`,
+    `<path d="M26 54q6-6 14-4M74 54q6-6 14-4" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>`)},
+  {k:'computer',cat:'s3',uri:mk(`<rect fill="#E3DDD2" x="14" y="12" width="92" height="66" rx="7"/><path fill="#E3DDD2" d="M52 78H68L72 92H48Z"/><rect fill="#E3DDD2" x="20" y="94" width="80" height="16" rx="4"/>`,
+    `<rect x="22" y="20" width="76" height="50" rx="3" fill="#3E5C8A"/><path d="M30 32H62M30 42H76M30 52H54" stroke="#9FD3FF" stroke-width="3" stroke-linecap="round"/><rect x="58" y="49" width="6" height="7" fill="#FFE08A"/><path d="M28 100H92M28 105H92" stroke="#B8AFA2" stroke-width="2" stroke-dasharray="5 3"/>`)},
+  {k:'studydesk',cat:'s3',uri:mk(`<rect fill="#B5763B" x="6" y="72" width="108" height="10" rx="2"/><rect fill="#B5763B" x="14" y="82" width="8" height="30"/><rect fill="#B5763B" x="98" y="82" width="8" height="30"/><rect fill="#5B6C8A" x="74" y="66" width="26" height="6" rx="2"/><path fill="none" d="M87 66L78 42L94 28"/><path fill="#5B6C8A" d="M86 24L106 18L110 38Z"/><path fill="#fff" d="M20 70L26 58Q38 54 46 60Q56 54 66 58L70 70Z"/>`,
+    `<path d="M106 34L80 70H116Z" fill="#FFE08A" opacity=".5"/><path d="M46 60V70" stroke="#C6BBA8" stroke-width="2"/><path fill="#FFE066" d="M30 10a14 14 0 1 0 15 22a11 11 0 1 1-15-22z"/><path d="M56 14l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#FFE066"/>`)},
+  {k:'snack',cat:'s3',uri:mk(`<path fill="#fff" d="M20 48H100L90 108H30Z"/><rect fill="${GOLD}" x="16" y="40" width="88" height="11" rx="3"/><path fill="none" d="M66 44L92 6M76 44L104 12"/>`,
+    `<path d="M24 64H96L93 86H27Z" fill="#C8333A"/><text x="60" y="81" font-size="15" font-weight="900" fill="#fff" text-anchor="middle" font-family="sans-serif">消夜</text><path d="M66 44L92 6M76 44L104 12" stroke="#B5763B" stroke-width="4" stroke-linecap="round"/><path d="M34 32q-6-8 0-16M48 32q-6-8 0-16" stroke="#C6C6C6" stroke-width="3" fill="none" stroke-linecap="round"/>`)},
+  // 學生活動中心
+  {k:'handmic',cat:'s4',uri:mk(`<path fill="${DARK}" d="M60 54L72 66L36 104Q28 110 22 104Q16 98 22 90Z"/><circle fill="#C9C3B8" cx="78" cy="40" r="25"/>`,
+    `<path d="M62 30L88 56M70 20L98 48M58 42L76 60M84 18L100 34" stroke="#8C8070" stroke-width="2.4" stroke-linecap="round"/><path d="M58 58L70 70" stroke="${GOLD}" stroke-width="7"/><circle cx="40" cy="88" r="3" fill="#E04B5A"/>`)},
+  {k:'guitar',cat:'s4',uri:mk(`<g transform="rotate(-28 60 60)"><path fill="#E89B4C" d="M60 54C44 54 40 64 44 74C34 80 32 92 38 102C46 114 74 114 82 102C88 92 86 80 76 74C80 64 76 54 60 54Z"/><rect fill="#7A4A2A" x="55" y="10" width="10" height="56" rx="2"/><rect fill="#7A4A2A" x="52" y="2" width="16" height="14" rx="3"/></g>`,
+    `<g transform="rotate(-28 60 60)"><circle cx="60" cy="86" r="8" fill="${DARK}"/><rect x="50" y="98" width="20" height="4" rx="1" fill="${DARK}"/><path d="M58 12V99M62 12V99" stroke="#F3EADB" stroke-width="1"/><circle cx="52" cy="6" r="2" fill="${GOLD}"/><circle cx="68" cy="6" r="2" fill="${GOLD}"/></g>`)},
+  {k:'lightstick',cat:'s4',uri:mk(`<rect fill="#F3EADB" x="52" y="62" width="16" height="52" rx="6"/><circle fill="#FF8FC7" cx="60" cy="38" r="29"/>`,
+    `<path fill="#fff" transform="translate(60 39) scale(.34) translate(-60 -60)" d="${HEART}"/><circle cx="60" cy="84" r="4" fill="#FF8FC7"/><path d="M16 14l6 6M104 14l-6 6M8 40h8M104 40h8" stroke="#FFB3D9" stroke-width="3.4" stroke-linecap="round"/>`)},
+  {k:'fansign',cat:'s4',uri:mk(`<rect fill="${DARK}" x="54" y="70" width="12" height="44" rx="3"/><rect fill="#FFE066" x="10" y="14" width="100" height="62" rx="9"/>`,
+    `<text x="60" y="54" font-size="21" font-weight="900" fill="#C8333A" text-anchor="middle" font-family="sans-serif">雄女最美</text><path fill="#FF6F95" transform="translate(14 18) scale(.13)" d="${HEART}"/><path fill="#FF6F95" transform="translate(91 56) scale(.13)" d="${HEART}"/>`)},
+  {k:'notes',cat:'s4',uri:mk(`<path fill="#8E1E2E" d="M42 30L98 16V30L42 44Z"/><rect fill="#8E1E2E" x="40" y="36" width="7" height="54"/><rect fill="#8E1E2E" x="91" y="22" width="7" height="54"/><ellipse fill="#8E1E2E" cx="33" cy="90" rx="15" ry="11" transform="rotate(-20 33 90)"/><ellipse fill="#8E1E2E" cx="84" cy="76" rx="15" ry="11" transform="rotate(-20 84 76)"/>`,
+    `<ellipse cx="28" cy="86" rx="4" ry="2.4" fill="#fff" opacity=".7" transform="rotate(-20 28 86)"/><ellipse cx="79" cy="72" rx="4" ry="2.4" fill="#fff" opacity=".7" transform="rotate(-20 79 72)"/><path d="M14 30l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="${GOLD}"/>`)},
+  // 體育館
+  {k:'volleyball',cat:'s5',uri:mk(`<circle fill="#fff" cx="60" cy="60" r="46"/>`,
+    `<clipPath id="vb"><circle cx="60" cy="60" r="44.5"/></clipPath><g clip-path="url(#vb)" fill="none" stroke-linecap="round"><path d="M60 14Q34 44 50 70Q62 92 104 82" stroke="#FFD43B" stroke-width="13"/><path d="M16 50Q50 48 64 66Q78 86 66 108" stroke="#3E7FD6" stroke-width="13"/><path d="M60 14Q34 44 50 70Q62 92 104 82M16 50Q50 48 64 66Q78 86 66 108M58 60Q86 40 100 30" stroke="${LINE}" stroke-width="2.4"/></g>`)},
+  {k:'shako',cat:'s5',uri:mk(`<circle fill="#fff" cx="60" cy="30" r="9"/><circle fill="#fff" cx="53" cy="22" r="8"/><circle fill="#fff" cx="67" cy="22" r="8"/><circle fill="#fff" cx="60" cy="14" r="8"/><circle fill="#E04B5A" cx="60" cy="7" r="6"/><path fill="#D63A3A" d="M33 40H87L82 96H38Z"/><path fill="${DARK}" d="M36 94H84Q90 98 88 104Q74 112 60 112Q46 112 32 104Q30 98 36 94Z"/>`,
+    `<rect x="33" y="40" width="54" height="8" fill="#fff"/><path d="M40 52L60 74L80 52" stroke="#fff" stroke-width="4.5" fill="none" stroke-linejoin="round"/><circle cx="60" cy="78" r="8" fill="${GOLD}"/><path d="M57 78h6M60 75v6" stroke="#fff" stroke-width="2"/><path d="M38 90H82" stroke="${GOLD}" stroke-width="3"/>`)},
+  {k:'trumpet',cat:'s5',uri:mk(`<path fill="none" d="M26 66Q26 84 46 84H70Q80 84 80 72"/><path fill="${GOLD}" d="M74 50L110 30V90L74 70Z"/><rect fill="${GOLD}" x="16" y="54" width="62" height="12" rx="4"/><rect fill="${GOLD}" x="6" y="56" width="12" height="8" rx="3"/><rect fill="${GOLD}" x="34" y="34" width="8" height="20" rx="2"/><rect fill="${GOLD}" x="46" y="34" width="8" height="20" rx="2"/><rect fill="${GOLD}" x="58" y="34" width="8" height="20" rx="2"/>`,
+    `<rect x="32" y="30" width="12" height="5" rx="2" fill="#B88A30"/><rect x="44" y="30" width="12" height="5" rx="2" fill="#B88A30"/><rect x="56" y="30" width="12" height="5" rx="2" fill="#B88A30"/><path d="M84 50L104 40" stroke="#FFF3CF" stroke-width="3" stroke-linecap="round"/>`)},
+  {k:'swimcap',cat:'s5',uri:mk(`<path fill="#3E7FD6" d="M14 82C14 38 34 16 60 16C86 16 106 38 106 82Z"/><rect fill="${DARK}" x="6" y="76" width="108" height="7" rx="3.5"/><ellipse fill="#7FD6E8" cx="40" cy="80" rx="17" ry="12"/><ellipse fill="#7FD6E8" cx="80" cy="80" rx="17" ry="12"/>`,
+    `<text x="60" y="56" font-size="15" font-weight="900" fill="#fff" text-anchor="middle" font-family="sans-serif" letter-spacing="1">KGHS</text><path d="M57 78Q60 74 63 78" stroke="${LINE}" stroke-width="3" fill="none"/><path d="M30 76q5-5 12-4M70 76q5-5 12-4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`)},
 ];
-const CATS={ award:'典禮', love:'愛心', animal:'動物', fruit:'花果', school:'校園' };
+const CATS={ s1:'校門口', s2:'榕園', s3:'圖書館', s4:'活動中心', s5:'體育館', award:'典禮', love:'愛心', animal:'動物', fruit:'花果', school:'校園' };
 const STK_IMG={};
 STICKERS.forEach(s=>{ const im=new Image(); im.onload=()=>{ if(E.spot) draw(); }; im.src=s.uri; STK_IMG[s.k]=im; });
 
@@ -1876,9 +1923,10 @@ function renderIdeas(){
   $('#camIdeas').innerHTML=`<button disabled style="opacity:.7;border:0;background:none;padding-left:0">${ic('bulb')} 靈感</button>`+list.map((d,i)=>`<button data-idea="${i}" aria-pressed="${i===ideaSel}">${ic(d.icon)} ${esc(d.name)}</button>`).join('');
 }
 function renderAllPanels(){
-  renderFrames(); renderTemplates(); renderStk('award'); renderQuick(); renderIdeas();
+  const stkCat=E.spot&&CATS[E.spot.id]?E.spot.id:'award';
+  renderFrames(); renderTemplates(); renderStk(stkCat); renderQuick(); renderIdeas();
   $('#filters').innerHTML='';
-  $('#stkcats').innerHTML=Object.entries(CATS).map(([k,l])=>`<button class="chip" data-cat="${k}">${l}</button>`).join(''); setSel('cat','award',$('#stkcats'));
+  $('#stkcats').innerHTML=Object.entries(CATS).map(([k,l])=>`<button class="chip" data-cat="${k}">${l}</button>`).join(''); setSel('cat',stkCat,$('#stkcats'));
   $('#words').innerHTML=WORDS.map((w,i)=>{ const s=WSTYLE[w.st]; return `<button class="word" data-word="${i}" style="background:${s.bg};color:${s.fg};${s.line?`box-shadow:0 0 0 2px ${s.line} inset,0 3px 6px rgba(60,40,70,.15)`:''}">${esc(w.v)}</button>`; }).join('');
   $('#textColors').innerHTML=TEXT_STYLES.map(k=>{ const s=WSTYLE[k]; return `<button class="dot" data-tstyle="${k}" aria-label="文字顏色" style="background:${s.bg};${s.line?`outline:3px solid ${s.line};outline-offset:-6px`:''}"></button>`; }).join('');
   $('#penColors').innerHTML=PEN_COLORS.map(c=>`<button class="dot" data-pen="${c}" aria-label="畫筆顏色" style="background:${c}"></button>`).join('');

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>雄女祕境集章｜投影牆</title>
+<title>3040 KGHS 投影牆</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=Huninn&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=Huninn&family=Josefin+Sans:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
 /* 投影固定深色：暗底在宴會廳比較不刺眼，照片顏色也比較飽和 */
 :root{
@@ -201,12 +201,59 @@ body{background-image:radial-gradient(ellipse 60% 40% at 50% -8%,rgba(212,178,10
 .sheet button{background:var(--velvet);color:#F6EBD6}
 button:focus-visible{outline-color:var(--gold-hi)}
 @media (prefers-reduced-motion:reduce){.slot .card,.spot,.spot .inner,.tile,.notice{transition:none}.slot .card.in{animation:none}}
+/* ===================== 3040 KGHS 主視覺：黑金裝飾藝術風（Art Deco） ===================== */
+:root{ --gold-grad:linear-gradient(100deg,#9C7634 0%,#F6E3AE 24%,#C9A158 44%,#FFF1C9 56%,#B88A3E 74%,#E9CF8F 100%);
+  --deco:"Josefin Sans","Noto Sans TC",sans-serif; --script:"Great Vibes",cursive; --bar:4.2vh; }
+body{background:#1A1816;background-image:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(212,178,106,.10),transparent 70%)}
+/* 上下兩條金色琴鍵飾帶 */
+.deco{position:fixed;left:0;right:0;height:var(--bar);z-index:1;pointer-events:none;
+  background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='60' viewBox='0 0 132 60'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%236E5226'/%3E%3Cstop offset='.45' stop-color='%23EAD3A0'/%3E%3Cstop offset='1' stop-color='%239A7738'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23g)'%3E%3Crect x='3' y='6' width='12' height='50' rx='3'/%3E%3Crect x='19' y='6' width='10' height='50' rx='3'/%3E%3Crect x='33' y='6' width='7' height='50' rx='2'/%3E%3Crect x='44' y='6' width='4' height='50' rx='1'/%3E%3Crect x='53' y='4' width='1.4' height='54'/%3E%3Crect x='77.6' y='4' width='1.4' height='54'/%3E%3Crect x='84' y='6' width='4' height='50' rx='1'/%3E%3Crect x='92' y='6' width='7' height='50' rx='2'/%3E%3Crect x='103' y='6' width='10' height='50' rx='3'/%3E%3Crect x='117' y='6' width='12' height='50' rx='3'/%3E%3C/g%3E%3C/svg%3E") center/auto 72% repeat-x;
+  border-color:rgba(212,178,106,.7);border-style:solid;border-width:0}
+.deco.top-bars{top:0;border-bottom-width:1px;box-shadow:0 .6vh 0 -.45vh rgba(212,178,106,.45)}
+.deco.bot-bars{bottom:0;border-top-width:1px;box-shadow:0 -.6vh 0 -.45vh rgba(212,178,106,.45)}
+.app{padding:calc(var(--bar) + 1.4vh) 2.4vw calc(var(--bar) + 1.4vh);gap:1.4vh}
+/* 標題：校徽＋3040 KGHS */
+.top{gap:1.4vw}
+.logo{height:clamp(40px,6.6vh,96px);width:auto;filter:drop-shadow(0 .4vh 1vh rgba(0,0,0,.5))}
+.brand{display:flex;flex-direction:column;gap:.3vh;align-items:flex-start}
+.brand .kg{font-family:var(--deco);font-weight:400;font-size:clamp(14px,1.7vw,36px);letter-spacing:.14em;line-height:1;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.brand .kg i{font-family:var(--script);font-style:normal;letter-spacing:0;font-size:1.05em;margin-left:.5em}
+.brand h1{font-family:var(--serif);font-weight:600;font-size:clamp(16px,1.9vw,40px);letter-spacing:.42em;line-height:1.2;color:#F3EADB;
+  padding:.4vh 0;border-top:1px solid rgba(212,178,106,.7);border-bottom:1px solid rgba(212,178,106,.7)}
+.stat{background:rgba(212,178,106,.06);border-color:rgba(212,178,106,.45);border-radius:2px;font-family:var(--serif);letter-spacing:.06em}
+.stat b{font-family:var(--deco);font-weight:600;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.clock{font-family:var(--deco);font-weight:300;letter-spacing:.12em;color:var(--gold-hi)}
+/* 舞台：雙金框＋四角放射扇形 */
+.stage{border-radius:0;background:#1B1917;
+  box-shadow:inset 0 0 0 1px rgba(212,178,106,.75),inset 0 0 0 6px #1B1917,inset 0 0 0 7px rgba(212,178,106,.35)}
+.stage::before,.stage::after{content:"";position:absolute;z-index:2;width:6.4vh;height:6.4vh;pointer-events:none;
+  background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23D4B26A' stroke-width='1.2'%3E%3Cpath d='M2 2H40M2 2V40M8 8H28V12H12V28H8Z'/%3E%3Cpath d='M58 2A26 26 0 0 1 32 28' /%3E%3C/g%3E%3Cg stroke='%23D4B26A' stroke-width='.8'%3E%3Cpath d='M46 2l-2 14M50 2l0 15M54 2l3 14M42 2l-5 12M38 2l-8 9'/%3E%3C/g%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+.stage::before{top:.4vh;left:.4vh}
+.stage::after{bottom:.4vh;right:.4vh;transform:rotate(180deg)}
+.collage{padding:calc(var(--u)*.35 + 1vh)}
+.cols{inset:1.6vh}
+.col{border-radius:2px;border-color:rgba(212,178,106,.4)}
+.col .aw{font-family:var(--serif)}
+.chip{border-radius:2px}
+.notice{border-radius:2px;background:var(--gold-grad);color:#1E1610;font-family:var(--serif);font-weight:600}
+/* 還沒有照片：用 PPT 背板當待機畫面 */
+.empty{background:#1A1816 url("assets/brand/backplate.jpg") center/contain no-repeat;color:#E9CF8F;font-family:var(--serif);font-size:clamp(14px,1.6vw,32px);padding:22vh 24% 0}
+.card .work{color:#8E1E2E}
+/* 大結局開場與謝幕：主視覺 */
+.kv{position:absolute;inset:0;background:#000 url("assets/brand/key-visual.jpg") center/contain no-repeat;opacity:0;transition:opacity 1.4s}
+.kv.show{opacity:1}
+.finale .line small{font-family:var(--deco);font-weight:400;letter-spacing:.3em}
+.credits h2{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (prefers-reduced-motion:reduce){.kv{transition:none}}
 </style>
 </head>
 <body>
+<div class="deco top-bars" aria-hidden="true"></div><div class="deco bot-bars" aria-hidden="true"></div>
 <div class="app">
   <header class="top">
-    <div class="brand"><h1>雄女祕境集章</h1><span>頒獎典禮　現場放映</span></div>
+    <img class="logo" src="assets/brand/logo-gold.png" alt="高雄女中">
+    <div class="brand"><p class="kg">3040 KGHS <i>Alumni Reunion Party</i></p><h1>高雄女中校友重聚</h1></div>
     <div class="stats" id="stats"></div>
     <div class="clock" id="clock"></div>
   </header>
@@ -242,12 +289,12 @@ const CONFIG = {
   ],
   swapSeconds: 2.5,       // 照片牆：每幾秒換掉一格
   featureSeconds: 18,     // 照片牆：每幾秒放大一張特寫（0＝不放大）
-  finale: {               // 大結局的文字，{people}{photos} 會換成人數與照片數
+  finale: {               // 大結局的文字（開場前與謝幕後會播放主視覺 assets/brand/key-visual.jpg）
     opening: '今天，我們一起回到了雄女',
-    openingSub: '頒獎典禮　現在開始',
+    openingSub: '三十而遇　四十重聚',
     creditsTitle: '本屆得獎名單',
     closing: '歡迎回家',
-    closingSub: '2026 雄女校友回娘家'
+    closingSub: '3040 KGHS　高雄女中校友重聚'
   }
 };
 
@@ -489,8 +536,11 @@ async function playFinale(){
   const F=CONFIG.finale, fin=$('#finale'), W=innerWidth, H=innerHeight;
   const m=people(); const nPeople=m.size, nPhotos=items.length;
   fin.hidden=false; fin.innerHTML='';
+  const kv=async ms=>{ const d=document.createElement('div'); d.className='kv'; fin.appendChild(d); await sleep(50); d.classList.add('show'); await sleep(ms); d.classList.remove('show'); await sleep(1400); d.remove(); };
   const say=async(html,ms)=>{ const d=document.createElement('div'); d.className='line'; d.innerHTML=html; fin.appendChild(d); await sleep(50); d.classList.add('show'); await sleep(ms); d.classList.remove('show'); await sleep(1300); d.remove(); };
   try{
+    await kv(4200);
+    if(!inFinale) return;
     await say(`${esc(F.opening)}<small>${esc(F.openingSub)}</small>`, 3200);
     if(!inFinale) return;
     // 照片飛進來拼成愛心
@@ -542,6 +592,8 @@ async function playFinale(){
     cr.remove();
     if(!inFinale) return;
     await say(`${esc(F.closing)}<small>${esc(F.closingSub)}</small>`, 6000);
+    if(!inFinale) return;
+    await kv(8000);
   } finally {
     endFinale();
   }
