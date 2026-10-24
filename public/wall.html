@@ -382,7 +382,7 @@ function people(){ const m=new Map(); items.forEach(x=>{ const k=x.cls+'|'+x.nam
 function renderStats(){
   const m=people(), done=[...m.values()].filter(s=>s.size>=CONFIG.spots.length).length;
   const pl = PRE.total && PRE.done<PRE.total ? `<span class="stat" title="背景預先載入照片">${ic('hourglass')} 預載 <b>${PRE.done}</b>/ ${PRE.total}</span>` : '';
-  $('#stats').innerHTML=`${pl}<span class="stat"><b>${m.size}</b>位校友參加</span><span class="stat"><b>${done}</b>位拿下五座獎</span><span class="stat"><b>${items.length}</b>張照片</span>`;
+  $('#stats').innerHTML=`${pl}<span class="stat"><b>${m.size}</b>位校友參加</span><span class="stat"><b>${done}</b>位摘齊五星</span><span class="stat"><b>${items.length}</b>張照片</span>`;
 }
 /* 預先載入：開頁後在背景把所有照片的牆面版與小圖下載好（同時 6 張），播放時就不會出現空格。
    載入過的圖片瀏覽器會快取，之後輪播不再耗流量。 */

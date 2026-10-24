@@ -548,7 +548,7 @@ body.busy{overflow:hidden}
       <div class="cv-content">
         <p class="cv-year" id="cvYear">2026 雄女校友回娘家</p>
         <div class="cv-crest"><svg class="cv-laurel l" viewBox="0 0 60 140" aria-hidden="true"><g fill="none" stroke="#C9A158" stroke-width="2.2" stroke-linecap="round"><path d="M46 136C18 112 10 70 30 8"/></g><g fill="#C9A158"><ellipse cx="30" cy="16" rx="4.2" ry="10" transform="rotate(10 30 16)"/><ellipse cx="22" cy="30" rx="4.2" ry="10" transform="rotate(-30 22 30)"/><ellipse cx="36" cy="32" rx="4.2" ry="10" transform="rotate(40 36 32)"/><ellipse cx="17" cy="48" rx="4.2" ry="10" transform="rotate(-38 17 48)"/><ellipse cx="31" cy="52" rx="4.2" ry="10" transform="rotate(38 31 52)"/><ellipse cx="15" cy="68" rx="4.2" ry="10" transform="rotate(-42 15 68)"/><ellipse cx="29" cy="72" rx="4.2" ry="10" transform="rotate(34 29 72)"/><ellipse cx="17" cy="88" rx="4.2" ry="10" transform="rotate(-46 17 88)"/><ellipse cx="30" cy="92" rx="4.2" ry="10" transform="rotate(30 30 92)"/><ellipse cx="22" cy="108" rx="4.2" ry="10" transform="rotate(-52 22 108)"/><ellipse cx="35" cy="110" rx="4.2" ry="10" transform="rotate(24 35 110)"/><ellipse cx="31" cy="124" rx="4.2" ry="10" transform="rotate(-60 31 124)"/></g></svg><svg class="cv-laurel r" viewBox="0 0 60 140" aria-hidden="true"><g fill="none" stroke="#C9A158" stroke-width="2.2" stroke-linecap="round"><path d="M46 136C18 112 10 70 30 8"/></g><g fill="#C9A158"><ellipse cx="30" cy="16" rx="4.2" ry="10" transform="rotate(10 30 16)"/><ellipse cx="22" cy="30" rx="4.2" ry="10" transform="rotate(-30 22 30)"/><ellipse cx="36" cy="32" rx="4.2" ry="10" transform="rotate(40 36 32)"/><ellipse cx="17" cy="48" rx="4.2" ry="10" transform="rotate(-38 17 48)"/><ellipse cx="31" cy="52" rx="4.2" ry="10" transform="rotate(38 31 52)"/><ellipse cx="15" cy="68" rx="4.2" ry="10" transform="rotate(-42 15 68)"/><ellipse cx="29" cy="72" rx="4.2" ry="10" transform="rotate(34 29 72)"/><ellipse cx="17" cy="88" rx="4.2" ry="10" transform="rotate(-46 17 88)"/><ellipse cx="30" cy="92" rx="4.2" ry="10" transform="rotate(30 30 92)"/><ellipse cx="22" cy="108" rx="4.2" ry="10" transform="rotate(-52 22 108)"/><ellipse cx="35" cy="110" rx="4.2" ry="10" transform="rotate(24 35 110)"/><ellipse cx="31" cy="124" rx="4.2" ry="10" transform="rotate(-60 31 124)"/></g></svg><h1 class="cv-title">雄女<br>祕境集章</h1></div>
-        <p class="cv-sub">頒獎典禮</p>
+        <p class="cv-sub">五星獎頒獎典禮</p>
         <div class="cv-rule"></div>
         <p class="cv-awards" id="cvAwards"></p>
         <p class="cv-date" id="cvDate"></p>
@@ -562,7 +562,7 @@ body.busy{overflow:hidden}
     <div class="cover">
       <p class="hello">2026 雄女校友回娘家</p>
       <h1>雄女<br>祕境集章</h1>
-      <p class="lede">今晚有一場只屬於妳們的頒獎典禮。五座獎藏在校園五個角落，找到它、拍一張照、留一句話，就拿下這座獎。集滿五座，就能領到典禮入場券。</p>
+      <p class="lede">今晚，妳是「五星獎」的入圍女星。五顆星藏在校園五個角落，找到它、拍一張照、留一句得獎感言，就摘下一顆星。摘齊五星，就能領到典禮入場券。</p>
       <div class="joincard">
         <label class="field"><span>怎麼稱呼妳？</span><input type="text" id="jName" maxlength="12" autocomplete="nickname" placeholder="例如：小美"></label>
         <label class="field"><span>妳是第幾屆畢業？</span><input type="number" id="jCls" inputmode="numeric" min="1" max="200" placeholder="例如：45"></label>
@@ -787,29 +787,31 @@ const CONFIG = {
   // 提示卡：riddle 是正面的謎題，hint 是翻到背面的提示；name 是找到之後才顯示的地點名稱；id 與 key 會寫進現場 QR Code 網址
   // presets 是「不想拍照」時可以選的照片（放在 assets/presets 資料夾）
   spots: [
-    { id:'s1', award:'最佳時光獎', key:'q7k2', stamp:'門', name:'校門口', riddle:'鐘聲迴響之地', hint:'每天清晨，大家都從這裡走進雄女。',
+    { id:'s1', award:'最佳時光獎', key:'q7k2', stamp:'門', name:'校門口', riddle:'晨光報到處', hint:'每天早上第一個打招呼的地方，教官和糾察隊都在這裡等妳。',
       presets:['assets/presets/s1-1.jpg','assets/presets/s1-old.jpg'] },
-    { id:'s2', award:'最佳夢想獎', key:'m3x9', stamp:'科', name:'榕園', riddle:'科研繁茂之地', hint:'實驗中心旁那片榕樹綠蔭，以前有圓桌可以坐。',
+    { id:'s2', award:'最佳夢想獎', key:'m3x9', stamp:'科', name:'榕園', riddle:'綠蔭下的實驗室', hint:'實驗中心旁，老榕樹撐開一片綠蔭；圓桌邊吃過便當，也聊過夢想。',
       presets:['assets/presets/s2-1.jpg','assets/presets/s2-old.jpg'] },
-    { id:'s3', award:'最佳書香獎', key:'t8p4', stamp:'書', name:'圖書館', riddle:'書香盤繞之地', hint:'找找那座迴旋梯，書都住在那裡。',
+    { id:'s3', award:'最佳書香獎', key:'t8p4', stamp:'書', name:'圖書館', riddle:'旋轉而上的書海', hint:'沿著那座迴旋梯一路往上，晚自習的燈常常亮到很晚。',
       presets:['assets/presets/s3-1.jpg','assets/presets/s3-2.jpg','assets/presets/s3-old.jpg'] },
-    { id:'s4', award:'最佳人氣獎', key:'r2w6', stamp:'活', name:'學生活動中心', riddle:'熱鬧非凡之地', hint:'演講、社團、比賽都在這裡上演。',
+    { id:'s4', award:'最佳人氣獎', key:'r2w6', stamp:'活', name:'學生活動中心', riddle:'掌聲最響的舞台', hint:'社團成發、合唱比賽、週會演講，尖叫和掌聲都在這裡。',
       presets:['assets/presets/s4-1.jpg','assets/presets/s4-old.jpg'] },
-    { id:'s5', award:'最佳青春熱血獎', key:'h5n1', stamp:'體', name:'體育館', riddle:'青春熱血之地', hint:'流汗、打球、上體育課的地方。',
+    { id:'s5', award:'最佳青春熱血獎', key:'h5n1', stamp:'體', name:'體育館', riddle:'汗水飛揚的殿堂', hint:'排球、體育課、儀隊練習，青春的汗水都灑在這片地板上。',
       presets:['assets/presets/s5-1.jpg','assets/presets/s5-old.jpg'] }
   ],
   // 開場與結尾劇情：一個 { } 是一頁；icon 用貼紙代號（trophy、reel、ticket、filmcam、gstar、rose、bell、camera…）；{name} 會換成玩家的稱呼
   story: {
     intro: [
-      { icon:'reel', text:'今晚的雄女，\n要辦一場只屬於妳們的頒獎典禮。' },
-      { icon:'ticket', text:'校園裡藏著五座獎，\n每一座都藏在妳們熟悉的地方：\n校門、圖書館、體育館……' },
-      { icon:'filmcam', text:'找到它們，\n拍一張現在的妳，\n留一句得獎感言。' },
-      { icon:'gstar', text:'不想入鏡也沒關係。\n當一次攝影師，\n拍下妳心中它最美的樣子。' },
-      { icon:'trophy', text:'五座獎都拿到，\n典禮的入場券\n就會交到妳手上。' }
+      { icon:'reel', text:'紅毯上閃光燈此起彼落，\n今晚的主角，\n是剛走進校門的妳。' },
+      { icon:'mic', text:'記者：「{name}，歡迎回到雄女！\n聽說妳是今晚\n「五星獎」的入圍女星？」' },
+      { icon:'filmcam', text:'「離開校園這麼多年，\n還記得當年最常待的地方嗎？\n校門口、圖書館、體育館……」' },
+      { icon:'camera', text:'「今晚不用多說，\n請用照片告訴我們：\n回到那個角落，拍下現在的妳。」' },
+      { icon:'gstar', text:'「五個角落藏著五顆星。\n每找到一處、拍一張照、\n說一句得獎感言，就摘下一顆。」' },
+      { icon:'ticket', text:'「摘齊五星，\n典禮的入場券就是妳的。\n準備好了嗎？」' }
     ],
-    introEnd: '進場',
+    introEnd: '走上紅毯',
     ending: [
-      { icon:'trophy', text:'校門、榕園、圖書館、\n活動中心、體育館，\n五座獎都頒給妳了。' },
+      { icon:'gstar', text:'校門、榕園、圖書館、\n活動中心、體育館，\n五顆星都被妳摘下了。' },
+      { icon:'mic', text:'記者：「最後一個問題，\n回到這裡，\n是什麼感覺？」' },
       { icon:'filmcam', text:'妳拍下的照片和得獎感言，\n今晚會在典禮現場放映。' },
       { icon:'rose', text:'{name}，\n歡迎回家。' }
     ],
@@ -948,7 +950,7 @@ function scanSpot(id,k){
   S.scanned[id]=true; save();
   show('home'); renderHome();
   try{ sfx.stamp(); }catch(_){}
-  modal(`<div class="unlock-stamp">${s.stamp}</div>${s.award?`<p class="unlock-award">${esc(s.award)}</p>`:''}<h2 style="text-align:center">${again?'這座獎妳已經拿到了':'入圍了！'}</h2><p style="text-align:center">「${esc(s.name)}」${again?'要重拍一次嗎？':'找到了。拍一張照、留一句感言，就能拿下這座獎'}</p>`,
+  modal(`<div class="unlock-stamp">${s.stamp}</div>${s.award?`<p class="unlock-award">${esc(s.award)}</p>`:''}<h2 style="text-align:center">${again?'這顆星妳已經摘下了':'入圍了！'}</h2><p style="text-align:center">「${esc(s.name)}」${again?'要重拍一次嗎？':'找到了。拍一張照、留一句感言，就能摘下這顆星'}</p>`,
     [{label: again ? '重拍這一站' : '開始拍照', fn:()=>openEditor(id)}, {label:'等一下再拍', soft:true}]);
   return true;
 }
@@ -1246,7 +1248,7 @@ let ST=null;
 const stickerUri=k=>(STICKERS.find(s=>s.k===k)||{}).uri;
 function playStory(which, done){ ST={ pages:CONFIG.story[which], end:CONFIG.story[which+'End'], i:0, done }; show('story'); renderScene(); }
 function renderScene(){
-  const pg=ST.pages[ST.i], name=S ? S.player.name : '測試校友';
+  const pg=ST.pages[ST.i], name=S ? S.player.name : '大明星';
   const text=esc(pg.text).replace(/\{name\}/g, `<span class="who">${esc(name)}</span>`).replace(/\n/g,'<br>');
   const sc=$('#scene'); sc.innerHTML=`${pg.icon && stickerUri(pg.icon) ? `<img src="${stickerUri(pg.icon)}" alt="">` : ''}<p>${text}</p>`;
   sc.style.animation='none'; void sc.offsetWidth; sc.style.animation='';
@@ -1269,14 +1271,14 @@ function renderHome(){
     <header class="pass">
       <div class="who">${esc(p.name)}</div>
       <div class="count">${n}<span> / ${spots.length}</span></div>
-      <div class="meta">第 ${esc(p.cls)} 屆　已獲 ${n} 座獎</div>
+      <div class="meta">第 ${esc(p.cls)} 屆　已摘 ${n} 顆星</div>
     </header>
     <div class="syncbar" id="syncBar" hidden><span id="syncText"></span><button class="btn soft small" data-act="retry">立即重試</button></div>
     <div class="who-row"><span class="tiny" style="margin:0">找回進度用：末三碼 ${esc(p.l3)}</span><button class="btn soft small" data-act="logout">不是妳？</button></div>
-    <div class="stamps" aria-label="已獲 ${n} / ${spots.length} 座獎">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
+    <div class="stamps" aria-label="已摘 ${n} / ${spots.length} 顆星">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
     <section class="clues" aria-label="提示卡"><h2 class="clues-h">提示卡<span>點一下翻面</span></h2><div class="clue-row">${spots.map(clueHTML).join('')}</div></section>
-    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>翻開上面的提示卡，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「${ic('scan')} 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就拿下這座獎</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
-    ${n===spots.length ? `<section class="unlock"><h2>五座獎都拿到了</h2><p>典禮入場券準備好了，聚餐地點寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
+    ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>翻開上面的提示卡，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「${ic('scan')} 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就摘下這一顆星</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
+    ${n===spots.length ? `<section class="unlock"><h2>五星獎全部到手</h2><p>典禮入場券準備好了，聚餐地點寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
     <section class="spots">${spots.map(spotHTML).join('')}</section>`;
   justStamped=null; syncBanner();
 }
@@ -1291,7 +1293,7 @@ function clueHTML(s,i){
 function spotHTML(s){
   const d=S.done[s.id], sc=S.scanned[s.id], known=d||sc;
   let foot;
-  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已得獎　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 '+ic('check'),failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">${ic('camera')} 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?`<p class="work">${ic('note')} 便利貼祝福</p>`:''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
+  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已摘星　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 '+ic('check'),failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">${ic('camera')} 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?`<p class="work">${ic('note')} 便利貼祝福</p>`:''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
   else if(sc) foot=`<p class="status ok">找到了！可以拍照了</p><button class="btn wide" data-act="shoot" data-id="${s.id}">去拍照</button>`;
   else foot=`<button class="btn soft wide scanbtn" data-sc="open">${ic('scan')} 到了！掃描 QR Code</button>`;
   return `<article class="spot ${d?'won':''}">${s.award?`<p class="award">${esc(s.award)}</p>`:''}<div class="head"><span class="mark">${s.stamp}</span><h3 class="${known?'':'unknown'}">${known?esc(s.name):'？？？'}</h3></div><p class="riddle">${esc(s.riddle)}</p>${foot}</article>`;
@@ -2411,15 +2413,15 @@ async function openInvite(){
   g.strokeStyle='rgba(217,189,126,.45)'; g.lineWidth=1.5; g.strokeRect(56,56,IW-112,IH-112);
   g.textAlign='center'; g.textBaseline='alphabetic';
   g.fillStyle=GOLD; g.font=`500 34px ${NF}`; g.fillText(`${new Date().getFullYear()}　${CONFIG.eventName}`, IW/2, 170);
-  g.fillStyle=IVORY; g.font=`900 150px ${SF}`; g.fillText('頒獎典禮', IW/2, 345);
+  g.fillStyle=IVORY; g.font=`900 150px ${SF}`; g.fillText('五星獎', IW/2, 345);
   g.fillStyle=GOLD; g.font=`600 58px ${SF}`; g.fillText('入　場　券', IW/2, 435);
   g.fillStyle=GOLD2; ornament(g,'diamond',IW/2-215,416,12,-1); ornament(g,'diamond',IW/2+215,416,12,1);
   // 致詞
   g.fillStyle=IVORY; g.font=`600 52px ${SF}`; g.fillText(`敬邀　${p.name}`, IW/2, 540);
   g.fillStyle='#C9BBA5'; g.font=`400 34px ${NF}`;
-  g.fillText(`妳拿下了校園裡的 ${spots.length} 座獎。`, IW/2, 600);
+  g.fillText('五顆星，妳全都摘下了。', IW/2, 600);
   g.fillText('歡迎回家，今晚的典禮為妳留了位子。', IW/2, 650);
-  // 底片條：五座獎的照片
+  // 底片條：五顆星的照片
   const fy=705, fh=300; g.fillStyle='#050403'; g.fillRect(56,fy,IW-112,fh);
   g.fillStyle='#2E2620'; for(let x=74;x<IW-80;x+=44){ rr(g,x,fy+14,24,18,4); g.fill(); rr(g,x,fy+fh-32,24,18,4); g.fill(); }
   const imgs=await Promise.all(spots.map(s=>S && S.done[s.id] ? loadImg(S.done[s.id].thumb||S.done[s.id].img) : null));
