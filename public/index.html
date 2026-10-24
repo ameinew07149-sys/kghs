@@ -6,7 +6,7 @@
 <title>2026高雄女中-星光晚宴回憶錄</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=Gaegu:wght@400;700&family=Huninn&family=Josefin+Sans:wght@300;400&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=Gaegu:wght@400;700&family=Huninn&family=Josefin+Sans:wght@300;400&family=Great+Vibes&family=LXGW+WenKai+TC:wght@400;700&family=Iansui&display=swap" rel="stylesheet">
 <style>
 :root{
   /* 頒獎典禮：節目單象牙紙、絲絨紅、香檳金、劇院黑 */
@@ -156,6 +156,7 @@ input[type=text],input[type=number],textarea{width:100%;border:2px solid var(--l
 .stkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .stk{aspect-ratio:1;border:2px solid var(--line);border-radius:18px;background:var(--t-lilac);cursor:pointer;padding:8px;display:grid;place-items:center}
 .stk img{width:100%;height:100%;object-fit:contain}
+.stk.wide{background:#8C7F70}
 .words{display:flex;flex-wrap:wrap;gap:12px}
 .word{border:3px solid #fff;border-radius:999px;padding:6px 16px;font-family:var(--cute);font-weight:700;font-size:1.25rem;cursor:pointer;box-shadow:0 3px 6px rgba(60,40,70,.15)}
 .label{display:block;margin:4px 0 8px}
@@ -285,6 +286,11 @@ body.fullmode .toast{bottom:auto;top:calc(72px + env(safe-area-inset-top,0px))}
 .hrow .tpl{width:96px}
 .hrow .sw{width:62px}
 .stks .stk{width:66px;height:66px}
+.fontrow .chip{font-size:1.05rem}
+.tapes{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px}
+.tapes button{flex:none;border:2px solid var(--line);border-radius:12px;background:var(--card);padding:6px 8px 4px;font:inherit;font-size:.8rem;color:var(--ink);cursor:pointer;display:grid;gap:2px;justify-items:center}
+.tapes button img{width:84px;height:30px;display:block}
+.tapes button[aria-pressed="true"]{border-color:var(--pink);box-shadow:0 0 0 2px var(--pink)}
 .hrow .word{white-space:nowrap}
 .fl{width:74px;border:0;background:none;font:inherit;font-size:.88rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:0}
 .fl img,.fl .ph{width:66px;height:82px;object-fit:cover;border-radius:12px;border:3px solid transparent;background:var(--t-pink)}
@@ -412,6 +418,8 @@ body.storymode .sound{background:#2A231E;color:#F3EADB;border-color:#3A302A}
 #story .sdots i.on{background:var(--gold-hi)}
 #story .btn.soft{background:transparent;color:#C9BBA5;border-color:#3A302A;box-shadow:none}
 /* 相框選單的特別款色票 */
+.sw i.deco{background:repeating-linear-gradient(90deg,#D9BD7E 0 3px,#0C0A09 3px 6px) 50% 18%/70% 16% no-repeat,#0C0A09;box-shadow:inset 0 0 0 4px #0C0A09,inset 0 0 0 5.5px #D9BD7E,0 0 0 2px var(--line)}
+.sw i.reunion{background:url("assets/brand/logo-gold.png") center/56% no-repeat,#14100E}
 .sw i.film{background:radial-gradient(circle,#16120F 52%,transparent 54%),repeating-linear-gradient(90deg,#E2C27D 0 4px,#16120F 4px 9px)}
 .sw i.ticket{background:#F4ECDD;box-shadow:inset 0 0 0 3px #8E1E2E,0 0 0 2px var(--line)}
 .sw i.award{background:#1E1916;box-shadow:inset 0 0 0 3px #1E1916,inset 0 0 0 5px #D9BD7E,0 0 0 2px var(--line)}
@@ -678,6 +686,8 @@ body.busy{overflow:hidden}
       <div class="tp" id="t-word">
         <div class="hrow" id="words"></div>
         <div class="mine"><input type="text" id="myText" maxlength="12" placeholder="自己打字…"><button class="btn small" data-ed="addtext">貼上</button></div>
+        <p class="sub" style="margin:10px 0 4px">字體</p>
+        <div class="row wrapr fontrow" id="textFonts"></div>
         <div class="dots" id="textColors"></div>
       </div>
       <div class="tp" id="t-pen">
@@ -687,6 +697,10 @@ body.busy{overflow:hidden}
       </div>
       <div class="tp" id="t-msg">
         <div id="noteColorsRow" class="ncolors" hidden></div>
+        <div id="noteStyle" hidden>
+          <p class="sub" style="margin:0 0 4px">字體</p><div class="row wrapr fontrow" id="noteFonts"></div>
+          <p class="sub" style="margin:10px 0 4px">紙膠帶</p><div class="tapes" id="noteTapes"></div>
+        </div>
         <div class="seg" id="msgMode"><button data-mode2="type">打字留言</button><button data-mode2="hand">手寫留言</button></div>
         <div id="m-title" hidden>
           <label class="sub" for="title" style="display:block;margin-top:0">作品名稱</label>
@@ -870,6 +884,8 @@ const CONFIG = {
   },
   // 一鍵套用的範例樣式：x、y 是位置（0～1），s 是大小，r 是角度；k 是貼紙代號，w 是文字貼紙
   templates: [
+    { name:'3040 星光', frame:'deco', filter:'warm', items:[ {k:'discoball',x:.86,y:.12,s:.95,r:.12}, {k:'cheers',x:.14,y:.66,s:.95,r:-.12} ] },
+    { name:'三十而遇', frame:'reunion', filter:'milk', items:[ {k:'lacepearl',x:.5,y:.06,s:1,r:0} ] },
     { name:'首映之夜', frame:'film', filter:'warm', items:[ {k:'filmcam',x:.15,y:.1,s:.95,r:-.15}, {w:'首映之夜',st:'ink',x:.7,y:.1,s:.95,r:.05} ] },
     { name:'最佳女主角', frame:'award', filter:'milk', items:[ {k:'trophy',x:.85,y:.64,s:1.05,r:.1}, {w:'最佳女主角',st:'gold',x:.33,y:.1,s:1,r:-.06} ] },
     { name:'雜誌封面', frame:'magazine', filter:'peach', items:[ {k:'rose',x:.86,y:.66,s:.9,r:.2} ] },
@@ -1314,6 +1330,8 @@ const W65='rgba(255,255,255,.65)';
    decor：額外畫的典禮元素（film 底片孔與日期、ticket 票券撕線、award 金框、magazine 雜誌封面）
    only：只在某些版型出現；awardCap：底部標題改成這一站的獎項名稱 */
 const FRAMES={
+  deco:    { label:'3040 金框', bg:'#0C0A09', ink:'#E9CF8F', sub:'#A39279', empty:'#1E1916', pattern:null, decor:'deco', orn:'diamond', awardCap:true, swatch:'deco' },
+  reunion: { label:'三十而遇', bg:'#14100E', ink:'#F3EADB', sub:'#C9A158', empty:'#2A231E', pattern:null, decor:'reunion', orn:'diamond', head:'三十而遇　四十重聚', swatch:'reunion' },
   film:    { label:'底片', bg:'#16120F', ink:'#E9CF8F', sub:'#9C8D78', empty:'#2A231E', pattern:null, decor:'film', orn:'diamond', swatch:'film' },
   ticket:  { label:'入場券', bg:'#F4ECDD', ink:'#8E1E2E', sub:'#A08668', empty:'#E8DCC8', pattern:null, decor:'ticket', orn:'diamond', swatch:'ticket' },
   award:   { label:'金框', bg:'#1B1613', ink:'#E2C27D', sub:'#A39279', empty:'#2A231E', pattern:null, decor:'award', orn:'diamond', awardCap:true, swatch:'award' },
@@ -1329,7 +1347,17 @@ const FRAMES={
   // mine1:{ label:'名稱', bg:'#FFFFFF', ink:'#333', sub:'#999', empty:'#EEE', caption:false,
   //         overlay:{ single:'frames/mine1-single.png', strip:'frames/mine1-strip.png', grid:'frames/mine1-grid.png' } },
 };
-const DEF_FRAME='film';
+const DEF_FRAME='deco';
+const LOGO_IMG=new Image(); LOGO_IMG.onload=()=>{ if(E.spot) draw(); }; LOGO_IMG.src='assets/brand/logo-gold.png';
+const goldGrad=(c,x0,x1)=>{ const gr=c.createLinearGradient(x0,0,x1,0); [[0,'#8C6A30'],[.3,'#F3DFA8'],[.5,'#B88A3E'],[.7,'#FFF0C8'],[1,'#A9843E']].forEach(([o,col])=>gr.addColorStop(o,col)); return gr; };
+/* 裝飾藝術扇形角飾：(x,y) 是角落，sx/sy 決定朝向 */
+function decoFan(c,x,y,r,sx,sy){ c.save(); c.translate(x,y); c.scale(sx,sy); c.strokeStyle='#D9BD7E'; c.lineWidth=Math.max(1.5,r*0.05);
+  c.beginPath(); c.arc(0,0,r,0,Math.PI/2); c.stroke(); c.lineWidth=Math.max(1,r*0.03); c.beginPath();
+  for(let a=10;a<90;a+=10){ const t=a*Math.PI/180; c.moveTo(Math.cos(t)*r*0.32,Math.sin(t)*r*0.32); c.lineTo(Math.cos(t)*r*0.86,Math.sin(t)*r*0.86); } c.stroke();
+  c.fillStyle='#D9BD7E'; c.beginPath(); c.arc(0,0,r*0.12,0,Math.PI*2); c.fill(); c.restore(); }
+/* 金色琴鍵飾帶 */
+function decoBars(c,x0,x1,y,h,u){ const pat=[.9,.7,.5,.25,.1,0,.1,.25,.5,.7,.9]; let x=x0;
+  while(x<x1){ for(const k of pat){ if(x>x1) break; if(k){ const w=Math.max(1.5,u*k*1.6); c.fillStyle=goldGrad(c,x,x+w); c.fillRect(x,y,w,h); x+=w+u*0.4; } else x+=u*1.2; } x+=u; } }
 const FILTERS={ none:'原色', milk:'美肌', peach:'好氣色', warm:'復古暖調', mono:'黑白' };
 function drawPattern(c,p,W,H){
   c.save();
@@ -1396,6 +1424,32 @@ function drawDecor(c,f,lay,phase,spot){
     c.beginPath(); c.moveTo(m*0.9,ty); c.lineTo(W-m*0.9,ty); c.stroke(); c.setLineDash([]);
     c.fillStyle='#DCCBB0'; [0,W].forEach(x=>{ c.beginPath(); c.arc(x,ty,m*0.55,0,Math.PI*2); c.fill(); });
   }
+  if(d==='deco' && phase==='under'){
+    decoBars(c, m*1.7, W-m*1.7, m*0.2, m*0.58, m*0.26);
+    decoBars(c, m*1.7, W-m*1.7, H-m*0.62, m*0.42, m*0.22);
+    c.fillStyle='rgba(217,189,126,.55)'; c.fillRect(m*1.2, m*0.86, W-m*2.4, Math.max(1.5,m*0.03)); c.fillRect(m*1.2, H-m*0.74, W-m*2.4, Math.max(1.5,m*0.03));
+    const r=m*0.7; decoFan(c,m*0.12,m*0.12,r,1,1); decoFan(c,W-m*0.12,m*0.12,r,-1,1); decoFan(c,m*0.12,H-m*0.12,r,1,-1); decoFan(c,W-m*0.12,H-m*0.12,r,-1,-1);
+  }
+  if(d==='deco' && phase==='over'){
+    cells.forEach(([x,y,w,h])=>{ const g1=Math.max(5,m*0.14), g2=Math.max(9,m*0.3);
+      c.strokeStyle='#D9BD7E'; c.lineWidth=Math.max(2.5,m*0.06); c.strokeRect(x-g1,y-g1,w+g1*2,h+g1*2);
+      c.lineWidth=Math.max(1.2,m*0.025); c.strokeStyle='rgba(217,189,126,.5)'; c.strokeRect(x-g2,y-g2,w+g2*2,h+g2*2); });
+  }
+  if(d==='reunion' && phase==='under'){
+    let seed=5; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+    for(let k=0;k<Math.round(W*H/26000);k++){ c.fillStyle=`rgba(217,189,126,${(.03+rnd()*.06).toFixed(3)})`; c.fillRect(rnd()*W-40, rnd()*H, W*(.06+rnd()*.2), H*(.02+rnd()*.06)); }
+    c.strokeStyle='rgba(217,189,126,.8)'; c.lineWidth=Math.max(2,m*0.04); c.strokeRect(m*0.3,m*0.3,W-m*0.6,H-m*0.6);
+  }
+  if(d==='reunion' && phase==='over'){
+    cells.forEach(([x,y,w,h])=>{ c.strokeStyle='rgba(233,207,143,.85)'; c.lineWidth=Math.max(2,m*0.04); c.strokeRect(x,y,w,h); });
+    const [x,y,w,h]=cells[cells.length-1], bw=Math.min(w,h)*0.24, bh=bw*0.52, bx=x+w-bw-bw*0.08, by=y+h-bh-bw*0.08;
+    c.fillStyle='rgba(12,10,9,.62)'; rr(c,bx,by,bw,bh,bh*0.16); c.fill();
+    c.strokeStyle='rgba(217,189,126,.7)'; c.lineWidth=Math.max(1.2,bw*0.008); rr(c,bx,by,bw,bh,bh*0.16); c.stroke();
+    if(LOGO_IMG.naturalWidth){ const lh=bh*0.74; c.drawImage(LOGO_IMG,bx+bh*0.14,by+(bh-lh)/2,lh*LOGO_IMG.naturalWidth/LOGO_IMG.naturalHeight,lh); }
+    c.textAlign='left'; c.textBaseline='middle'; c.fillStyle=goldGrad(c,bx+bh,bx+bw);
+    c.font=`400 ${Math.round(bh*0.26)}px "Josefin Sans",sans-serif`; c.fillText('3040', bx+bh*0.98, by+bh*0.36);
+    c.fillText('KGHS', bx+bh*0.98, by+bh*0.68);
+  }
   if(d==='award' && phase==='over'){
     cells.forEach(([x,y,w,h])=>{ const g1=Math.max(6,m*0.2), g2=Math.max(10,m*0.36);
       c.strokeStyle='#D4AF61'; c.lineWidth=Math.max(3,m*0.07); c.strokeRect(x-g1,y-g1,w+g1*2,h+g1*2);
@@ -1445,7 +1499,38 @@ const blush=(y=68,dx=20,cx=60)=>`<ellipse cx="${cx-dx}" cy="${y}" rx="6" ry="4" 
 const shine=(x,y)=>`<ellipse cx="${x}" cy="${y}" rx="5" ry="8" fill="#fff" opacity=".85" transform="rotate(-30 ${x} ${y})"/>`;
 const petals=[...Array(8)].map((_,i)=>`<ellipse fill="#FFFFFF" cx="60" cy="30" rx="13" ry="22" transform="rotate(${i*45} 60 60)"/>`).join('');
 const GOLD='#E2B85A', DARK='#2A211B';
+const svgW=(w,h,inner)=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${w*3}" height="${h*3}" viewBox="0 0 ${w} ${h}">${inner}</svg>`);
+/* 蕾絲：用遮罩挖出鏤空花紋，pat 是一個重複單元（寬 pw），白色是蕾絲、黑色是挖空 */
+const laceURI=(pw,pat,col='#FFFFFF')=>svgW(480,96,`<defs><pattern id="p" width="${pw}" height="96" patternUnits="userSpaceOnUse">${pat}</pattern><mask id="m"><rect width="480" height="96" fill="url(#p)"/></mask></defs><rect width="480" height="96" fill="${col}" mask="url(#m)"/>`);
 const STICKERS=[
+  // ---------- 派對手帳 ----------
+  {k:'partyhat',cat:'party',uri:mk(`<path fill="#FF8FC7" d="M60 12L94 102H26Z"/><circle fill="#FFE066" cx="60" cy="12" r="10"/>`,
+    `<circle cx="58" cy="44" r="4.5" fill="#fff"/><circle cx="70" cy="64" r="4.5" fill="#FFE066"/><circle cx="48" cy="74" r="4.5" fill="#74B3FF"/><circle cx="66" cy="88" r="4.5" fill="#fff"/><circle cx="40" cy="94" r="4" fill="#FFE066"/><path d="M28 100Q44 94 60 100T92 100" stroke="#74B3FF" stroke-width="6" fill="none" stroke-linecap="round"/>`)},
+  {k:'balloons',cat:'party',uri:mk(`<path fill="none" d="M36 64Q44 90 58 114M84 62Q74 90 60 114M60 54V114"/><ellipse fill="#FF8FAB" cx="34" cy="40" rx="21" ry="26"/><ellipse fill="#74B3FF" cx="86" cy="38" rx="21" ry="26"/><ellipse fill="#FFE066" cx="60" cy="30" rx="21" ry="26"/>`,
+    shine(26,30)+shine(78,28)+shine(52,20)+`<path d="M32 66l4-4 4 4zM84 64l4-4 4 4zM56 56l4-4 4 4z" fill="${LINE}"/>`)},
+  {k:'gift',cat:'party',uri:mk(`<rect fill="#B9A4FF" x="18" y="54" width="84" height="54" rx="4"/><rect fill="#C9B6FF" x="12" y="40" width="96" height="18" rx="4"/><path fill="#FF6F95" d="M60 40C44 14 22 22 32 40ZM60 40C76 14 98 22 88 40Z"/>`,
+    `<rect x="53" y="40" width="14" height="68" fill="#FF6F95"/><circle cx="34" cy="76" r="3.5" fill="#fff"/><circle cx="84" cy="88" r="3.5" fill="#fff"/><circle cx="30" cy="98" r="3" fill="#FFE066"/><circle cx="90" cy="70" r="3" fill="#FFE066"/>`)},
+  {k:'cake',cat:'party',uri:mk(`<rect fill="#FFF4E6" x="18" y="66" width="84" height="44" rx="6"/><rect fill="#FFD6E2" x="32" y="40" width="56" height="30" rx="6"/><rect fill="#74B3FF" x="56" y="18" width="8" height="22" rx="2"/><path fill="#FFB347" d="M60 4C67 11 67 15 60 18C53 15 53 11 60 4Z"/>`,
+    `<path d="M18 76Q26 84 34 76T50 76T66 76T82 76T102 76" stroke="#FF8FAB" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="44" cy="42" r="5" fill="#E04B5A"/><circle cx="76" cy="42" r="5" fill="#E04B5A"/><path d="M30 92h6M50 98h6M70 90h6M86 100h6" stroke="#B9A4FF" stroke-width="3" stroke-linecap="round"/>`)},
+  {k:'bunting',cat:'party',uri:mk(`<path fill="none" d="M6 30Q60 62 114 30"/><path fill="#FF8FAB" d="M8 36H30L19 66Z"/><path fill="${GOLD}" d="M28 43H51L39.5 74Z"/><path fill="#74B3FF" d="M49 46H71L60 78Z"/><path fill="#9BE3C0" d="M69 43H92L80.5 74Z"/><path fill="#B9A4FF" d="M90 36H112L101 66Z"/>`,
+    `<circle cx="19" cy="46" r="3" fill="#fff"/><circle cx="39.5" cy="53" r="3" fill="#fff"/><circle cx="60" cy="56" r="3" fill="#fff"/><circle cx="80.5" cy="53" r="3" fill="#fff"/><circle cx="101" cy="46" r="3" fill="#fff"/>`)},
+  {k:'popper',cat:'party',uri:mk(`<path fill="${GOLD}" d="M12 110L42 52L70 80Z"/>`,
+    `<path d="M24 92L52 72M32 104L60 82" stroke="#8E1E2E" stroke-width="4" stroke-linecap="round"/><path d="M60 50q10-18 4-34M74 62q18-6 26-22M80 80q18 4 30-6" stroke="#FF6F95" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="88" y="14" width="8" height="8" fill="#74B3FF" transform="rotate(20 92 18)"/><rect x="48" y="22" width="7" height="7" fill="#FFE066" transform="rotate(-15 51 25)"/><circle cx="104" cy="56" r="4" fill="#9BE3C0"/><circle cx="74" cy="30" r="4" fill="#B9A4FF"/><path d="M98 96l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="${GOLD}"/>`)},
+  {k:'cheers',cat:'party',uri:mk(`<g transform="translate(40 14) rotate(-16)"><path fill="#FFF8E1" d="M-13 0H13L10 38Q0 45 -10 38Z"/><rect fill="#FFF8E1" x="-2.5" y="42" width="5" height="34"/><ellipse fill="#FFF8E1" cx="0" cy="78" rx="15" ry="4.5"/></g><g transform="translate(80 14) rotate(16)"><path fill="#FFF8E1" d="M-13 0H13L10 38Q0 45 -10 38Z"/><rect fill="#FFF8E1" x="-2.5" y="42" width="5" height="34"/><ellipse fill="#FFF8E1" cx="0" cy="78" rx="15" ry="4.5"/></g>`,
+    `<g transform="translate(40 14) rotate(-16)"><path d="M-11.5 12H11.5L9.5 37Q0 43 -9.5 37Z" fill="${GOLD}"/><circle cx="-3" cy="24" r="1.8" fill="#fff"/><circle cx="3" cy="30" r="1.5" fill="#fff"/></g><g transform="translate(80 14) rotate(16)"><path d="M-11.5 12H11.5L9.5 37Q0 43 -9.5 37Z" fill="${GOLD}"/><circle cx="3" cy="22" r="1.8" fill="#fff"/><circle cx="-2" cy="30" r="1.5" fill="#fff"/></g><path d="M60 0l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="${GOLD}"/>`)},
+  {k:'discoball',cat:'party',uri:mk(`<path fill="none" d="M60 2V20"/><circle fill="#D9D2C6" cx="60" cy="66" r="44"/>`,
+    `<clipPath id="db"><circle cx="60" cy="66" r="42.5"/></clipPath><g clip-path="url(#db)"><path d="M16 46H104M16 60H104M16 74H104M16 88H104M30 22V110M45 22V110M60 22V110M75 22V110M90 22V110" stroke="#A59D90" stroke-width="2"/><rect x="45" y="46" width="15" height="14" fill="#fff"/><rect x="75" y="60" width="15" height="14" fill="#FFF3CF"/><rect x="30" y="74" width="15" height="14" fill="#E9CF8F"/><rect x="60" y="88" width="15" height="14" fill="#fff"/><rect x="60" y="32" width="15" height="14" fill="${GOLD}"/></g><path d="M100 14l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="${GOLD}"/><path d="M16 22l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="${GOLD}"/>`)},
+  {k:'fireworks',cat:'party',uri:mk(`<path fill="none" d="M60 58L60 14M60 58L91 27M60 58L104 58M60 58L91 89M60 58L60 102M60 58L29 89M60 58L16 58M60 58L29 27"/>`,
+    `<path d="M60 58L60 14M60 58L104 58M60 58L60 102M60 58L16 58" stroke="#FF6F95" stroke-width="4" stroke-linecap="round"/><path d="M60 58L91 27M60 58L91 89M60 58L29 89M60 58L29 27" stroke="${GOLD}" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="10" r="5" fill="#FFE066"/><circle cx="108" cy="58" r="5" fill="#74B3FF"/><circle cx="60" cy="106" r="5" fill="#FFE066"/><circle cx="12" cy="58" r="5" fill="#74B3FF"/><circle cx="60" cy="58" r="6" fill="#fff"/>`)},
+  {k:'confetti',cat:'party',uri:mk(`<rect fill="#FF8FAB" x="18" y="22" width="16" height="10" rx="2" transform="rotate(-25 26 27)"/><rect fill="#74B3FF" x="74" y="16" width="16" height="10" rx="2" transform="rotate(30 82 21)"/><circle fill="${GOLD}" cx="58" cy="44" r="8"/><rect fill="#9BE3C0" x="26" y="70" width="16" height="10" rx="2" transform="rotate(40 34 75)"/><circle fill="#B9A4FF" cx="88" cy="70" r="8"/><rect fill="#FFE066" x="56" y="90" width="16" height="10" rx="2" transform="rotate(-20 64 95)"/><path fill="none" d="M92 98q6-10 0-18M20 100q-4-10 4-16"/>`,
+    `<path d="M92 98q6-10 0-18M20 100q-4-10 4-16" stroke="#FF6F95" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M104 40l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="${GOLD}"/>`)},
+  // ---------- 蕾絲花邊（長條，ar 是寬高比） ----------
+  {k:'lacescallop',cat:'lace',ar:5,uri:laceURI(32,`<rect y="18" width="32" height="34" fill="#fff"/><circle cx="16" cy="52" r="16" fill="#fff"/><circle cx="16" cy="54" r="5.5" fill="#000"/><circle cx="16" cy="32" r="4" fill="#000"/><circle cx="0" cy="26" r="2.4" fill="#000"/><circle cx="32" cy="26" r="2.4" fill="#000"/><circle cx="16" cy="22" r="1.6" fill="#000"/><circle cx="6" cy="40" r="2" fill="#000"/><circle cx="26" cy="40" r="2" fill="#000"/>`)},
+  {k:'lacedaisy',cat:'lace',ar:5,uri:laceURI(48,`<rect y="43" width="48" height="10" fill="#fff"/>${[...Array(8)].map((_,i)=>`<circle cx="${(24+Math.cos(i*Math.PI/4)*15).toFixed(1)}" cy="${(48+Math.sin(i*Math.PI/4)*15).toFixed(1)}" r="9" fill="#fff"/>`).join('')}<circle cx="24" cy="48" r="12" fill="#fff"/><circle cx="24" cy="48" r="4.5" fill="#000"/>${[...Array(8)].map((_,i)=>`<circle cx="${(24+Math.cos(i*Math.PI/4)*16).toFixed(1)}" cy="${(48+Math.sin(i*Math.PI/4)*16).toFixed(1)}" r="3.2" fill="#000"/>`).join('')}`)},
+  {k:'laceeyelet',cat:'lace',ar:5,uri:laceURI(24,`<rect y="26" width="24" height="44" fill="#fff"/><circle cx="12" cy="26" r="10" fill="#fff"/><circle cx="12" cy="70" r="10" fill="#fff"/><ellipse cx="12" cy="48" rx="5" ry="10" fill="#000"/><circle cx="12" cy="22" r="2.6" fill="#000"/><circle cx="12" cy="74" r="2.6" fill="#000"/><circle cx="0" cy="34" r="1.6" fill="#000"/><circle cx="0" cy="62" r="1.6" fill="#000"/>`)},
+  {k:'laceheart',cat:'lace',ar:5,uri:laceURI(40,`<rect y="45" width="40" height="6" fill="#fff"/><path d="M20 72C4 60 2 46 10 38C16 32 20 36 20 42C20 36 24 32 30 38C38 46 36 60 20 72Z" fill="#fff"/><path d="M20 62C12 56 11 49 14 45C17 42 20 44 20 48C20 44 23 42 26 45C29 49 28 56 20 62Z" fill="#000"/><circle cx="0" cy="48" r="5" fill="#fff"/><circle cx="0" cy="48" r="2" fill="#000"/>`)},
+  {k:'lacepearl',cat:'lace',ar:5,uri:svgW(480,96,`<defs><radialGradient id="pg" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".45" stop-color="#F4EBDD"/><stop offset="1" stop-color="#C9B79C"/></radialGradient></defs><path d="M0 40Q240 76 480 40" stroke="#D9BD7E" stroke-width="2" fill="none"/>${[...Array(20)].map((_,i)=>{ const x=12+i*24, y=40+36*(1-Math.pow((x-240)/240,2))*0.5*2*0.5*2*0.5; return `<circle cx="${x}" cy="${y.toFixed(1)}" r="${i%5===2?11:8.5}" fill="url(#pg)"/>`; }).join('')}`)},
+  {k:'lacedeco',cat:'lace',ar:5,uri:svgW(480,96,`<defs><linearGradient id="dg" x1="0" x2="1"><stop offset="0" stop-color="#6E5226"/><stop offset=".45" stop-color="#EAD3A0"/><stop offset="1" stop-color="#9A7738"/></linearGradient><pattern id="dp" width="132" height="96" patternUnits="userSpaceOnUse"><g fill="url(#dg)"><rect x="3" y="20" width="12" height="56" rx="3"/><rect x="19" y="20" width="10" height="56" rx="3"/><rect x="33" y="20" width="7" height="56" rx="2"/><rect x="44" y="20" width="4" height="56" rx="1"/><rect x="53" y="16" width="1.4" height="64"/><rect x="77.6" y="16" width="1.4" height="64"/><rect x="84" y="20" width="4" height="56" rx="1"/><rect x="92" y="20" width="7" height="56" rx="2"/><rect x="103" y="20" width="10" height="56" rx="3"/><rect x="117" y="20" width="12" height="56" rx="3"/></g></pattern></defs><rect width="480" height="96" fill="url(#dp)"/><path d="M0 8H480M0 88H480" stroke="#D9BD7E" stroke-width="2"/>`)},
   {k:'trophy',cat:'award',uri:mk(`<path fill="none" d="M40 32H24Q20 56 44 60M80 32H96Q100 56 76 60"/><path fill="${GOLD}" d="M36 20H84V46Q84 72 60 76Q36 72 36 46Z"/><rect fill="${GOLD}" x="53" y="74" width="14" height="14"/><rect fill="${DARK}" x="38" y="88" width="44" height="16" rx="3"/>`,shine(48,36)+`<path fill="#FFF3CF" transform="translate(48 34) scale(.2)" d="${SPARK}"/><rect x="50" y="93" width="20" height="5" rx="2" fill="${GOLD}"/>`)},
   {k:'clapper',cat:'award',uri:mk(`<rect fill="${DARK}" x="16" y="48" width="88" height="54" rx="5"/><path fill="${DARK}" d="M14 30L100 16L104 36L18 46Z"/>`,`<path fill="#F3EADB" d="M28 28L40 26L36 43L24 44ZM52 24L64 22L60 40L48 41ZM76 20L88 18L84 37L72 38Z"/><path d="M28 64H92M28 78H70M28 90H82" stroke="#F3EADB" stroke-width="3" stroke-linecap="round" opacity=".7"/>`)},
   {k:'reel',cat:'award',uri:mk(`<circle fill="${DARK}" cx="60" cy="60" r="46"/>`,[0,72,144,216,288].map(a=>`<circle cx="60" cy="34" r="11" fill="#F3EADB" transform="rotate(${a} 60 60)"/>`).join('')+`<circle cx="60" cy="60" r="7" fill="${GOLD}"/>`)},
@@ -1464,17 +1549,6 @@ const STICKERS=[
   {k:'star',cat:'love',uri:mk(`<polygon fill="#FFD43B" points="60,12 73,44 108,46 81,68 90,102 60,83 30,102 39,68 12,46 47,44"/>`,eyes(60,9)+`<path d="M55 68q5 5 10 0" stroke="${LINE}" stroke-width="3" fill="none" stroke-linecap="round"/>`)},
   {k:'bow',cat:'love',uri:mk(`<path fill="#FF9EBB" d="M54 62L38 100L50 96L58 104L60 64Z"/><path fill="#FF9EBB" d="M66 62L82 100L70 96L62 104L60 64Z"/><path fill="#FF9EBB" d="M58 56C40 30 12 32 14 52C16 72 40 70 58 62Z"/><path fill="#FF9EBB" d="M62 56C80 30 108 32 106 52C104 72 80 70 62 62Z"/><rect fill="#FF7FA3" x="50" y="47" width="20" height="22" rx="8"/>`)},
   {k:'letter',cat:'love',uri:mk(`<rect fill="#FFFFFF" x="16" y="32" width="88" height="60" rx="8"/><path fill="#FFE3EB" d="M16 36L60 68L104 36"/>`,`<path fill="#FF6F95" transform="translate(48 58) scale(.2)" d="${HEART}"/>`)},
-  {k:'bunny',cat:'animal',uri:mk(`<ellipse fill="#FFFFFF" cx="44" cy="34" rx="11" ry="26"/><ellipse fill="#FFFFFF" cx="76" cy="34" rx="11" ry="26"/><ellipse fill="#FFFFFF" cx="60" cy="76" rx="38" ry="31"/>`,`<ellipse cx="44" cy="34" rx="5" ry="17" fill="#FFC2D3"/><ellipse cx="76" cy="34" rx="5" ry="17" fill="#FFC2D3"/>`+eyes(74,12)+blush(84,24)+`<path d="M56 82q4 4 8 0" stroke="${LINE}" stroke-width="3" fill="none" stroke-linecap="round"/>`)},
-  {k:'bear',cat:'animal',uri:mk(`<circle fill="#C99A6E" cx="30" cy="38" r="15"/><circle fill="#C99A6E" cx="90" cy="38" r="15"/><circle fill="#C99A6E" cx="60" cy="68" r="40"/>`,`<circle cx="30" cy="38" r="7" fill="#F1DCC3"/><circle cx="90" cy="38" r="7" fill="#F1DCC3"/><ellipse cx="60" cy="80" rx="17" ry="13" fill="#F1DCC3"/><ellipse cx="60" cy="75" rx="6" ry="4" fill="${LINE}"/>`+eyes(62,15)+blush(76,28))},
-  {k:'cat',cat:'animal',uri:mk(`<path fill="#FFE6A8" d="M24 52L28 16L52 36Q60 33 68 36L92 16L96 52Q102 96 60 98Q18 96 24 52Z"/>`,eyes(62,14)+blush(74,26)+`<path d="M52 72q4 5 8 0q4 5 8 0" stroke="${LINE}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M12 64h16M12 74h16M92 64h16M92 74h16" stroke="${LINE}" stroke-width="2.5" stroke-linecap="round"/>`)},
-  {k:'chick',cat:'animal',uri:mk(`<circle fill="#FFE066" cx="60" cy="66" r="40"/><path fill="#FFE066" d="M56 28Q58 12 66 18Q62 22 64 28Z"/>`,eyes(60,13)+blush(72,24)+`<path d="M54 68L60 76L66 68Z" fill="#FF9F43"/>`)},
-  {k:'butterfly',cat:'animal',uri:mk(`<ellipse fill="#B9DCFF" cx="36" cy="44" rx="24" ry="20" transform="rotate(-20 36 44)"/><ellipse fill="#B9DCFF" cx="84" cy="44" rx="24" ry="20" transform="rotate(20 84 44)"/><ellipse fill="#FFC4D6" cx="42" cy="80" rx="16" ry="14"/><ellipse fill="#FFC4D6" cx="78" cy="80" rx="16" ry="14"/>`,`<rect x="55" y="36" width="10" height="56" rx="5" fill="${LINE}"/><path d="M58 36Q50 20 44 18M62 36Q70 20 76 18" stroke="${LINE}" stroke-width="3" fill="none" stroke-linecap="round"/>`)},
-  {k:'cloud',cat:'animal',uri:mk(`<path fill="#FFFFFF" d="M30 88C14 88 10 70 22 62C18 46 36 38 46 46C50 30 74 28 80 44C94 38 108 50 100 64C112 70 106 88 92 88Z"/>`,eyes(66,10)+blush(74,22))},
-  {k:'cherry',cat:'fruit',uri:mk(`<path fill="none" d="M42 64Q50 32 72 18M78 64Q74 38 72 18"/><circle fill="#FF5C7A" cx="40" cy="80" r="19"/><circle fill="#FF5C7A" cx="80" cy="80" r="19"/>`,`<path d="M42 64Q50 32 72 18M78 64Q74 38 72 18" stroke="#5BBF7A" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="84" cy="24" rx="12" ry="6" fill="#6CCB8B" transform="rotate(-25 84 24)"/>`+shine(32,72)+shine(72,72))},
-  {k:'berry',cat:'fruit',uri:mk(`<path fill="#FF6B81" d="M60 108C30 96 18 62 30 44C40 32 80 32 90 44C102 62 90 96 60 108Z"/><path fill="#6CCB8B" d="M36 40L48 26L60 38L72 26L84 40L68 46L60 54L52 46Z"/>`,[[46,62],[64,60],[80,64],[54,78],[72,80],[62,94],[40,78]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="2.5" ry="4" fill="#FFE9A8"/>`).join(''))},
-  {k:'daisy',cat:'fruit',uri:mk(petals+`<circle fill="#FFD43B" cx="60" cy="60" r="16"/>`,eyes(58,5)+`<path d="M57 63q3 3 6 0" stroke="${LINE}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`)},
-  {k:'tulip',cat:'fruit',uri:mk(`<path fill="none" d="M60 70V108"/><path fill="#7FD6AE" d="M60 100Q36 96 30 72Q50 76 60 94Z"/><path fill="#FF9EBB" d="M36 28L48 40L60 24L72 40L84 28Q90 70 60 74Q30 70 36 28Z"/>`,`<path d="M60 74V108" stroke="#5BBF7A" stroke-width="4" stroke-linecap="round"/>`)},
-  {k:'clover',cat:'fruit',uri:mk(`<path fill="none" d="M60 64Q66 92 80 106"/><circle fill="#8FDCA8" cx="60" cy="36" r="19"/><circle fill="#8FDCA8" cx="84" cy="58" r="19"/><circle fill="#8FDCA8" cx="60" cy="80" r="19"/><circle fill="#8FDCA8" cx="36" cy="58" r="19"/>`,`<path d="M64 84Q68 96 80 106" stroke="#5BBF7A" stroke-width="4" fill="none" stroke-linecap="round"/>`)},
   {k:'cap',cat:'school',uri:mk(`<path fill="#5B4A7A" d="M34 58V82Q60 98 86 82V58L60 68Z"/><path fill="#5B4A7A" d="M8 48L60 26L112 48L60 70Z"/>`,`<path d="M60 48L96 58V82" stroke="#FFD43B" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="96" cy="86" r="6" fill="#FFD43B"/>`)},
   {k:'pencil',cat:'school',uri:mk(`<g transform="rotate(-35 60 60)"><rect fill="#FFE066" x="22" y="48" width="64" height="24" rx="4"/><path fill="#F6D7B0" d="M86 48L108 60L86 72Z"/><rect fill="#FF8FAB" x="10" y="48" width="16" height="24" rx="6"/></g>`,`<g transform="rotate(-35 60 60)"><path d="M100 56L108 60L100 64Z" fill="${LINE}"/></g>`)},
   {k:'camera',cat:'school',uri:mk(`<rect fill="#C9B6FF" x="34" y="24" width="26" height="18" rx="6"/><rect fill="#C9B6FF" x="12" y="36" width="96" height="64" rx="16"/>`,`<circle cx="60" cy="68" r="21" fill="#fff" stroke="${LINE}" stroke-width="3"/><circle cx="60" cy="68" r="12" fill="#8E80C4"/><circle cx="55" cy="63" r="4" fill="#fff"/><circle cx="92" cy="50" r="5" fill="#FFE066"/>`)},
@@ -1540,7 +1614,8 @@ const STICKERS=[
   {k:'goggles',cat:'s5',uri:mk(`<path fill="none" d="M16 60Q6 60 6 70M104 60Q114 60 114 70"/><ellipse fill="#4FB3D9" cx="38" cy="60" rx="22" ry="17"/><ellipse fill="#4FB3D9" cx="82" cy="60" rx="22" ry="17"/><path fill="none" d="M58 56Q60 51 62 56"/>`,
     `<path d="M16 60Q6 60 6 70M104 60Q114 60 114 70" stroke="#E04B5A" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="60" rx="15" ry="11" fill="#9FE0F5"/><ellipse cx="82" cy="60" rx="15" ry="11" fill="#9FE0F5"/><path d="M28 55q5-5 11-4M72 55q5-5 11-4" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/>`)},
 ];
-const CATS={ s1:'校門口', s2:'榕園', s3:'圖書館', s4:'活動中心', s5:'體育館', award:'典禮', love:'愛心', animal:'動物', fruit:'花果', school:'校園' };
+const CATS={ s1:'校門口', s2:'榕園', s3:'圖書館', s4:'活動中心', s5:'體育館', party:'派對', lace:'蕾絲花邊', award:'典禮', love:'愛心', school:'校園' };
+const STK_AR={}; STICKERS.forEach(s=>{ if(s.ar) STK_AR[s.k]=s.ar; });
 const STK_IMG={};
 STICKERS.forEach(s=>{ const im=new Image(); im.onload=()=>{ if(E.spot) draw(); }; im.src=s.uri; STK_IMG[s.k]=im; });
 
@@ -1581,6 +1656,23 @@ const extraCats={};
   };
   im.src=cs.src; STK_IMG[cs.k]=im;
 });
+/* 文字與便利貼可選的字體（Google Fonts；中文字型會依用到的字自動下載） */
+const TEXT_FONTS={
+  auto:{ label:'預設' },
+  ming:{ label:'明體', fam:SF, w:600 },
+  hei: { label:'黑體', fam:'"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', w:700 },
+  kai: { label:'楷體', fam:'"LXGW WenKai TC","BiauKai","DFKai-SB",serif', w:700 },
+  hand:{ label:'手寫', fam:'"Iansui","LXGW WenKai TC",cursive', w:400 },
+  cute:{ label:'俏皮', fam:'"Huninn","PingFang TC",sans-serif', w:400 }
+};
+const FONT_TRY=new Set();
+/* 畫到畫布前確認字型已下載；還沒下載就先抓，抓完重畫一次 */
+function needFont(F,text){
+  if(!F || !F.fam || !text || !document.fonts) return;
+  const spec=`${F.w} 40px ${F.fam.split(',')[0]}`; let ok=true; try{ ok=document.fonts.check(spec,text); }catch(_){}
+  if(ok) return; const key=spec+'|'+text; if(FONT_TRY.has(key)) return; FONT_TRY.add(key);
+  document.fonts.load(spec,text).then(()=>{ if(E.spot) draw(); }).catch(()=>{});
+}
 const WSTYLE={
   gold:{bg:'#D4AF61',fg:'#2A1E10',serif:true}, velvet:{bg:'#8E1E2E',fg:'#F6EBD6',serif:true}, ink:{bg:'#1B1613',fg:'#E9CF8F',serif:true},
   pink:{bg:'#FF8FAB',fg:'#FFFFFF'}, lilac:{bg:'#B9A4FF',fg:'#FFFFFF'}, butter:{bg:'#FFE066',fg:'#7A5B00'},
@@ -1605,7 +1697,7 @@ const PAD_COLORS=['#1B1613','#8E1E2E','#8A6A2A'];
 const LIVE_FILTER={ none:'none', milk:'brightness(1.08) saturate(.9) contrast(.96)', peach:'brightness(1.05) saturate(1.05) sepia(.1) hue-rotate(-10deg)', mono:'grayscale(1) brightness(1.05)', warm:'sepia(.28) saturate(.85) brightness(1.04) contrast(.97)' };
 const TOOL_NAMES={ tpl:'範例樣式', frame:'相框', filter:'美顏', sticker:'貼紙', word:'文字', pen:'塗鴉', msg:'留言' };
 const E={ spot:null, tool:null, layout:'single', frame:DEF_FRAME, filter:'milk', caption:true, cells:[], cur:0, stickers:[], sel:-1, strokes:[],
-  pen:'#FFFFFF', penSize:.014, textStyle:'gold', msg:'', msgMode:'type', msgPlace:'caption', hand:[], handColor:'#1B1613',
+  pen:'#FFFFFF', penSize:.014, textStyle:'gold', textFont:'auto', noteFont:'cute', noteTape:'plain', msg:'', msgMode:'type', msgPlace:'caption', hand:[], handColor:'#1B1613',
   kind:'selfie', title:'', mode:'selfie', timer:3, shotK:0 };
 const newCell=()=>({ raw:null, img:null, zoom:1, ox:0, oy:0, mini:null });
 const L=()=>LAYOUTS[E.layout];
@@ -1634,8 +1726,9 @@ function strokePath(c,sk,outline){
   c.strokeStyle=sk.c; c.lineWidth=sk.w; c.stroke(); c.restore();
 }
 function drawWord(c,st){
-  const s=WSTYLE[st.st], fs=st.base*0.3;
-  c.font = s.serif ? `600 ${fs*0.9}px ${SF}` : `700 ${fs}px ${GF}`;
+  const s=WSTYLE[st.st], fs=st.base*0.3, F=TEXT_FONTS[st.f];
+  if(F && F.fam){ needFont(F,st.v); c.font=`${F.w} ${fs*0.9}px ${F.fam}`; }
+  else c.font = s.serif ? `600 ${fs*0.9}px ${SF}` : `700 ${fs}px ${GF}`;
   const w=c.measureText(st.v).width+fs*1.1, h=fs*1.5, o=fs*0.14;
   c.shadowColor='rgba(60,40,70,.22)'; c.shadowBlur=10; c.shadowOffsetY=4;
   c.fillStyle='#FFFFFF';
@@ -1739,7 +1832,7 @@ function draw(showSel=true){
       cx.fillStyle=Fm.sub; cx.font=`500 ${Math.round(lay.cap[1]*0.8)}px ${NF}`;
       cx.fillText(scene ? `${ttl?`《${ttl}》 `:''}攝影 ${S.player.name}${sep}${dateStr()}` : `${S.player.name}${sep}${Fm.awardCap&&E.spot.award?E.spot.award:E.spot.name}${sep}${dateStr()}`, mid, capTop+capH*0.84);
     } else {
-      const head = Fm.awardCap && E.spot.award ? E.spot.award : E.spot.name;
+      const head = Fm.head || (Fm.awardCap && E.spot.award ? E.spot.award : E.spot.name);
       cx.fillStyle=Fm.ink;
       const f=fitText(cx, head, W-220, lay.cap[0]*1.3, lay.cap[0], 26, SF, 600);
       cx.font=`600 ${f.s}px ${SF}`;
@@ -1747,7 +1840,7 @@ function draw(showSel=true){
       const tw=cx.measureText(f.ls[0]).width, hs=f.s*0.3;
       cx.fillStyle=Fm.sub; if(Fm.orn!=='none'){ ornament(cx,Fm.orn,mid-tw/2-hs*2.4,y1,hs,-1); ornament(cx,Fm.orn,mid+tw/2+hs*2.4,y1,hs,1); }
       cx.font=subF;
-      cx.fillText(`${S.player.name}${sep}${dateStr()}`, mid, capTop+capH*0.72);
+      cx.fillText(Fm.head ? `${S.player.name}${sep}${E.spot.award||E.spot.name}${sep}${dateStr()}` : `${S.player.name}${sep}${dateStr()}`, mid, capTop+capH*0.72);
     }
   }
   E.strokes.forEach(sk=>strokePath(cx,sk));
@@ -1893,7 +1986,7 @@ function hint(){
 function syncUI(){
   if(!E.spot) return;
   setSel('tool',E.tool,$('#toolbar')); setSel('frame',E.frame); setSel('filter',E.filter); setSel('pen',E.pen); setSel('psize',E.penSize);
-  setSel('tstyle',E.textStyle); setSel('mode2',E.msgMode); setSel('place',E.msgPlace); setSel('padc',E.handColor); setSel('tpl',tplSel);
+  setSel('tstyle',E.textStyle); setSel('tfont',E.textFont); setSel('mode2',E.msgMode); setSel('place',E.msgPlace); setSel('padc',E.handColor); setSel('tpl',tplSel);
   $('#msgTabLbl').innerHTML = hasMsg() ? '留言 '+ic('check') : '留言';
   $('#edHint').textContent=hint();
   const multi=L().cells.length>1, c=E.cells[E.cur];
@@ -1905,7 +1998,9 @@ function syncUI(){
   const sc=E.kind==='scene';
   $('#m-type').hidden = E.msgMode!=='type'; $('#m-hand').hidden = E.msgMode!=='hand';
   const nt=E.layout==='note';
-  $('#noteColorsRow').hidden=!nt; $('#msgPlace').hidden=nt; $('#placeLbl').hidden=nt;
+  $('#noteColorsRow').hidden=!nt; $('#noteStyle').hidden=!nt;
+  if(nt){ $('#noteFonts').innerHTML=Object.entries(TEXT_FONTS).filter(([k])=>k!=='auto').map(([k,f])=>`<button class="chip" data-nfont="${k}" style="${f.fam?`font-family:${f.fam.replace(/"/g,"'")};font-weight:${f.w}`:''}">${f.label}</button>`).join(''); setSel('nfont',E.noteFont,$('#noteFonts'));
+    $('#noteTapes').innerHTML=Object.entries(NOTE_TAPES).map(([k,l])=>`<button data-ntape="${k}" aria-pressed="${k===E.noteTape}"><img src="${tapePreview(k)}" alt="">${l}</button>`).join(''); } $('#msgPlace').hidden=nt; $('#placeLbl').hidden=nt;
   if(nt) $('#noteColorsRow').innerHTML=Object.entries(NOTE_COLORS).map(([k,[bg]])=>`<button data-ncol="${k}" aria-label="便利貼顏色" aria-pressed="${k===E.noteColor}" style="background:${bg}"></button>`).join('');
   $('#m-title').hidden = !(sc && E.msgMode==='type');
   $('#msgLabel').textContent = nt ? '便利貼上的祝福（60 字內）' : sc ? '作品介紹（為什麼拍這裡？）' : '留一句話給大家';
@@ -1926,7 +2021,7 @@ function renderFilters(){
 }
 function renderStk(cat){
   setSel('cat',cat,$('#stkcats'));
-  $('#stkbox').innerHTML=STICKERS.filter(s=>s.cat===cat).map(s=>`<button class="stk" data-stk="${s.k}" aria-label="貼紙"><img src="${s.uri}" alt=""></button>`).join('');
+  $('#stkbox').innerHTML=STICKERS.filter(s=>s.cat===cat).map(s=>`<button class="stk${s.ar?' wide':''}" data-stk="${s.k}" aria-label="貼紙"><img src="${s.uri}" alt=""></button>`).join('');
 }
 function renderTemplates(){ $('#tpls').innerHTML=CONFIG.templates.map((t,i)=> FRAMES[t.frame] && !frameOK(FRAMES[t.frame]) ? '' : `<button class="tpl" data-tpl="${i}" aria-pressed="${i===tplSel}">${tplPreview(t)}${esc(t.name)}</button>`).join(''); }
 function renderQuick(){
@@ -1947,6 +2042,7 @@ function renderAllPanels(){
   $('#filters').innerHTML='';
   $('#stkcats').innerHTML=Object.entries(CATS).map(([k,l])=>`<button class="chip" data-cat="${k}">${l}</button>`).join(''); setSel('cat',stkCat,$('#stkcats'));
   $('#words').innerHTML=WORDS.map((w,i)=>{ const s=WSTYLE[w.st]; return `<button class="word" data-word="${i}" style="background:${s.bg};color:${s.fg};${s.line?`box-shadow:0 0 0 2px ${s.line} inset,0 3px 6px rgba(60,40,70,.15)`:''}">${esc(w.v)}</button>`; }).join('');
+  $('#textFonts').innerHTML=Object.entries(TEXT_FONTS).map(([k,f])=>`<button class="chip" data-tfont="${k}" style="${f.fam?`font-family:${f.fam.replace(/"/g,"'")};font-weight:${f.w}`:''}">${f.label}</button>`).join('');
   $('#textColors').innerHTML=TEXT_STYLES.map(k=>{ const s=WSTYLE[k]; return `<button class="dot" data-tstyle="${k}" aria-label="文字顏色" style="background:${s.bg};${s.line?`outline:3px solid ${s.line};outline-offset:-6px`:''}"></button>`; }).join('');
   $('#penColors').innerHTML=PEN_COLORS.map(c=>`<button class="dot" data-pen="${c}" aria-label="畫筆顏色" style="background:${c}"></button>`).join('');
   $('#penSizes').innerHTML=PEN_SIZES.map(([l,v])=>`<button class="chip" data-psize="${v}">${l}</button>`).join('');
@@ -1999,8 +2095,9 @@ function drawSticker(st,sel){
   const c=cx; c.save(); c.translate(st.x,st.y); c.rotate(st.r); c.scale(st.s,st.s);
   if(st.type==='img'){
     const im=STK_IMG[st.key], b=st.base;
-    if(im && (im.naturalWidth || (im.width && !(im instanceof HTMLImageElement)))){ c.shadowColor='rgba(60,40,70,.2)'; c.shadowBlur=12; c.shadowOffsetY=4; c.drawImage(im,-b/2,-b/2,b,b); c.shadowColor='rgba(0,0,0,0)'; }
-    st.hw=st.hh=b*0.45;
+    const ar=STK_AR[st.key]||1, w=ar>1?b*2.4:b, h=w/ar;
+    if(im && (im.naturalWidth || (im.width && !(im instanceof HTMLImageElement)))){ c.shadowColor='rgba(60,40,70,.28)'; c.shadowBlur=12; c.shadowOffsetY=4; c.drawImage(im,-w/2,-h/2,w,h); c.shadowColor='rgba(0,0,0,0)'; }
+    st.hw=w*0.45; st.hh=Math.max(h*0.5,b*0.18);
   } else if(st.type==='hand'){
     const b=st.base, h=b*st.img.height/st.img.width;
     c.drawImage(st.img,-b/2,-h/2,b,h); st.hw=b/2; st.hh=h/2;
@@ -2109,16 +2206,44 @@ function presetPicker(){
   });
 }
 /* 便利貼：直接用編輯畫面（可加貼紙、文字、塗鴉、手寫），底圖換成一整張便利貼 */
+const NOTE_TAPES={ plain:'霧白', gold:'香檳金', stripe:'紅金斜紋', dot:'粉點點', check:'紅格紋', lace:'蕾絲', corner:'金色雙角', none:'不貼' };
+/* 紙膠帶：中心 (x,y)、寬 w、高 h、角度 rot；兩端是撕開的鋸齒 */
+function drawTape(g,x,y,w,h,rot,kind,paper){
+  g.save(); g.translate(x,y); g.rotate(rot);
+  const n=Math.max(4,Math.round(h/6)), zz=h*0.12; g.beginPath(); g.moveTo(-w/2,-h/2); g.lineTo(w/2,-h/2);
+  for(let i=1;i<=n;i++) g.lineTo(w/2+(i%2?-zz:0), -h/2+h*i/n);
+  g.lineTo(-w/2,h/2); for(let i=n-1;i>=0;i--) g.lineTo(-w/2+(i%2?zz:0), -h/2+h*i/n); g.closePath();
+  g.shadowColor='rgba(0,0,0,.12)'; g.shadowBlur=h*0.2; g.shadowOffsetY=h*0.06;
+  const base={ plain:'rgba(255,255,255,.62)', gold:'rgba(226,190,112,.88)', stripe:'rgba(246,238,223,.9)', dot:'rgba(255,200,216,.88)', check:'rgba(255,255,255,.8)', lace:'rgba(255,255,255,.0)' }[kind]||'rgba(255,255,255,.62)';
+  g.fillStyle=base; g.fill(); g.shadowColor='rgba(0,0,0,0)'; g.clip();
+  if(kind==='gold'){ const gr=g.createLinearGradient(-w/2,-h/2,w/2,h/2); gr.addColorStop(0,'rgba(255,240,200,0)'); gr.addColorStop(.5,'rgba(255,248,225,.55)'); gr.addColorStop(1,'rgba(255,240,200,0)'); g.fillStyle=gr; g.fillRect(-w/2,-h/2,w,h); }
+  if(kind==='stripe'){ g.lineWidth=h*0.22; for(let d=-w;d<w;d+=h*0.62){ g.strokeStyle=(Math.round(d/(h*0.62))%2)?'rgba(142,30,46,.75)':'rgba(212,175,97,.8)'; g.beginPath(); g.moveTo(d,h/2); g.lineTo(d+h,-h/2); g.stroke(); } }
+  if(kind==='dot'){ g.fillStyle='rgba(255,255,255,.9)'; for(let yy=-h/2+h*0.25,r=0;yy<h/2;yy+=h*0.5,r++) for(let xx=-w/2+(r%2?h*0.25:0);xx<w/2;xx+=h*0.5){ g.beginPath(); g.arc(xx,yy,h*0.1,0,Math.PI*2); g.fill(); } }
+  if(kind==='check'){ g.fillStyle='rgba(214,58,58,.32)'; const u=h/3; for(let xx=-w/2;xx<w/2;xx+=u*2) g.fillRect(xx,-h/2,u,h); g.fillRect(-w/2,-u/2,w,u); }
+  if(kind==='lace'){ g.fillStyle='rgba(255,255,255,.92)'; g.fillRect(-w/2,-h*0.22,w,h*0.44); const r=h*0.2;
+    for(let xx=-w/2+r;xx<w/2;xx+=r*2){ [-h*0.22,h*0.22].forEach(yy=>{ g.beginPath(); g.arc(xx,yy,r,0,Math.PI*2); g.fill(); }); }
+    g.fillStyle=paper||'#FFF1A8'; for(let xx=-w/2+r;xx<w/2;xx+=r*2){ g.beginPath(); g.arc(xx,0,r*0.34,0,Math.PI*2); g.fill(); [-h*0.26,h*0.26].forEach(yy=>{ g.beginPath(); g.arc(xx,yy,r*0.22,0,Math.PI*2); g.fill(); }); } }
+  g.restore();
+}
+const TAPE_PREVIEW={};
+function tapePreview(k){ if(TAPE_PREVIEW[k]) return TAPE_PREVIEW[k]; const c=document.createElement('canvas'); c.width=168; c.height=60; const g=c.getContext('2d');
+  if(k==='none'){ g.strokeStyle='#B8AFA2'; g.lineWidth=3; g.setLineDash([8,6]); g.strokeRect(20,14,128,32); }
+  else if(k==='corner'){ drawTape(g,44,30,70,24,-.5,'gold','#FFF1A8'); drawTape(g,124,30,70,24,.5,'gold','#FFF1A8'); }
+  else { g.fillStyle='#FFF1A8'; g.fillRect(0,0,168,60); drawTape(g,84,30,140,30,-.04,k,'#FFF1A8'); }
+  return TAPE_PREVIEW[k]=c.toDataURL('image/png'); }
 function paintNote(g,size,text,ck,hintEmpty){
   const [bg,ac]=NOTE_COLORS[ck]||NOTE_COLORS.yellow;
   g.fillStyle=bg; g.fillRect(0,0,size,size);
   const sh=g.createLinearGradient(0,size*.6,0,size); sh.addColorStop(0,'rgba(0,0,0,0)'); sh.addColorStop(1,'rgba(0,0,0,.06)'); g.fillStyle=sh; g.fillRect(0,0,size,size);
-  g.save(); g.translate(size/2,size*.035); g.rotate(-.04); g.fillStyle='rgba(255,255,255,.6)'; g.fillRect(-size*.16,-size*.03,size*.32,size*.07); g.restore();
+  const tk=E.noteTape||'plain';
+  if(tk==='corner'){ drawTape(g,size*.07,size*.06,size*.26,size*.065,-.78,'gold',bg); drawTape(g,size*.93,size*.06,size*.26,size*.065,.78,'gold',bg); }
+  else if(tk!=='none') drawTape(g,size/2,size*.035,size*.34,size*.075,-.04,tk,bg);
   g.textAlign='center'; g.textBaseline='middle';
   if(text){
     g.fillStyle='#3B3346';
-    const f=fitText(g, text, size*.78, size*.56, Math.round(size*.085), Math.round(size*.042), HF);
-    g.font=`400 ${f.s}px ${HF}`;
+    const NFt=TEXT_FONTS[E.noteFont]&&TEXT_FONTS[E.noteFont].fam ? TEXT_FONTS[E.noteFont] : { fam:HF, w:400 }; needFont(NFt,text);
+    const f=fitText(g, text, size*.78, size*.56, Math.round(size*.085), Math.round(size*.042), NFt.fam, NFt.w);
+    g.font=`${NFt.w} ${f.s}px ${NFt.fam}`;
     const top=size*.42-(f.ls.length-1)*f.s*1.35/2; f.ls.forEach((ln,i)=>g.fillText(ln,size/2,top+i*f.s*1.35));
   } else if(hintEmpty){
     g.fillStyle='rgba(59,51,70,.35)'; g.font=`400 ${Math.round(size*.05)}px ${HF}`;
@@ -2167,12 +2292,16 @@ $('#frames').addEventListener('click', e=>{ const b=e.target.closest('[data-fram
 $('#filters').addEventListener('click', e=>{ const b=e.target.closest('[data-filter]'); if(b) setFilter(b.dataset.filter); });
 $('#stkcats').addEventListener('click', e=>{ const b=e.target.closest('[data-cat]'); if(b) renderStk(b.dataset.cat); });
 $('#stkbox').addEventListener('click', e=>{ const s=e.target.closest('[data-stk]'); if(s) addSticker({type:'img', key:s.dataset.stk}); });
-$('#words').addEventListener('click', e=>{ const w=e.target.closest('[data-word]'); if(!w) return; const o=WORDS[+w.dataset.word]; addSticker({type:'word', v:o.v, st:o.st}); });
+$('#words').addEventListener('click', e=>{ const w=e.target.closest('[data-word]'); if(!w) return; const o=WORDS[+w.dataset.word]; addSticker({type:'word', v:o.v, st:o.st, f:E.textFont}); });
+$('#textFonts').addEventListener('click', e=>{ const b=e.target.closest('[data-tfont]'); if(!b) return; E.textFont=b.dataset.tfont;
+  const st=E.stickers[E.sel]; if(st && st.type==='word') st.f=E.textFont; syncUI(); draw(); });
 $('#textColors').addEventListener('click', e=>{ const b=e.target.closest('[data-tstyle]'); if(b){ E.textStyle=b.dataset.tstyle; syncUI(); } });
 $('#penColors').addEventListener('click', e=>{ const b=e.target.closest('[data-pen]'); if(b){ E.pen=b.dataset.pen; syncUI(); } });
 $('#penSizes').addEventListener('click', e=>{ const b=e.target.closest('[data-psize]'); if(b){ E.penSize=+b.dataset.psize; syncUI(); } });
 $('#padColors').addEventListener('click', e=>{ const b=e.target.closest('[data-padc]'); if(b){ E.handColor=b.dataset.padc; syncUI(); } });
 $('#msgMode').addEventListener('click', e=>{ const b=e.target.closest('[data-mode2]'); if(!b) return; E.msgMode=b.dataset.mode2; syncUI(); draw(); });
+$('#noteFonts').addEventListener('click', e=>{ const b=e.target.closest('[data-nfont]'); if(!b) return; E.noteFont=b.dataset.nfont; syncUI(); draw(); });
+$('#noteTapes').addEventListener('click', e=>{ const b=e.target.closest('[data-ntape]'); if(!b) return; E.noteTape=b.dataset.ntape; syncUI(); draw(); });
 $('#noteColorsRow').addEventListener('click', e=>{ const b=e.target.closest('[data-ncol]'); if(!b) return; E.noteColor=b.dataset.ncol; syncUI(); draw(); });
 $('#msgPlace').addEventListener('click', e=>{ const b=e.target.closest('[data-place]'); if(b) setPlace(b.dataset.place); });
 $('#msg').addEventListener('input', e=>{ E.msg=e.target.value; syncUI(); draw(); });
@@ -2193,7 +2322,7 @@ document.addEventListener('click', e=>{
   if(a==='finish') finish();
   if(a==='closetool') setTool(null);
   if(a==='cap'){ E.caption=!E.caption; syncUI(); draw(); }
-  if(a==='addtext'){ const v=$('#myText').value.trim(); if(!v){ toast('先打幾個字喔'); return; } addSticker({type:'word', v, st:E.textStyle}); $('#myText').value=''; }
+  if(a==='addtext'){ const v=$('#myText').value.trim(); if(!v){ toast('先打幾個字喔'); return; } addSticker({type:'word', v, st:E.textStyle, f:E.textFont}); $('#myText').value=''; }
   if(a==='undo'){ E.strokes.pop(); draw(); }
   if(a==='clearpen'){ E.strokes=[]; draw(); }
   if(a==='padundo'){ E.hand.pop(); drawPad(); syncUI(); }
