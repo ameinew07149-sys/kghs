@@ -228,7 +228,7 @@ let user=null;
 /* ===================== 和投影畫面溝通 =====================
    同一台電腦用 BroadcastChannel；登入後同時寫到 Firestore，其他裝置（例如手機）也能遙控 */
 const BC = 'BroadcastChannel' in window ? new BroadcastChannel('kghs-wall') : null;
-let wallState=null, wallSeen=0, wallWin=null;
+let wallState=null, wallSeen=0, wallWin=null, remoteState=null, remoteSeen=0, stateSrc='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 async function send(cmd, extra={}){
   const m={ type:'cmd', id:uid(), cmd, ...extra, t:Date.now() };
@@ -238,19 +238,23 @@ async function send(cmd, extra={}){
 }
 if(BC) BC.onmessage=e=>{ const m=e.data; if(m && m.type==='state'){ wallState=m; wallSeen=Date.now(); renderWall(); } };
 function renderWall(){
-  const live = wallState && Date.now()-wallSeen<10000;
+  const local = wallState && Date.now()-wallSeen<10000;
+  const remote = !local && remoteState && Date.now()-remoteState.t<45000 && Date.now()-remoteSeen<45000;
+  if(remote) wallState={ ...remoteState, filter:{ spot:remoteState.spot, kind:remoteState.kind } };
+  stateSrc = local ? 'local' : remote ? 'remote' : '';
+  const live = local || remote;
   const p=$('#wallPill'); p.className='pill '+(live?'ok':(user?'warn':''));
   if(live){
     const s=wallState, f=s.filter||{};
-    $('#wallText').textContent=`投影中・${s.inFinale?'大結局':s.mode==='cols'?'五個祕境':'照片牆'}${s.paused?'・已暫停':''}${s.standby?'・待機中':''}・${s.shown}/${s.total} 張`;
+    $('#wallText').textContent=`${stateSrc==='remote'?'投影中（遠端）':'投影中'}・${s.inFinale?'大結局':s.mode==='cols'?'五個祕境':'照片牆'}${s.paused?'・已暫停':''}${s.standby?'・待機中':''}・${s.shown}/${s.total} 張`;
     document.querySelectorAll('[data-a="mode"]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===s.mode && !s.inFinale));
     $('#bPause').setAttribute('aria-pressed', !!s.paused); $('#bPause').textContent=s.paused?'繼續輪播':'暫停輪播';
     $('#bStandby').setAttribute('aria-pressed', !!s.standby);
     $('#wfNow').textContent=`目前播放：${f.spot&&f.spot!=='all'?spotName(f.spot):'全部地點'}・${KINDS[f.kind||'all']}`;
     if((s.featured||null)!==FEATURED){ FEATURED=s.featured||null; if(user) renderPhotos(); }
   } else {
-    $('#wallText').textContent = user ? '遠端模式（這台電腦沒有投影畫面）' : '尋找投影畫面中…';
-    FEATURED=null;
+    $('#wallText').textContent = user ? '沒有收到投影畫面的回報，請確認投影電腦已開啟並連上網路' : '尋找投影畫面中…';
+    FEATURED=null; wallState=null;
   }
 }
 setInterval(()=>{ if(BC) BC.postMessage({ type:'cmd', id:uid(), cmd:'ping' }); renderWall(); }, 3000);
@@ -278,6 +282,7 @@ const F={ status:'shown', spot:'all', kind:'all', sort:'new', q:'' };
 function listen(){
   if(listening) return; listening=true;
   fb().then(({db})=>{
+    db.collection('control').doc('state').onSnapshot(d=>{ const s=d.data(); if(s && typeof s.t==='number'){ remoteState=s; remoteSeen=Date.now(); renderWall(); } }, ()=>{});
     db.collection('entries').onSnapshot(snap=>{
       entries=snap.docs.map(d=>({ id:d.id, ...d.data() })); renderPhotos();
     }, err=>{ toast('讀不到照片清單：'+(err.code==='permission-denied'?'權限不足':'網路問題')); });

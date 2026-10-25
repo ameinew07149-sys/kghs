@@ -39,5 +39,14 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    // 投影畫面回報目前狀態給手機遙控：不用登入，但只能寫這幾個欄位
+    match /control/state {
+      allow write: if request.resource.data.keys().hasOnly(['display','mode','paused','inFinale','standby','spot','kind','shown','total','featured','t'])
+        && request.resource.data.mode in ['grid','cols'] && request.resource.data.paused is bool && request.resource.data.inFinale is bool
+        && request.resource.data.standby is bool && request.resource.data.display is bool
+        && str(request.resource.data.spot, 4) && str(request.resource.data.kind, 8)
+        && request.resource.data.shown is int && request.resource.data.total is int && request.resource.data.t is int
+        && (request.resource.data.featured == null || str(request.resource.data.featured, 80));
+    }
   }
 }

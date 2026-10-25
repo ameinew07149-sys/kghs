@@ -674,7 +674,19 @@ let rt=null; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()
    其他裝置（例如用手機當遙控器）：Firestore 的 control/wall 文件 */
 const BC = 'BroadcastChannel' in window ? new BroadcastChannel('kghs-wall') : null;
 const SEEN=new Set(), BOOT=Date.now();
-function sendState(){ if(!BC) return; try{ BC.postMessage({ type:'state', display:DISPLAY, mode, paused, inFinale, standby, filter:{...WF}, shown:items.length, total:all.length, featured:$('#spot').classList.contains('show')?$('#spot').dataset.id:null, t:Date.now() }); }catch(_){} }
+function wallStatus(){ return { display:DISPLAY, mode, paused, inFinale, standby, spot:WF.spot, kind:WF.kind, shown:items.length, total:all.length, featured:$('#spot').classList.contains('show')?($('#spot').dataset.id||null):null, t:Date.now() }; }
+function sendState(){
+  const st=wallStatus();
+  if(BC){ try{ BC.postMessage({ type:'state', ...st, filter:{ spot:st.spot, kind:st.kind } }); }catch(_){} }
+  pushRemote(st);
+}
+/* 只有投影模式的畫面回報狀態到 Firestore（避免好幾個視窗互相覆蓋）；內容沒變就每 15 秒回報一次當作心跳 */
+let remoteSig='', remoteAt=0, remoteT=null;
+function pushRemote(st){
+  if(!DISPLAY || !LIVE) return;
+  const sig=JSON.stringify({ ...st, t:0 }); if(sig===remoteSig && Date.now()-remoteAt<15000) return;
+  clearTimeout(remoteT); remoteT=setTimeout(async()=>{ try{ const { db }=await fb(); remoteSig=sig; remoteAt=Date.now(); await db.collection('control').doc('state').set({ ...wallStatus() }); }catch(_){} }, 400);
+}
 function setStandby(v){ standby=!!v; $('#standby').hidden=!standby; sendState(); }
 function runCmd(m){
   if(!m || m.type!=='cmd' || !m.id || SEEN.has(m.id)) return; SEEN.add(m.id);
