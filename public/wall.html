@@ -246,6 +246,13 @@ body{background:#1A1816;background-image:radial-gradient(ellipse 70% 50% at 50% 
 .finale .line small{font-family:var(--deco);font-weight:400;letter-spacing:.3em}
 .credits h2{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (prefers-reduced-motion:reduce){.kv{transition:none}}
+/* 投影模式：沒有游標、沒有按鈕 */
+body.display,body.display *{cursor:none!important}
+body.display .ctl{display:none!important}
+.standby{position:fixed;inset:0;z-index:8;background:#000 url("assets/brand/key-visual.jpg") center/contain no-repeat}
+.fshint{position:fixed;left:50%;bottom:8vh;transform:translateX(-50%);z-index:12;background:rgba(12,10,9,.9);color:#F3EADB;border:1px solid var(--gold);padding:1.4vh 2.4vw;font-family:var(--serif);font-size:clamp(14px,1.4vw,28px);transition:opacity 1s}
+.fshint b{color:var(--gold-hi);font-weight:900}
+.fshint.dim{opacity:.25}
 </style>
 </head>
 <body>
@@ -275,6 +282,8 @@ body{background:#1A1816;background-image:radial-gradient(ellipse 70% 50% at 50% 
 </div>
 
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
+<div class="standby" id="standby" hidden></div>
+<div class="fshint" id="fsHint" hidden>在這個畫面<b>點兩下</b>（或按 <b>F</b>）進入全螢幕</div>
 
 <script>
 /* ===================== 設定（要和玩家頁的 CONFIG 一致） ===================== */
@@ -313,7 +322,12 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LIVE=!!(CONFIG.firebase && CONFIG.firebase.apiKey);
 const shuffle=a=>{ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 
-let items=[], mode='grid', paused=false, inFinale=false;
+let all=[], items=[], mode='grid', paused=false, inFinale=false, standby=false;
+/* 投影模式（wall.html?display=1）：畫面上不出現任何按鈕，全部由控制台 control.html 操作 */
+const DISPLAY=new URLSearchParams(location.search).get('display')==='1';
+const WF={ spot:'all', kind:'all' };
+const match=it=>(WF.spot==='all'||it.spot===WF.spot)&&(WF.kind==='all'||it.kind===WF.kind);
+function refilter(){ items=all.filter(match); }
 
 /* ===================== 資料來源 ===================== */
 function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
@@ -338,8 +352,8 @@ async function subscribe(){
     db.collection('entries').where('hidden','==',false).onSnapshot(snap=>{
       if(firstSnap){
         firstSnap=false;
-        items=snap.docs.map(d=>docToItem(d.id,d.data())).sort((a,b)=>b.t-a.t);
-        renderStats(); setMode(mode); preload(items); res(); return;
+        all=snap.docs.map(d=>docToItem(d.id,d.data())).sort((a,b)=>b.t-a.t); refilter();
+        renderStats(); setMode(mode); preload(all); res(); sendState(); return;
       }
       snap.docChanges().forEach(ch=>{
         if(ch.type==='removed') removeItem(ch.doc.id);
@@ -350,15 +364,16 @@ async function subscribe(){
 }
 function addItem(it){
   if(LIVE) preload([it]);
-  const existed=items.some(x=>x.id===it.id);
-  items=items.filter(x=>x.id!==it.id); items.unshift(it);
-  renderStats(); if(inFinale) return;
+  const existed=all.some(x=>x.id===it.id);
+  all=all.filter(x=>x.id!==it.id); all.unshift(it); refilter();
+  renderStats(); sendState(); if(inFinale || !match(it)) return;
   notice(`第 ${it.cls} 屆 ${it.name} 剛剛在「${spotName(it.spot)}」${existed?'重拍了一張':'集章'}！`);
   if(mode==='grid'){ const n=document.querySelectorAll('.tile2').length; if(n<items.length && n<GRID.cap) renderGrid(); else placeNew(it); feature(it); }
   else renderCols();
 }
 function removeItem(id){
-  items=items.filter(x=>x.id!==id); renderStats();
+  if($('#spot').classList.contains('show') && $('#spot').dataset.id===id) $('#spot').classList.remove('show');
+  all=all.filter(x=>x.id!==id); refilter(); renderStats(); sendState();
   if(mode==='grid'){ document.querySelectorAll(`.tile2[data-id="${CSS.escape(id)}"]`).forEach(t=>swapSlot(t)); }
   else renderCols();
 }
@@ -378,11 +393,11 @@ function cardHTML(it){
                      : `<p class="who">${esc(it.name)}<em>第 ${esc(it.cls)} 屆・${esc(spotName(it.spot))}</em></p>`;
   return `<div class="card ${scene?'scene':''}"><div class="ph"><img src="${it.img}" alt="" loading="lazy"></div><div class="cap">${head}${it.msg||it.hand?`<p class="say">${say}</p>`:''}</div></div>`;
 }
-function people(){ const m=new Map(); items.forEach(x=>{ const k=x.cls+'|'+x.name; m.set(k,(m.get(k)||new Set()).add(x.spot)); }); return m; }
+function people(){ const m=new Map(); all.forEach(x=>{ const k=x.cls+'|'+x.name; m.set(k,(m.get(k)||new Set()).add(x.spot)); }); return m; }
 function renderStats(){
   const m=people(), done=[...m.values()].filter(s=>s.size>=CONFIG.spots.length).length;
   const pl = PRE.total && PRE.done<PRE.total ? `<span class="stat" title="背景預先載入照片">${ic('hourglass')} 預載 <b>${PRE.done}</b>/ ${PRE.total}</span>` : '';
-  $('#stats').innerHTML=`${pl}<span class="stat"><b>${m.size}</b>位校友參加</span><span class="stat"><b>${done}</b>位摘齊五星</span><span class="stat"><b>${items.length}</b>張照片</span>`;
+  $('#stats').innerHTML=`${pl}<span class="stat"><b>${m.size}</b>位校友參加</span><span class="stat"><b>${done}</b>位摘齊五星</span><span class="stat"><b>${all.length}</b>張照片</span>`;
 }
 /* 預先載入：開頁後在背景把所有照片的牆面版與小圖下載好（同時 6 張），播放時就不會出現空格。
    載入過的圖片瀏覽器會快取，之後輪播不再耗流量。 */
@@ -438,7 +453,7 @@ function tileHTML(it){
 }
 function renderGrid(){
   clearInterval(GRID.swapT); clearInterval(GRID.featT);
-  if(!items.length){ $('#stage').innerHTML='<p class="empty">還沒有照片。<br>校友們集章後，照片和留言會出現在這裡。</p>'; return; }
+  if(!items.length){ $('#stage').innerHTML = all.length ? '<p class="empty">這個篩選目前沒有照片。</p>' : '<p class="empty">還沒有照片。<br>校友們集章後，照片和留言會出現在這裡。</p>'; return; }
   const st=$('#stage'), W=st.clientWidth, H=st.clientHeight;
   const cols = W/H>1.4 ? 32 : 20, u=W/(cols+0.7);
   GRID.queues={};
@@ -474,21 +489,21 @@ function placeNew(it){
   if(same.length) swapSlot(same[Math.floor(Math.random()*same.length)], it);
   else { (GRID.queues[shapeOf(it)]||(GRID.queues[shapeOf(it)]=[])).unshift(it); }
 }
-function feature(it){
+function feature(it, ms=6500){
   if(!it){ const slots=[...document.querySelectorAll('.tile2')]; if(!slots.length) return; const s=slots[Math.floor(Math.random()*slots.length)]; it=items.find(x=>x.id===s.dataset.id); }
   if(!it) return;
   if(it.kind==='note'){
     $('#spotInner').innerHTML=`${noteHTML(it,true)}<div class="words"><span class="chip notechip">${ic('note')} 便利貼祝福</span><p class="by" style="margin-top:1vh">寫於「${esc(spotName(it.spot))}」</p></div>`;
-    $('#spot').classList.add('show'); clearTimeout(feature.t); feature.t=setTimeout(()=>$('#spot').classList.remove('show'), 6500); return;
+    $('#spot').dataset.id=it.id; $('#spot').classList.add('show'); clearTimeout(feature.t); feature.t=setTimeout(()=>$('#spot').classList.remove('show'), ms); return;
   }
   const words = it.hand ? `<img class="hand" src="${it.hand}" alt="手寫留言">` : `<p class="msg ${it.kind==='scene'?'small':''}">「${esc(it.msg)}」</p>`;
   const scene=it.kind==='scene';
   const top = scene ? `<span class="chip work">${ic('camera')} 攝影作品・${esc(spotName(it.spot))}</span>${it.title?`<p class="ttl">《${esc(it.title)}》</p>`:''}` : `<span class="chip">${esc(spotAward(it.spot)||spotName(it.spot))}</span>${spotAward(it.spot)?`<p class="where">攝於${esc(spotName(it.spot))}</p>`:''}`;
   const body = it.hand ? words : (it.msg ? words : '');
   $('#spotInner').innerHTML=`<div class="big"><img id="bigImg" src="${it.img}" alt=""></div><div class="words">${top}${body}<p class="by">${scene?'攝影｜':''}<b>${esc(it.name)}</b>　第 ${esc(it.cls)} 屆</p></div>`;
-  $('#spot').classList.add('show');
+  $('#spot').dataset.id=it.id; $('#spot').classList.add('show');
   if(it.full && it.full!==it.img){ const hi=new Image(); hi.onload=()=>{ const b=$('#bigImg'); if(b && b.getAttribute('src')===it.img) b.src=it.full; }; hi.src=it.full; }
-  clearTimeout(feature.t); feature.t=setTimeout(()=>$('#spot').classList.remove('show'), 6500);
+  clearTimeout(feature.t); feature.t=setTimeout(()=>$('#spot').classList.remove('show'), ms);
 }
 
 /* ===================== 模式二：五個祕境（五欄同時捲動） ===================== */
@@ -531,8 +546,9 @@ function heartSlots(count, W, H){
   return { pts:[], size:8 };
 }
 async function playFinale(){
+  const items=all;
   if(inFinale || !items.length) return;
-  inFinale=true; $('#spot').classList.remove('show');
+  inFinale=true; $('#spot').classList.remove('show'); sendState();
   const F=CONFIG.finale, fin=$('#finale'), W=innerWidth, H=innerHeight;
   const m=people(); const nPeople=m.size, nPhotos=items.length;
   fin.hidden=false; fin.innerHTML='';
@@ -598,13 +614,13 @@ async function playFinale(){
     endFinale();
   }
 }
-function endFinale(){ if(!inFinale) return; inFinale=false; $('#finale').hidden=true; $('#finale').innerHTML=''; setMode(mode); }
+function endFinale(){ if(!inFinale) return; inFinale=false; $('#finale').hidden=true; $('#finale').innerHTML=''; setMode(mode); sendState(); }
 
 /* ===================== 控制 ===================== */
 let ctlTimer=null;
-function showCtl(){ $('#ctl').classList.add('show'); clearTimeout(ctlTimer); ctlTimer=setTimeout(()=>$('#ctl').classList.remove('show'),3500); }
+function showCtl(){ if(DISPLAY) return; $('#ctl').classList.add('show'); clearTimeout(ctlTimer); ctlTimer=setTimeout(()=>$('#ctl').classList.remove('show'),3500); }
 ['mousemove','pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, showCtl));
-function togglePause(){ paused=!paused; $('#bPause').textContent=paused?'繼續':'暫停'; $('#bPause').setAttribute('aria-pressed',paused); }
+function togglePause(v){ paused = typeof v==='boolean' ? v : !paused; $('#bPause').textContent=paused?'繼續':'暫停'; $('#bPause').setAttribute('aria-pressed',paused); sendState(); }
 function openSheet(html){ $('#sheet').innerHTML=html; $('#modal').hidden=false; }
 function closeSheet(){ $('#modal').hidden=true; }
 function hidePicker(){
@@ -627,6 +643,7 @@ async function hideOne(id){
   }catch(e){ notice(/password|credential|user/.test(String(e.code)) ? '密碼不對，沒有隱藏' : '網路有問題或沒有權限，沒有隱藏'); }
 }
 document.addEventListener('click', e=>{
+  if(DISPLAY) return;
   const pk=e.target.closest('[data-pick]'); if(pk){ hideOne(pk.dataset.pick); return; }
   const m=e.target.closest('[data-mode]'); if(m){ setMode(m.dataset.mode); return; }
   const b=e.target.closest('[data-k]'); if(!b) return;
@@ -640,6 +657,7 @@ document.addEventListener('click', e=>{
 });
 $('#finale').addEventListener('click', ()=>{ /* 大結局中點畫面不中斷，按 Esc 才停止 */ });
 document.addEventListener('keydown', e=>{
+  if(DISPLAY){ if(e.key==='f'||e.key==='F') document.documentElement.requestFullscreen?.().catch(()=>{}); return; }
   if(!$('#modal').hidden){ if(e.key==='Escape') closeSheet(); return; }
   if(e.key==='Escape' && inFinale){ endFinale(); return; }
   if(e.key===' '){ e.preventDefault(); togglePause(); }
@@ -650,10 +668,51 @@ document.addEventListener('keydown', e=>{
 });
 let rt=null; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if(!inFinale) setMode(mode); }, 400); });
 
+
+/* ===================== 遙控：接收控制台的指令 =====================
+   同一台電腦：BroadcastChannel（不用網路、最快）
+   其他裝置（例如用手機當遙控器）：Firestore 的 control/wall 文件 */
+const BC = 'BroadcastChannel' in window ? new BroadcastChannel('kghs-wall') : null;
+const SEEN=new Set(), BOOT=Date.now();
+function sendState(){ if(!BC) return; try{ BC.postMessage({ type:'state', display:DISPLAY, mode, paused, inFinale, standby, filter:{...WF}, shown:items.length, total:all.length, featured:$('#spot').classList.contains('show')?$('#spot').dataset.id:null, t:Date.now() }); }catch(_){} }
+function setStandby(v){ standby=!!v; $('#standby').hidden=!standby; sendState(); }
+function runCmd(m){
+  if(!m || m.type!=='cmd' || !m.id || SEEN.has(m.id)) return; SEEN.add(m.id);
+  const c=m.cmd;
+  if(c==='ping') return sendState();
+  if(c==='mode'){ if(inFinale) endFinale(); setMode(m.v==='cols'?'cols':'grid'); }
+  if(c==='pause') togglePause(!!m.v);
+  if(c==='standby') setStandby(m.v);
+  if(c==='feature'){ const it=all.find(x=>x.id===m.v); if(it && !inFinale){ setStandby(false); feature(it, (m.sec||12)*1000); } }
+  if(c==='featureRandom' && !inFinale) feature();
+  if(c==='unfeature'){ clearTimeout(feature.t); $('#spot').classList.remove('show'); }
+  if(c==='finale'){ setStandby(false); playFinale(); }
+  if(c==='stopFinale') endFinale();
+  if(c==='filter'){ WF.spot=m.spot||'all'; WF.kind=m.kind||'all'; refilter(); if(!inFinale) setMode(mode); }
+  if(c==='hide') removeItem(m.v);
+  if(c==='notice' && m.v) notice(String(m.v).slice(0,60));
+  if(c==='reload') location.reload();
+  sendState();
+}
+if(BC) BC.onmessage=e=>runCmd(e.data);
+async function listenRemote(){
+  if(!LIVE) return; const { db }=await fb();
+  db.collection('control').doc('wall').onSnapshot(d=>{ const m=d.data(); if(m && m.t>BOOT-5000) runCmd(m); }, ()=>{});
+}
+setInterval(sendState, 4000);
+if(DISPLAY){
+  document.body.classList.add('display');
+  $('#fsHint').hidden=false;
+  const hideHint=()=>{ $('#fsHint').hidden=!!document.fullscreenElement; };
+  document.addEventListener('fullscreenchange', hideHint);
+  document.addEventListener('dblclick', ()=>{ (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())?.catch?.(()=>{}); });
+  setTimeout(()=>{ if(!document.fullscreenElement) $('#fsHint').classList.add('dim'); }, 8000);
+}
+
 /* ===================== 啟動 ===================== */
 (async function init(){
   tick(); setInterval(tick, 20000);
-  if(LIVE){ $('#stage').innerHTML='<p class="empty">讀取照片中…</p>'; try{ await subscribe(); }catch(e){ notice('讀不到資料，請確認網路'); } }
+  if(LIVE){ $('#stage').innerHTML='<p class="empty">讀取照片中…</p>'; try{ await subscribe(); }catch(e){ notice('讀不到資料，請確認網路'); } listenRemote().catch(()=>{}); }
   else $('#stage').innerHTML='<p class="empty">還沒設定 Firebase：請在 wall.html 的 CONFIG.firebase 貼上設定</p>';
 })();
 </script>

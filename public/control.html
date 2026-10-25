@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>3040 KGHS 投影控制台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=Josefin+Sans:wght@400&display=swap" rel="stylesheet">
+<style>
+/* 控制台固定深色，和投影牆同一套黑金配色 */
+:root{
+  --bg:#110E0C; --panel:#1C1714; --panel2:#251F1B; --ink:#F3EADB; --muted:#A39279; --line:#3A302A;
+  --gold:#D4B26A; --gold-hi:#E9CF8F; --velvet:#8E1E2E; --ok:#7FC79A; --warn:#E5A15A;
+  --serif:"Noto Serif TC","Noto Serif CJK TC","Songti TC",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root[data-theme="light"],:root[data-theme="dark"]{ color-scheme:dark; }
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom,0px)}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:1280px;margin:0 auto;padding:16px}
+/* 頂部 */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#1A1512,var(--bg));position:sticky;top:0;z-index:5}
+.top img{height:38px}
+.top h1{font-family:var(--serif);font-weight:900;font-size:1.25rem;letter-spacing:.08em}
+.top h1 small{display:block;font-family:"Josefin Sans",var(--sans);font-weight:400;font-size:.72rem;letter-spacing:.2em;color:var(--gold)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:.88rem;color:var(--muted);background:var(--panel)}
+.pill i{width:9px;height:9px;border-radius:50%;background:#6B6157;flex:none}
+.pill.ok i{background:var(--ok);box-shadow:0 0 0 3px rgba(127,199,154,.2)}
+.pill.warn i{background:var(--warn)}
+.sp{flex:1}
+/* 版面 */
+.grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.card h2{font-family:var(--serif);font-weight:600;font-size:1.05rem;color:var(--gold-hi);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h2 span{font-family:var(--sans);font-weight:400;font-size:.82rem;color:var(--muted)}
+.note{font-size:.85rem;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row+.row{margin-top:8px}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:9px 14px;cursor:pointer;min-height:42px}
+.btn:hover{border-color:var(--gold)}
+.btn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#1E1610;font-weight:700}
+.btn.gold{background:linear-gradient(180deg,#F1DCA6,#C9A158);border-color:#C9A158;color:#1E1610;font-weight:700}
+.btn.red{background:var(--velvet);border-color:var(--velvet);color:#F6EBD6}
+.btn.wide{flex:1}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg .btn{border:0;border-radius:0;flex:1}
+.seg .btn+.btn{border-left:1px solid var(--line)}
+label.f{display:grid;gap:4px;font-size:.85rem;color:var(--muted);flex:1;min-width:120px}
+select,input[type=text],input[type=password],input[type=search]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-height:42px;font-size:16px}
+ol.steps{margin:6px 0 0;padding-left:1.3em;font-size:.88rem;color:var(--muted)}
+ol.steps li{margin:3px 0}
+ol.steps b{color:var(--ink);font-weight:500}
+/* 照片管理 */
+.filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+@media (max-width:640px){.filters{grid-template-columns:1fr 1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.88rem}
+.chip[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#1E1610;font-weight:700}
+.chip b{font-family:"Josefin Sans",var(--sans);font-weight:400;margin-left:4px;opacity:.8}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px}
+.ph{background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.ph.hidden{opacity:.5;border-style:dashed}
+.ph.onwall{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.ph .im{position:relative;aspect-ratio:4/5;background:#0B0908;cursor:zoom-in;border:0;padding:0;display:block;width:100%}
+.ph .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph .tag{position:absolute;left:6px;top:6px;background:rgba(12,10,9,.82);color:var(--gold-hi);font-size:.75rem;border-radius:6px;padding:2px 7px}
+.ph .tag.h{background:var(--velvet);color:#fff;left:auto;right:6px}
+.ph .meta{padding:8px 10px 4px;font-size:.84rem}
+.ph .meta b{font-weight:700}
+.ph .meta p{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 8px 8px}
+.ph .acts .btn{min-height:36px;padding:6px 8px;font-size:.84rem}
+.empty{color:var(--muted);text-align:center;padding:40px 12px}
+.more{display:block;margin:14px auto 0}
+/* 預覽 */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:grid;place-items:center;z-index:20;padding:16px}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:min(920px,100%);max-height:92vh;overflow:auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;padding:16px}
+@media (max-width:700px){.sheet{grid-template-columns:1fr}}
+.sheet img.big{width:100%;max-height:74vh;object-fit:contain;background:#0B0908;border-radius:10px}
+.sheet .say{font-family:var(--serif);font-size:1.2rem;margin:10px 0}
+.sheet .hand{max-width:100%;background:#fff;border-radius:8px;margin:10px 0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--gold-hi);color:#1E1610;border-radius:12px;padding:10px 16px;display:flex;gap:12px;align-items:center;z-index:30;transition:transform .3s;max-width:92vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast button{border:0;background:#1E1610;color:var(--gold-hi);border-radius:8px;padding:5px 10px;cursor:pointer}
+.login{display:grid;gap:8px}
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="assets/brand/logo-gold.png" alt="高雄女中">
+  <h1>投影控制台<small>3040 KGHS</small></h1>
+  <span class="sp"></span>
+  <span class="pill" id="wallPill"><i></i><span id="wallText">尋找投影畫面中…</span></span>
+  <span class="pill" id="userPill"><i></i><span id="userText">未登入</span></span>
+</header>
+
+<div class="wrap grid">
+  <aside>
+    <section class="card">
+      <h2>投影畫面</h2>
+      <div class="row">
+        <button class="btn gold wide" data-a="openExt">放到延伸螢幕</button>
+        <button class="btn" data-a="openHere">在這台開新視窗</button>
+      </div>
+      <ol class="steps">
+        <li>筆電接上投影機，設成<b>延伸</b>（Windows 按 <b>Win＋P</b> 選「延伸」；Mac 到「顯示器」取消鏡像）</li>
+        <li>按「放到延伸螢幕」，瀏覽器問「視窗管理」時按<b>允許</b></li>
+        <li>在投影畫面上<b>點兩下</b>進入全螢幕，之後都在這裡操作</li>
+      </ol>
+      <p class="note" style="margin-top:8px">請用 Chrome 或 Edge。如果沒有自動跑到延伸螢幕，把新視窗拖過去再點兩下即可。</p>
+    </section>
+
+    <section class="card">
+      <h2>播放控制</h2>
+      <div class="seg" role="group" aria-label="投影模式">
+        <button class="btn" data-a="mode" data-v="grid" aria-pressed="false">照片牆</button>
+        <button class="btn" data-a="mode" data-v="cols" aria-pressed="false">五個祕境</button>
+      </div>
+      <div class="row">
+        <button class="btn wide" data-a="pause" id="bPause" aria-pressed="false">暫停輪播</button>
+        <button class="btn wide" data-a="standby" id="bStandby" aria-pressed="false">待機畫面</button>
+      </div>
+      <div class="row">
+        <button class="btn wide" data-a="featureRandom">隨機放大一張</button>
+        <button class="btn wide" data-a="unfeature">收起特寫</button>
+      </div>
+      <div class="row">
+        <button class="btn red wide" data-a="finale">播放大結局</button>
+        <button class="btn wide" data-a="stopFinale">停止大結局</button>
+      </div>
+      <p class="note" style="margin-top:8px">待機畫面會蓋上主視覺，適合開場前或換節目時使用。</p>
+    </section>
+
+    <section class="card">
+      <h2>投影牆只播放</h2>
+      <div class="row">
+        <label class="f">地點<select id="wfSpot"></select></label>
+        <label class="f">類型<select id="wfKind"></select></label>
+      </div>
+      <div class="row"><button class="btn gold wide" data-a="applyFilter">套用到投影牆</button><button class="btn" data-a="clearFilter">全部播放</button></div>
+      <p class="note" id="wfNow" style="margin-top:8px"></p>
+    </section>
+
+    <section class="card">
+      <h2>跑馬燈公告</h2>
+      <div class="row"><input type="text" id="noticeText" maxlength="60" placeholder="例如：五分鐘後播放大結局！"></div>
+      <div class="row"><button class="btn wide" data-a="notice">送到投影牆</button></div>
+    </section>
+  </aside>
+
+  <main>
+    <section class="card" id="loginCard">
+      <h2>管理員登入 <span>隱藏照片、遠端遙控需要登入</span></h2>
+      <form class="login" id="loginForm">
+        <input type="password" id="pass" autocomplete="current-password" placeholder="管理員密碼">
+        <button class="btn gold" type="submit">登入</button>
+      </form>
+      <p class="note" style="margin-top:8px">只在同一台電腦操作時，不登入也能切換畫面；要看到全部照片、隱藏照片，請先登入。</p>
+    </section>
+
+    <section class="card" id="photoCard" hidden>
+      <h2>照片管理 <span id="countText"></span></h2>
+      <div class="chips" id="statusChips"></div>
+      <div class="filters">
+        <label class="f">地點<select id="fSpot"></select></label>
+        <label class="f">類型<select id="fKind"></select></label>
+        <label class="f">排序<select id="fSort"><option value="new">最新的在前</option><option value="old">最早的在前</option><option value="cls">依屆別</option></select></label>
+        <label class="f">搜尋<input type="search" id="fQ" placeholder="稱呼、屆別、留言"></label>
+      </div>
+      <div class="photos" id="photos"></div>
+      <button class="btn more" id="moreBtn" hidden>顯示更多</button>
+      <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn" data-a="logout">登出</button></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastText"></span><button id="toastUndo" hidden>復原</button></div>
+
+<script>
+/* ===================== 設定（要和 wall.html 一致） ===================== */
+const CONFIG = {
+  firebase: { apiKey:'AIzaSyAupt9BRdUa4mIVZKWDD9nClUHG2MzPBfc', authDomain:'kghs-reunion.firebaseapp.com', projectId:'kghs-reunion', storageBucket:'kghs-reunion.firebasestorage.app', messagingSenderId:'112353723139', appId:'1:112353723139:web:2a9a50e0afe095da21df36', measurementId:'G-FCD8PZH2V3' },
+  adminEmail: 'ameinew07149@gmail.com',
+  spots: [
+    { id:'s1', name:'校門口', award:'最佳時光獎' }, { id:'s2', name:'榕園', award:'最佳夢想獎' }, { id:'s3', name:'圖書館', award:'最佳書香獎' },
+    { id:'s4', name:'學生活動中心', award:'最佳人氣獎' }, { id:'s5', name:'體育館', award:'最佳青春熱血獎' }
+  ]
+};
+const KINDS={ all:'全部類型', selfie:'自拍／合照', scene:'攝影作品', note:'便利貼', preset:'準備好的照片' };
+const $=s=>document.querySelector(s);
+const esc=s=>String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const spotName=id=>(CONFIG.spots.find(s=>s.id===id)||{}).name||'';
+const spotOpts=(all)=>`<option value="all">${all}</option>`+CONFIG.spots.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+const kindOpts=()=>Object.entries(KINDS).map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+$('#wfSpot').innerHTML=spotOpts('全部地點'); $('#fSpot').innerHTML=spotOpts('全部地點');
+$('#wfKind').innerHTML=kindOpts(); $('#fKind').innerHTML=kindOpts();
+
+/* 提示訊息（可附「復原」） */
+let toastT=null;
+function toast(t, undo){
+  $('#toastText').textContent=t; const u=$('#toastUndo'); u.hidden=!undo; u.onclick=()=>{ $('#toast').classList.remove('show'); undo&&undo(); };
+  $('#toast').classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>$('#toast').classList.remove('show'), undo?6000:3000);
+}
+
+/* ===================== Firebase ===================== */
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+const FBV='10.12.2'; let FB=null;
+async function fb(){
+  if(FB) return FB;
+  for(const m of ['app','firestore','auth']) if(!(window.firebase && (m==='app' || firebase[m]))) await loadScript(`https://cdn.jsdelivr.net/npm/firebase@${FBV}/firebase-${m}-compat.js`);
+  const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(CONFIG.firebase);
+  FB={ db:app.firestore(), auth:app.auth() };
+  return FB;
+}
+let user=null;
+
+/* ===================== 和投影畫面溝通 =====================
+   同一台電腦用 BroadcastChannel；登入後同時寫到 Firestore，其他裝置（例如手機）也能遙控 */
+const BC = 'BroadcastChannel' in window ? new BroadcastChannel('kghs-wall') : null;
+let wallState=null, wallSeen=0, wallWin=null;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+async function send(cmd, extra={}){
+  const m={ type:'cmd', id:uid(), cmd, ...extra, t:Date.now() };
+  if(BC) BC.postMessage(m);
+  if(user){ try{ const { db }=await fb(); await db.collection('control').doc('wall').set(m); }catch(e){ if(!wallState) toast('遠端指令沒送出，請確認網路'); } }
+  else if(!wallState) toast('找不到投影畫面：請在這台電腦開啟，或先登入用遠端遙控');
+}
+if(BC) BC.onmessage=e=>{ const m=e.data; if(m && m.type==='state'){ wallState=m; wallSeen=Date.now(); renderWall(); } };
+function renderWall(){
+  const live = wallState && Date.now()-wallSeen<10000;
+  const p=$('#wallPill'); p.className='pill '+(live?'ok':(user?'warn':''));
+  if(live){
+    const s=wallState, f=s.filter||{};
+    $('#wallText').textContent=`投影中・${s.inFinale?'大結局':s.mode==='cols'?'五個祕境':'照片牆'}${s.paused?'・已暫停':''}${s.standby?'・待機中':''}・${s.shown}/${s.total} 張`;
+    document.querySelectorAll('[data-a="mode"]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===s.mode && !s.inFinale));
+    $('#bPause').setAttribute('aria-pressed', !!s.paused); $('#bPause').textContent=s.paused?'繼續輪播':'暫停輪播';
+    $('#bStandby').setAttribute('aria-pressed', !!s.standby);
+    $('#wfNow').textContent=`目前播放：${f.spot&&f.spot!=='all'?spotName(f.spot):'全部地點'}・${KINDS[f.kind||'all']}`;
+    if((s.featured||null)!==FEATURED){ FEATURED=s.featured||null; if(user) renderPhotos(); }
+  } else {
+    $('#wallText').textContent = user ? '遠端模式（這台電腦沒有投影畫面）' : '尋找投影畫面中…';
+    FEATURED=null;
+  }
+}
+setInterval(()=>{ if(BC) BC.postMessage({ type:'cmd', id:uid(), cmd:'ping' }); renderWall(); }, 3000);
+if(BC) BC.postMessage({ type:'cmd', id:uid(), cmd:'ping' });
+
+/* 開啟投影畫面：有第二個螢幕就直接放過去（Chrome／Edge 的視窗管理功能） */
+async function openWall(ext){
+  let feat='popup,width=1280,height=720';
+  if(ext){
+    if('getScreenDetails' in window){
+      try{
+        const sd=await window.getScreenDetails(); const other=sd.screens.find(x=>x!==sd.currentScreen);
+        if(other) feat=`popup,left=${other.availLeft},top=${other.availTop},width=${other.availWidth},height=${other.availHeight}`;
+        else toast('沒有偵測到延伸螢幕，先在這裡開啟，再拖到投影機畫面');
+      }catch(e){ toast('沒有取得視窗管理權限，請把新視窗拖到投影機畫面'); }
+    } else toast('這個瀏覽器不能自動放到延伸螢幕，請把新視窗拖過去');
+  }
+  wallWin=window.open('wall.html?display=1','kghs-wall',feat);
+  if(!wallWin) toast('視窗被瀏覽器擋住了，請允許彈出式視窗後再按一次');
+}
+
+/* ===================== 照片管理 ===================== */
+let entries=[], FEATURED=null, shownN=60, listening=false;
+const F={ status:'shown', spot:'all', kind:'all', sort:'new', q:'' };
+function listen(){
+  if(listening) return; listening=true;
+  fb().then(({db})=>{
+    db.collection('entries').onSnapshot(snap=>{
+      entries=snap.docs.map(d=>({ id:d.id, ...d.data() })); renderPhotos();
+    }, err=>{ toast('讀不到照片清單：'+(err.code==='permission-denied'?'權限不足':'網路問題')); });
+  });
+}
+function filtered(){
+  const q=F.q.trim().toLowerCase();
+  let l=entries.filter(e=>(F.status==='all'||(F.status==='hidden')===!!e.hidden)&&(F.spot==='all'||e.spot===F.spot)&&(F.kind==='all'||(e.kind||'selfie')===F.kind)
+    &&(!q||[e.name,e.cls,'第'+e.cls+'屆',e.msg,e.title].some(v=>String(v||'').toLowerCase().includes(q))));
+  if(F.sort==='new') l.sort((a,b)=>(b.t||0)-(a.t||0));
+  if(F.sort==='old') l.sort((a,b)=>(a.t||0)-(b.t||0));
+  if(F.sort==='cls') l.sort((a,b)=>(parseInt(a.cls)||0)-(parseInt(b.cls)||0)||(b.t||0)-(a.t||0));
+  return l;
+}
+function renderPhotos(){
+  const shown=entries.filter(e=>!e.hidden).length, hid=entries.length-shown;
+  $('#statusChips').innerHTML=[['shown','顯示中',shown],['hidden','已隱藏',hid],['all','全部',entries.length]].map(([k,l,n])=>`<button class="chip" data-st="${k}" aria-pressed="${F.status===k}">${l}<b>${n}</b></button>`).join('');
+  const l=filtered();
+  $('#countText').textContent=`符合 ${l.length} 張`;
+  $('#photos').innerHTML = l.length ? l.slice(0,shownN).map(e=>{
+    const img=e.tinyUrl||e.wallUrl||e.photoUrl, k=e.kind||'selfie';
+    return `<article class="ph ${e.hidden?'hidden':''} ${FEATURED===e.id?'onwall':''}">
+      <button class="im" data-a="preview" data-id="${esc(e.id)}" aria-label="放大看 ${esc(e.name)} 的照片"><img src="${esc(img)}" alt="" loading="lazy"><span class="tag">${esc(spotName(e.spot))}</span>${e.hidden?'<span class="tag h">已隱藏</span>':''}</button>
+      <div class="meta"><b>${esc(e.name)}</b>　第 ${esc(e.cls)} 屆<p>${k==='scene'?'攝影作品 ':k==='note'?'便利貼 ':''}${esc(e.title?`《${e.title}》`:'')}${esc(e.msg||(e.handUrl?'（手寫留言）':''))}</p></div>
+      <div class="acts">${e.hidden?`<button class="btn" data-a="unhide" data-id="${esc(e.id)}">恢復顯示</button><button class="btn" disabled>投到牆上</button>`
+        :`<button class="btn" data-a="hide" data-id="${esc(e.id)}">隱藏</button><button class="btn gold" data-a="feature" data-id="${esc(e.id)}">投到牆上</button>`}</div>
+    </article>`; }).join('') : '<p class="empty">沒有符合的照片</p>';
+  $('#moreBtn').hidden = l.length<=shownN;
+}
+async function setHidden(id, hidden){
+  try{
+    const { db }=await fb(); await db.collection('entries').doc(id).update({ hidden });
+    if(hidden){ send('hide',{ v:id }); toast('已隱藏，投影牆上也拿掉了', ()=>setHidden(id,false)); }
+    else toast('已恢復顯示');
+  }catch(e){ toast(e.code==='permission-denied'?'沒有權限，請確認登入的是管理員帳號':'網路有問題，沒有改成功'); }
+}
+function preview(id){
+  const e=entries.find(x=>x.id===id); if(!e) return;
+  const k=e.kind||'selfie';
+  $('#sheet').innerHTML=`<img class="big" src="${esc(e.photoUrl||e.wallUrl)}" alt="">
+    <div><p class="note">${esc(spotName(e.spot))}・${KINDS[k]||''}・${new Date(e.t||0).toLocaleString('zh-TW',{hour12:false})}</p>
+      <h3 style="font-family:var(--serif);font-size:1.4rem;margin-top:6px">${esc(e.name)}　<span style="font-size:1rem;color:var(--muted)">第 ${esc(e.cls)} 屆</span></h3>
+      ${e.title?`<p class="say">《${esc(e.title)}》</p>`:''}${e.handUrl?`<img class="hand" src="${esc(e.handUrl)}" alt="手寫留言">`:e.msg?`<p class="say">「${esc(e.msg)}」</p>`:''}
+      <div class="row" style="margin-top:14px">${e.hidden?`<button class="btn wide" data-a="unhide" data-id="${esc(e.id)}">恢復顯示</button>`
+        :`<button class="btn gold wide" data-a="feature" data-id="${esc(e.id)}">投到牆上（12 秒）</button><button class="btn wide" data-a="hide" data-id="${esc(e.id)}">隱藏這張</button>`}</div>
+      <div class="row"><button class="btn wide" data-a="close">關閉</button></div></div>`;
+  $('#modal').hidden=false;
+}
+
+/* ===================== 按鈕 ===================== */
+document.addEventListener('click', e=>{
+  const st=e.target.closest('[data-st]'); if(st){ F.status=st.dataset.st; shownN=60; renderPhotos(); return; }
+  const b=e.target.closest('[data-a]'); if(!b) return;
+  const a=b.dataset.a, id=b.dataset.id;
+  if(a==='openExt') openWall(true);
+  if(a==='openHere') openWall(false);
+  if(a==='mode') send('mode',{ v:b.dataset.v });
+  if(a==='pause') send('pause',{ v:!(wallState&&wallState.paused) });
+  if(a==='standby') send('standby',{ v:!(wallState&&wallState.standby) });
+  if(a==='featureRandom') send('featureRandom');
+  if(a==='unfeature') send('unfeature');
+  if(a==='finale'){ if(confirm('確定要開始播放大結局嗎？（大約 2～3 分鐘）')) send('finale'); }
+  if(a==='stopFinale') send('stopFinale');
+  if(a==='applyFilter') send('filter',{ spot:$('#wfSpot').value, kind:$('#wfKind').value });
+  if(a==='clearFilter'){ $('#wfSpot').value='all'; $('#wfKind').value='all'; send('filter',{ spot:'all', kind:'all' }); }
+  if(a==='notice'){ const v=$('#noticeText').value.trim(); if(!v) return toast('先輸入公告文字'); send('notice',{ v }); $('#noticeText').value=''; toast('公告已送出'); }
+  if(a==='preview') preview(id);
+  if(a==='close') $('#modal').hidden=true;
+  if(a==='feature'){ send('feature',{ v:id, sec:12 }); $('#modal').hidden=true; toast('已投到牆上，12 秒後自動收起'); }
+  if(a==='hide'){ $('#modal').hidden=true; setHidden(id,true); }
+  if(a==='unhide'){ $('#modal').hidden=true; setHidden(id,false); }
+  if(a==='logout') FB && FB.auth.signOut();
+});
+$('#modal').addEventListener('click', e=>{ if(e.target.id==='modal') $('#modal').hidden=true; });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') $('#modal').hidden=true; });
+['fSpot','fKind','fSort'].forEach(k=>$('#'+k).addEventListener('change', e=>{ F[{fSpot:'spot',fKind:'kind',fSort:'sort'}[k]]=e.target.value; shownN=60; renderPhotos(); }));
+$('#fQ').addEventListener('input', e=>{ F.q=e.target.value; shownN=60; renderPhotos(); });
+$('#moreBtn').addEventListener('click', ()=>{ shownN+=60; renderPhotos(); });
+$('#loginForm').addEventListener('submit', async e=>{
+  e.preventDefault(); const pass=$('#pass').value; if(!pass) return;
+  try{ const { auth }=await fb(); await auth.signInWithEmailAndPassword(CONFIG.adminEmail, pass); $('#pass').value=''; }
+  catch(err){ toast(/password|credential|user/.test(String(err.code))?'密碼不對':'網路有問題，請再試一次'); }
+});
+
+/* ===================== 啟動 ===================== */
+fb().then(({auth})=>{
+  auth.onAuthStateChanged(u=>{
+    user=u && u.email===CONFIG.adminEmail ? u : null;
+    $('#userPill').className='pill '+(user?'ok':''); $('#userText').textContent=user?'管理員已登入':'未登入';
+    $('#loginCard').hidden=!!user; $('#photoCard').hidden=!user;
+    if(user) listen(); renderWall();
+  });
+}).catch(()=>toast('Firebase 載入失敗，請確認網路'));
+</script>
+</body>
+</html>

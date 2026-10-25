@@ -33,5 +33,11 @@ service cloud.firestore {
       allow update: if isAdmin() || (resource.data.hidden == false && valid(request.resource.data));
       allow delete: if isAdmin();
     }
+
+    // 投影牆遙控：投影畫面讀取指令（不用登入），只有管理員能下指令
+    match /control/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }
