@@ -61,7 +61,13 @@ ol.steps{margin:6px 0 0;padding-left:1.3em;font-size:.88rem;color:var(--muted)}
 ol.steps li{margin:3px 0}
 ol.steps b{color:var(--ink);font-weight:500}
 /* 照片管理 */
-.filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.who{display:flex;gap:8px;align-items:end;margin-bottom:8px}
+.who input{font-size:17px;min-height:48px;border-color:var(--gold)}
+.who .btn{min-height:48px}
+.whobar{background:rgba(212,178,106,.1);border:1px solid rgba(212,178,106,.4);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:.9rem}
+.whobar b{color:var(--gold-hi)}
+.ph .meta .nm{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--gold-hi);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 @media (max-width:640px){.filters{grid-template-columns:1fr 1fr}}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .chip{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.88rem}
@@ -171,11 +177,16 @@ ol.steps b{color:var(--ink);font-weight:500}
     <section class="card" id="photoCard" hidden>
       <h2>照片管理 <span id="countText"></span></h2>
       <div class="chips" id="statusChips"></div>
+      <div class="who">
+        <label class="f">搜尋上傳者<input type="search" id="fQ" list="nameList" autocomplete="off" placeholder="輸入名字或屆別，例如：小美、45"></label>
+        <button class="btn" data-a="clearQ">清除</button>
+      </div>
+      <datalist id="nameList"></datalist>
+      <p class="whobar" id="whoBar" hidden></p>
       <div class="filters">
         <label class="f">地點<select id="fSpot"></select></label>
         <label class="f">類型<select id="fKind"></select></label>
         <label class="f">排序<select id="fSort"><option value="new">最新的在前</option><option value="old">最早的在前</option><option value="cls">依屆別</option></select></label>
-        <label class="f">搜尋<input type="search" id="fQ" placeholder="稱呼、屆別、留言"></label>
       </div>
       <div class="photos" id="photos"></div>
       <button class="btn more" id="moreBtn" hidden>顯示更多</button>
@@ -288,10 +299,25 @@ function listen(){
     }, err=>{ toast('讀不到照片清單：'+(err.code==='permission-denied'?'權限不足':'網路問題')); });
   });
 }
+/* 搜尋規則：「45」或「第45屆」→ 找屆別；「小美」→ 找名字；「小美 45」→ 名字＋屆別；
+   名字都找不到時，才去找留言和作品名稱 */
+function parseQ(q){
+  q=q.trim().toLowerCase(); if(!q) return null;
+  let m=q.match(/^第?\s*(\d+)\s*屆?$/); if(m) return { cls:m[1] };
+  m=q.match(/^(.+?)\s+第?\s*(\d+)\s*屆?$/); if(m) return { name:m[1], cls:m[2] };
+  return { name:q, any:!entries.some(e=>String(e.name||'').toLowerCase().includes(q)) };
+}
+function matchQ(e,q){
+  const P=typeof q==='string' ? parseQ(q) : q; if(!P) return true;
+  if(P.cls && String(e.cls)!==P.cls) return false;
+  if(!P.name) return true;
+  if(P.any) return [e.msg,e.title].some(v=>String(v||'').toLowerCase().includes(P.name));
+  return String(e.name||'').toLowerCase().includes(P.name);
+}
 function filtered(){
-  const q=F.q.trim().toLowerCase();
+  const PQ=parseQ(F.q);
   let l=entries.filter(e=>(F.status==='all'||(F.status==='hidden')===!!e.hidden)&&(F.spot==='all'||e.spot===F.spot)&&(F.kind==='all'||(e.kind||'selfie')===F.kind)
-    &&(!q||[e.name,e.cls,'第'+e.cls+'屆',e.msg,e.title].some(v=>String(v||'').toLowerCase().includes(q))));
+    &&matchQ(e,PQ));
   if(F.sort==='new') l.sort((a,b)=>(b.t||0)-(a.t||0));
   if(F.sort==='old') l.sort((a,b)=>(a.t||0)-(b.t||0));
   if(F.sort==='cls') l.sort((a,b)=>(parseInt(a.cls)||0)-(parseInt(b.cls)||0)||(b.t||0)-(a.t||0));
@@ -302,11 +328,24 @@ function renderPhotos(){
   $('#statusChips').innerHTML=[['shown','顯示中',shown],['hidden','已隱藏',hid],['all','全部',entries.length]].map(([k,l,n])=>`<button class="chip" data-st="${k}" aria-pressed="${F.status===k}">${l}<b>${n}</b></button>`).join('');
   const l=filtered();
   $('#countText').textContent=`符合 ${l.length} 張`;
+  // 名字提示清單：輸入時跳出「小美・第 45 屆・3 張」
+  const ppl=new Map(); entries.forEach(e=>{ const k=e.name+'|'+e.cls; const p=ppl.get(k)||{ name:e.name, cls:e.cls, n:0 }; p.n++; ppl.set(k,p); });
+  $('#nameList').innerHTML=[...ppl.values()].sort((a,b)=>b.n-a.n).map(p=>`<option value="${esc(p.name)} ${esc(p.cls)}" label="${esc(p.name)}・第 ${esc(p.cls)} 屆・${p.n} 張"></option>`).join('');
+  // 搜到的都是同一個人時，顯示這個人的統計
+  const q=F.q.trim(), who=new Set(l.map(e=>e.name+'|'+e.cls));
+  const all=q ? entries.filter(e=>matchQ(e,q)) : [];
+  const allWho=new Set(all.map(e=>e.name+'|'+e.cls));
+  const PQ0=parseQ(q);
+  if(PQ0 && PQ0.any){ $('#whoBar').innerHTML=`沒有叫「${esc(q)}」的上傳者，改找留言和作品名稱：找到 ${all.length} 張`; $('#whoBar').hidden=false; }
+  else if(q && allWho.size===1){ const e=all[0], hid=all.filter(x=>x.hidden).length;
+    $('#whoBar').innerHTML=`<b>${esc(e.name)}</b>（第 ${esc(e.cls)} 屆）共上傳 ${all.length} 張，顯示中 ${all.length-hid} 張${hid?`、已隱藏 ${hid} 張`:''}`; $('#whoBar').hidden=false; }
+  else if(q && allWho.size>1){ const P=parseQ(q); $('#whoBar').innerHTML=`${P&&P.any?`沒有叫「${esc(q)}」的上傳者，改找留言內容：`:''}有 ${allWho.size} 位上傳者符合，點照片下方的名字可以只看那一位`; $('#whoBar').hidden=false; }
+  else $('#whoBar').hidden=true;
   $('#photos').innerHTML = l.length ? l.slice(0,shownN).map(e=>{
     const img=e.tinyUrl||e.wallUrl||e.photoUrl, k=e.kind||'selfie';
     return `<article class="ph ${e.hidden?'hidden':''} ${FEATURED===e.id?'onwall':''}">
       <button class="im" data-a="preview" data-id="${esc(e.id)}" aria-label="放大看 ${esc(e.name)} 的照片"><img src="${esc(img)}" alt="" loading="lazy"><span class="tag">${esc(spotName(e.spot))}</span>${e.hidden?'<span class="tag h">已隱藏</span>':''}</button>
-      <div class="meta"><b>${esc(e.name)}</b>　第 ${esc(e.cls)} 屆<p>${k==='scene'?'攝影作品 ':k==='note'?'便利貼 ':''}${esc(e.title?`《${e.title}》`:'')}${esc(e.msg||(e.handUrl?'（手寫留言）':''))}</p></div>
+      <div class="meta"><button class="nm" data-a="who" data-q="${esc(e.name)} ${esc(e.cls)}" title="只看這個人的照片">${esc(e.name)}</button>　第 ${esc(e.cls)} 屆<p>${k==='scene'?'攝影作品 ':k==='note'?'便利貼 ':''}${esc(e.title?`《${e.title}》`:'')}${esc(e.msg||(e.handUrl?'（手寫留言）':''))}</p></div>
       <div class="acts">${e.hidden?`<button class="btn" data-a="unhide" data-id="${esc(e.id)}">恢復顯示</button><button class="btn" disabled>投到牆上</button>`
         :`<button class="btn" data-a="hide" data-id="${esc(e.id)}">隱藏</button><button class="btn gold" data-a="feature" data-id="${esc(e.id)}">投到牆上</button>`}</div>
     </article>`; }).join('') : '<p class="empty">沒有符合的照片</p>';
@@ -350,6 +389,8 @@ document.addEventListener('click', e=>{
   if(a==='clearFilter'){ $('#wfSpot').value='all'; $('#wfKind').value='all'; send('filter',{ spot:'all', kind:'all' }); }
   if(a==='notice'){ const v=$('#noticeText').value.trim(); if(!v) return toast('先輸入公告文字'); send('notice',{ v }); $('#noticeText').value=''; toast('公告已送出'); }
   if(a==='preview') preview(id);
+  if(a==='who'){ $('#fQ').value=b.dataset.q; F.q=b.dataset.q; F.status='all'; shownN=60; renderPhotos(); $('#fQ').scrollIntoView({block:'center',behavior:'smooth'}); }
+  if(a==='clearQ'){ $('#fQ').value=''; F.q=''; shownN=60; renderPhotos(); $('#fQ').focus(); }
   if(a==='close') $('#modal').hidden=true;
   if(a==='feature'){ send('feature',{ v:id, sec:12 }); $('#modal').hidden=true; toast('已投到牆上，12 秒後自動收起'); }
   if(a==='hide'){ $('#modal').hidden=true; setHidden(id,true); }
