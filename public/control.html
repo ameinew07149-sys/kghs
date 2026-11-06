@@ -206,13 +206,16 @@ const CONFIG = {
   spots: [
     { id:'s1', name:'校門口', award:'最佳時光獎' }, { id:'s2', name:'榕園', award:'最佳夢想獎' }, { id:'s3', name:'圖書館', award:'最佳書香獎' },
     { id:'s4', name:'學生活動中心', award:'最佳人氣獎' }, { id:'s5', name:'體育館', award:'最佳青春熱血獎' }
-  ]
+  ],
+  // 第六個拍照點：晚會現場（不用掃 QR Code、不算在五星裡）
+  party: { id:'s6', name:'晚會現場' }
 };
 const KINDS={ all:'全部類型', selfie:'自拍／合照', scene:'攝影作品', note:'便利貼', preset:'準備好的照片' };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const spotName=id=>(CONFIG.spots.find(s=>s.id===id)||{}).name||'';
-const spotOpts=(all)=>`<option value="all">${all}</option>`+CONFIG.spots.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+const ALLSPOTS=[...CONFIG.spots, ...(CONFIG.party?[CONFIG.party]:[])];
+const spotName=id=>(ALLSPOTS.find(s=>s.id===id)||{}).name||'';
+const spotOpts=(all)=>`<option value="all">${all}</option>`+ALLSPOTS.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
 const kindOpts=()=>Object.entries(KINDS).map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
 $('#wfSpot').innerHTML=spotOpts('全部地點'); $('#fSpot').innerHTML=spotOpts('全部地點');
 $('#wfKind').innerHTML=kindOpts(); $('#fKind').innerHTML=kindOpts();

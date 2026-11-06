@@ -296,6 +296,8 @@ const CONFIG = {
     { id:'s1', name:'校門口', award:'最佳時光獎' }, { id:'s2', name:'榕園', award:'最佳夢想獎' }, { id:'s3', name:'圖書館', award:'最佳書香獎' },
     { id:'s4', name:'學生活動中心', award:'最佳人氣獎' }, { id:'s5', name:'體育館', award:'最佳青春熱血獎' }
   ],
+  // 第六個拍照點：晚會現場（不用掃 QR Code、不算在五星裡）
+  party: { id:'s6', name:'晚會現場' },
   swapSeconds: 2.5,       // 照片牆：每幾秒換掉一格
   featureSeconds: 18,     // 照片牆：每幾秒放大一張特寫（0＝不放大）
   finale: {               // 大結局的文字（開場前與謝幕後會播放主視覺 assets/brand/key-visual.jpg）
@@ -309,7 +311,8 @@ const CONFIG = {
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const spotName=id=>(CONFIG.spots.find(s=>s.id===id)||{}).name||'';
+const ALLSPOTS=[...CONFIG.spots, ...(CONFIG.party?[CONFIG.party]:[])];
+const spotName=id=>(ALLSPOTS.find(s=>s.id===id)||{}).name||'';
 const spotAward=id=>(CONFIG.spots.find(s=>s.id===id)||{}).award||'';
 const ICONS={
   camera:'<path d="M4 8.5A2 2 0 0 1 6 6.5h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/>',
@@ -367,8 +370,16 @@ function addItem(it){
   const existed=all.some(x=>x.id===it.id);
   all=all.filter(x=>x.id!==it.id); all.unshift(it); refilter();
   renderStats(); sendState(); if(inFinale || !match(it)) return;
-  notice(`第 ${it.cls} 屆 ${it.name} 剛剛在「${spotName(it.spot)}」${existed?'重拍了一張':'集章'}！`);
-  if(mode==='grid'){ const n=document.querySelectorAll('.tile2').length; if(n<items.length && n<GRID.cap) renderGrid(); else placeNew(it); feature(it); }
+  notice(`第 ${it.cls} 屆 ${it.name} 剛剛在「${spotName(it.spot)}」${existed?'重拍了一張':CONFIG.party&&it.spot===CONFIG.party.id?'打卡':'集章'}！`);
+  if(mode==='grid'){
+    // 重拍：牆上還掛著舊照片的格子，直接換成新照片（形狀不同就換別張，新照片另外找位置）
+    const old=[...document.querySelectorAll(`.tile2[data-id="${CSS.escape(it.id)}"]`)];
+    let placed=false;
+    old.forEach(t=>{ if(!placed && t.dataset.shape===shapeOf(it)){ swapSlot(t,it); placed=true; } else swapSlot(t); });
+    const n=document.querySelectorAll('.tile2').length;
+    if(!placed){ if(n<items.length && n<GRID.cap) renderGrid(); else placeNew(it); }
+    feature(it);
+  }
   else renderCols();
 }
 function removeItem(id){
@@ -395,7 +406,7 @@ function cardHTML(it){
 }
 function people(){ const m=new Map(); all.forEach(x=>{ const k=x.cls+'|'+x.name; m.set(k,(m.get(k)||new Set()).add(x.spot)); }); return m; }
 function renderStats(){
-  const m=people(), done=[...m.values()].filter(s=>s.size>=CONFIG.spots.length).length;
+  const m=people(), done=[...m.values()].filter(s=>CONFIG.spots.every(x=>s.has(x.id))).length;
   const pl = PRE.total && PRE.done<PRE.total ? `<span class="stat" title="背景預先載入照片">${ic('hourglass')} 預載 <b>${PRE.done}</b>/ ${PRE.total}</span>` : '';
   $('#stats').innerHTML=`${pl}<span class="stat"><b>${m.size}</b>位校友參加</span><span class="stat"><b>${done}</b>位摘齊五星</span><span class="stat"><b>${all.length}</b>張照片</span>`;
 }
@@ -510,8 +521,9 @@ function feature(it, ms=6500){
 let colRAF=null;
 function renderCols(){
   cancelAnimationFrame(colRAF);
-  const n=CONFIG.spots.length;
-  $('#stage').innerHTML=`<div class="cols" style="--n:${n}">${CONFIG.spots.map(s=>{
+  // 晚會現場有照片時，多一欄放在最右邊
+  const cols=ALLSPOTS.filter(s=>CONFIG.spots.includes(s) || items.some(x=>x.spot===s.id)), n=cols.length;
+  $('#stage').innerHTML=`<div class="cols" style="--n:${n}">${cols.map(s=>{
     const list=items.filter(x=>x.spot===s.id), cards=list.map(cardHTML).join('');
     return `<section class="col">${s.award?`<p class="aw">${esc(s.award)}</p>`:''}<h2>${esc(s.name)}</h2><span class="n">${list.length} 張</span><div class="win"><div class="track">${cards}${list.length>6?cards:''}</div></div></section>`;
   }).join('')}</div>`;

@@ -401,6 +401,9 @@ input[type=text],input[type=number],textarea{background:var(--card)}
 .spot .award{font-family:var(--serif);font-weight:600;color:var(--gold);font-size:1rem;letter-spacing:.06em;margin:0 0 8px}
 .spot .mark{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-family:var(--serif);font-weight:600}
 .spot h3.unknown{letter-spacing:.3em}
+.partyspot .spot.party{background:linear-gradient(160deg,#1B1613,#2A1E16);border-color:rgba(217,189,126,.6);color:#F3EADB}
+.partyspot .spot.party .riddle{color:#E2D6C2}
+.partyspot .spot.party .status.ok,.partyspot .spot.party .said,.partyspot .spot.party .work{color:#F3DFA8}
 .status.ok{color:var(--velvet)}
 .howto{background:var(--card);border:1px solid var(--line);border-radius:14px}
 .unlock{background:var(--velvet);color:#F6EBD6;border-radius:16px;box-shadow:inset 0 0 0 1px rgba(217,189,126,.5)}
@@ -819,6 +822,23 @@ const CONFIG = {
     { id:'s5', award:'最佳青春熱血獎', key:'h5n1', stamp:'體', name:'體育館', riddle:'汗水飛揚的殿堂', hint:'排球、體育課、儀隊練習，青春的汗水都灑在這片地板上。',
       presets:['assets/presets/s5-1.jpg','assets/presets/s5-old.jpg'] }
   ],
+  // 第六個拍照點：晚會現場。不用掃 QR Code、隨時都能拍，也不算在五星（集滿五站一樣會跳出入場券）
+  // 讓沒辦法回學校的校友，在晚會現場也能拍照打卡上牆
+  party: { id:'s6', stamp:'宴', name:'晚會現場', riddle:'今晚的星光大道', title:'晚會現場打卡',
+    desc:'人在晚會現場嗎？不用掃 QR Code，直接拍一張、留一句話，照片就會出現在投影牆上。（不算在五星裡）', presets:[] },
+  // 留言過濾：留言、作品名稱、自己打的文字貼紙、稱呼裡只要出現這些字，就不能送出（英文不分大小寫，中間夾空白或符號也抓得到）
+  badWords: [
+    '幹','操你','操妳','操他','操她','操死','肏','屌',
+    '靠北','靠杯','靠背','靠腰','靠夭','哭夭','哭爸','哭么','機掰','雞掰','機八','雞八','機巴','雞巴','鷄巴','鸡巴','雞歪','機歪',
+    '他媽','她媽','你媽','妳媽','媽的','媽逼','妈的','他妈','你妈','老木','三小','啥小','殺小','北七','白癡','白痴','白目','智障','智缺','低能','腦殘','弱智',
+    '賤人','賤貨','犯賤','下賤','婊','妓女','騷貨','破麻','爛貨','公娼','援交','雜種','畜生','畜牲','人渣','王八','混蛋','混帳','廢物','去死','死全家','吃屎','狗屎','屁眼','傻逼','傻屄','屄','煞筆','沙比',
+    '陰莖','陰道','陰蒂','雞雞','懶叫','卵葩','做愛','打砲','打炮','約砲','約炮','性交','口交','肛交','自慰','打手槍','強姦','強暴','輪姦','淫','色情','裸照','裸體','奶子','巨乳','A片',
+    '支那','台巴子','死gay','死娘炮','ㄍㄋㄋ','ㄎㄅ','ㄋㄇ','ㄐㄅ','ㄌㄐ',
+    'fuck','fuk','fck','fxck','shit','bitch','btch','asshole','bastard','cunt','dick','pussy','slut','whore','porn','nigger','nigga','motherfucker','wtf','stfu','dumbass','retard'
+  ],
+  // 不小心被上面擋到的正常詞，例如「幹部」「操場」，放在這裡就不會被擋
+  okWords: ['幹部','幹事','幹嘛','幹麼','幹啥','才幹','能幹','骨幹','樹幹','主幹','枝幹','幹勁','幹練','苦幹','實幹','蠻幹','硬幹','大幹','精幹','軀幹','幹道','幹線','幹員','幹活','幹細胞','幹得','幹過','幹了一番',
+    '操場','體操','早操','操心','操作','操練','操守','節操','情操','媽媽的','你媽媽','妳媽媽','他媽媽','她媽媽','死黨','小時','老木棉','老木頭','台北七','dickens','scunthorpe'],
   // 開場與結尾劇情：一個 { } 是一頁；icon 用貼紙代號（trophy、reel、ticket、filmcam、gstar、rose、bell、camera…）；{name} 會換成玩家的稱呼
   story: {
     intro: [
@@ -920,7 +940,32 @@ const esc=s=>String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>'
 let toastTimer;
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3000); }
 function show(id){ document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id); document.body.classList.toggle('fullmode', id==='cam'||id==='edit'||id==='scan'); document.body.classList.toggle('storymode', id==='story'); document.body.classList.toggle('covermode', id==='cover'); if(id==='cover') coverStart(); else coverStop(); const fab=document.getElementById('scanFab'); if(fab) fab.hidden = id!=='home'; window.scrollTo(0,0); }
-const spotById=id=>CONFIG.spots.find(s=>s.id===id);
+const spotById=id=>CONFIG.spots.find(s=>s.id===id) || (CONFIG.party && CONFIG.party.id===id ? CONFIG.party : undefined);
+const isParty=id=>!!(CONFIG.party && CONFIG.party.id===id);
+const starCount=done=>CONFIG.spots.filter(s=>done[s.id]).length;
+
+/* 留言過濾：先把全形轉半形、轉小寫、拿掉空白和符號（防「幹 你」「f.u.c.k」），再把 okWords 裡的正常詞挖掉，剩下的才比對 badWords */
+const BAD=(()=>{
+  const norm=t=>String(t||'').normalize('NFKC').toLowerCase().replace(/[\s\u200b-\u200f\u2060\ufeff_.,，。、！!？?~～\-—…·・*＊#@$%^&+=|\\/:;：；'"‘’“”「」『』()（）\[\]【】{}<>《》〈〉0-9０-９]/g,'');
+  const bad=[...new Set((CONFIG.badWords||[]).map(norm).filter(Boolean))];
+  const ok=[...new Set((CONFIG.okWords||[]).map(norm).filter(Boolean))].sort((a,b)=>b.length-a.length);
+  return {
+    find(t){
+      let s=norm(t); if(!s) return null;
+      ok.forEach(w=>{ s=s.split(w).join('　'); });
+      if(/(https?|www|\.com|\.tw|\.net|line\.me|bit\.ly)/i.test(String(t).toLowerCase().replace(/\s/g,''))) return '網址';
+      return bad.find(w=>s.includes(w)) || null;
+    }
+  };
+})();
+/* 檢查一組 [欄位名稱, 文字]；有問題就跳提示、回傳 false */
+function cleanCheck(fields){
+  for(const [label,text] of fields){
+    const w=BAD.find(text);
+    if(w){ toast(w==='網址' ? `${label}裡不能放網址，請拿掉再送出` : `${label}裡有不適當的字眼「${w}」，請修改後再送出`); return false; }
+  }
+  return true;
+}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function dateStr(){ const d=new Date(); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`; }
 function genCode(){ const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<6;i++) s+=a[Math.floor(Math.random()*a.length)]; return s; }
@@ -1197,6 +1242,7 @@ const pid=(name,cls,l3)=>`${cls}|${name}|${l3}`;
 $('#joinBtn').addEventListener('click', async ()=>{
   const name=$('#jName').value.trim(), cls=$('#jCls').value.trim().replace(/^0+/,''), l3=$('#jL3').value.trim();
   if(!name){ toast('請填寫怎麼稱呼妳'); return; }
+  if(!cleanCheck([['稱呼',name]])) return;
   if(!cls){ toast('請填寫第幾屆畢業'); return; }
   if(!/^\d{3}$/.test(l3)){ toast('手機末三碼請填 3 個數字'); return; }
   const id=pid(name,cls,l3);
@@ -1213,7 +1259,7 @@ $('#joinBtn').addEventListener('click', async ()=>{
   if(remote){
     const done={}, scanned={};
     (remote.entries||[]).forEach(e=>{ done[e.spot_id]={ thumb:e.photo_url, msg:e.msg, kind:e.kind||'selfie', title:e.title||'', hand:e.hand_url, layout:e.layout, t:+new Date(e.updated_at), sync:'sent' }; scanned[e.spot_id]=true; });
-    DB.players[id]={ player:{ name, cls, l3, code:remote.code, uid:remote.uid, t:Date.now() }, scanned, done, endSeen:Object.keys(done).length>=CONFIG.spots.length };
+    DB.players[id]={ player:{ name, cls, l3, code:remote.code, uid:remote.uid, t:Date.now() }, scanned, done, endSeen:starCount(done)>=CONFIG.spots.length };
     DB.current=id; S=DB.players[id]; save(); boot();
     toast(`歡迎回來，${name}！已找回妳的進度`); return;
   }
@@ -1305,6 +1351,7 @@ function renderHome(){
     <div class="syncbar" id="syncBar" hidden><span id="syncText"></span><button class="btn soft small" data-act="retry">立即重試</button></div>
     <div class="who-row"><span class="tiny" style="margin:0">找回進度用：末三碼 ${esc(p.l3)}</span><button class="btn soft small" data-act="logout">不是妳？</button></div>
     <div class="stamps" aria-label="已摘 ${n} / ${spots.length} 顆星">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
+    ${partyHTML()}
     <section class="clues" aria-label="提示卡"><h2 class="clues-h">提示卡<span>點一下翻面</span></h2><div class="clue-row">${spots.map(clueHTML).join('')}</div></section>
     ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>翻開上面的提示卡，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「${ic('scan')} 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就摘下這一顆星</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
     ${n===spots.length ? `<section class="unlock"><h2>五星獎全部到手</h2><p>星光晚宴的入場券準備好了，時間地點都寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
@@ -1319,10 +1366,20 @@ function clueHTML(s,i){
       <span class="clue-b"><span class="clue-no">No.${i+1}　提示</span><span class="clue-ht">${esc(s.hint)}</span>${found?`<span class="clue-ans">${ic('pin')} ${esc(s.name)}</span>`:''}</span>
     </span></button>`;
 }
+/* 第六個拍照點：晚會現場（不用掃 QR Code、不算星星） */
+function partyHTML(){
+  const s=CONFIG.party; if(!s) return '';
+  const d=S.done[s.id];
+  const foot = d ? doneFoot(s,d) : `<button class="btn wide" data-act="shoot" data-id="${s.id}">${ic('camera')} 在晚會現場拍照打卡</button>`;
+  return `<section class="spots partyspot" aria-label="${esc(s.title)}"><article class="spot party ${d?'won':''}"><p class="award">${esc(s.title)}</p><div class="head"><span class="mark">${s.stamp}</span><h3>${esc(s.name)}</h3></div><p class="riddle">${esc(s.desc)}</p>${foot}</article></section>`;
+}
+function doneFoot(s,d){
+  return `<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">${isParty(s.id)?'已打卡':'已摘星'}　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 '+ic('check'),failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">${ic('camera')} 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?`<p class="work">${ic('note')} 便利貼祝福</p>`:''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
+}
 function spotHTML(s){
   const d=S.done[s.id], sc=S.scanned[s.id], known=d||sc;
   let foot;
-  if(d) foot=`<div class="done"><img src="${d.thumb||d.img}" alt="在${esc(s.name)}拍的照片"><div><p class="status ok">已摘星　<span class="syncst ${d.sync||'sent'}">${({queued:'等待上傳',sending:'上傳中…',sent:'已上傳 '+ic('check'),failed:'上傳失敗，請洽工作人員'})[d.sync||'sent']}</span></p>${d.kind==='scene'?`<p class="work">${ic('camera')} 攝影作品${d.title?`《${esc(d.title)}》`:''}</p>`:''}${d.kind==='note'?`<p class="work">${ic('note')} 便利貼祝福</p>`:''}${d.hand?`<img class="said-hand" src="${d.hand}" alt="手寫留言">`:`<p class="said">「${esc(d.msg)}」</p>`}<button class="btn soft small" data-act="shoot" data-id="${s.id}">重拍</button></div></div>`;
+  if(d) foot=doneFoot(s,d);
   else if(sc) foot=`<p class="status ok">找到了！可以拍照了</p><button class="btn wide" data-act="shoot" data-id="${s.id}">去拍照</button>`;
   else foot=`<button class="btn soft wide scanbtn" data-sc="open">${ic('scan')} 到了！掃描 QR Code</button>`;
   return `<article class="spot ${d?'won':''}">${s.award?`<p class="award">${esc(s.award)}</p>`:''}<div class="head"><span class="mark">${s.stamp}</span><h3 class="${known?'':'unknown'}">${known?esc(s.name):'？？？'}</h3></div><p class="riddle">${esc(s.riddle)}</p>${foot}</article>`;
@@ -2047,7 +2104,7 @@ function renderIdeas(){
   $('#camIdeas').innerHTML=`<button disabled style="opacity:.7;border:0;background:none;padding-left:0">${ic('bulb')} 靈感</button>`+list.map((d,i)=>`<button data-idea="${i}" aria-pressed="${i===ideaSel}">${ic(d.icon)} ${esc(d.name)}</button>`).join('');
 }
 function renderAllPanels(){
-  const stkCat=E.spot&&CATS[E.spot.id]?E.spot.id:'award';
+  const stkCat=E.spot&&CATS[E.spot.id]?E.spot.id:(E.spot&&isParty(E.spot.id)?'party':'award');
   renderFrames(); renderTemplates(); renderStk(stkCat); renderQuick(); renderIdeas();
   $('#filters').innerHTML='';
   $('#stkcats').innerHTML=Object.entries(CATS).map(([k,l])=>`<button class="chip" data-cat="${k}">${l}</button>`).join(''); setSel('cat',stkCat,$('#stkcats'));
@@ -2278,10 +2335,17 @@ function leaveNoteMode(){
   renderQuick();
 }
 
+/* 留言過濾：留言、作品名稱、自己打的文字貼紙有不適當的字眼就不能送出 */
+function wordsOk(){
+  const msgBad=!cleanCheck([...(E.msgMode==='type' ? [[E.layout==='note'?'便利貼':'留言', E.msg]] : []), ...(E.kind==='scene' ? [['作品名稱', E.title]] : [])]);
+  if(msgBad){ if(E.tool!=='msg') setTool('msg'); return false; }
+  return cleanCheck(E.stickers.filter(o=>o.type==='word' && !o.tpl).map(o=>['照片上的文字', o.v]));
+}
 /* 完成 */
 function finish(){
   if(E.layout!=='note' && !filled()){ toast('照片還沒拍完喔'); retake(); return; }
   if(!hasMsg()){ if(E.tool!=='msg') setTool('msg'); toast(E.msgMode==='type' ? (E.kind==='note' ? '在便利貼上寫幾句祝福，或點一句現成的' : E.kind==='scene' ? '幫作品取個名字，或寫一段介紹' : '最後留一句話給大家，點一下現成的句子也可以') : '在白色板子上寫幾個字'); return; }
+  if(!wordsOk()) return;
   E.sel=-1; draw(false);
   const img=cv.toDataURL('image/jpeg',.8);
   modal(`<h2>這樣可以嗎？</h2><img src="${img}" alt="完成的照片" style="display:block;max-height:48vh;max-width:100%;margin:6px auto 4px;border-radius:8px">`,
@@ -2332,7 +2396,7 @@ document.addEventListener('click', e=>{
   if(a==='finish') finish();
   if(a==='closetool') setTool(null);
   if(a==='cap'){ E.caption=!E.caption; syncUI(); draw(); }
-  if(a==='addtext'){ const v=$('#myText').value.trim(); if(!v){ toast('先打幾個字喔'); return; } addSticker({type:'word', v, st:E.textStyle, f:E.textFont}); $('#myText').value=''; }
+  if(a==='addtext'){ const v=$('#myText').value.trim(); if(!v){ toast('先打幾個字喔'); return; } if(!cleanCheck([['文字貼紙',v]])) return; addSticker({type:'word', v, st:E.textStyle, f:E.textFont}); $('#myText').value=''; }
   if(a==='undo'){ E.strokes.pop(); draw(); }
   if(a==='clearpen'){ E.strokes=[]; draw(); }
   if(a==='padundo'){ E.hand.pop(); drawPad(); syncUI(); }
@@ -2513,6 +2577,7 @@ function setSaving(on){
 }
 async function submit(){
   if(saving || !E.spot) return;
+  if(!wordsOk()) return;
   setSaving(true);
   // 先讓「儲存中」畫面出現，再開始處理照片（處理照片時手機會卡一下）
   await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,60)));
@@ -2536,7 +2601,7 @@ async function doSubmit(){
   justStamped=spot; const stamp=E.spot.stamp; $('#edit').classList.remove('notemode'); E.spot=null;
   const all=CONFIG.spots.every(s=>S.done[s.id]);
   if(all && !S.endSeen){ S.endSeen=true; save(); sfx.stamp(); playStory('ending', openInvite); return; }
-  show('home'); renderHome(); const aw=(spotById(spot)||{}).award||`「${stamp}」`; toast(kind==='note' ? `便利貼貼好了，獲得${aw}` : `恭喜獲得${aw}`); setTimeout(()=>sfx.stamp(),250);
+  show('home'); renderHome(); const aw=(spotById(spot)||{}).award||`「${stamp}」`; toast(isParty(spot) ? (kind==='note' ? '便利貼貼好了，等一下會出現在投影牆上' : '晚會打卡成功！照片等一下會出現在投影牆上') : kind==='note' ? `便利貼貼好了，獲得${aw}` : `恭喜獲得${aw}`); setTimeout(()=>sfx.stamp(),250);
 }
 
 /* ===================== 邀請函 ===================== */
