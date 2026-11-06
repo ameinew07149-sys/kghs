@@ -633,7 +633,7 @@ try{ new Function('var a=null; return a?.b ?? 1'); }catch(e){ document.addEventL
       <p class="cf-t">相機還沒打開</p>
       <p class="cf-s">按下面的按鈕，手機問妳時請選「允許」</p>
       <button class="btn" data-ed="retrycam">開啟相機</button>
-      <label class="btn soft">改用手機相機拍<input class="vh" type="file" accept="image/*" capture="user" id="fCam"></label>
+      <label class="btn soft">用手機內建相機開<input class="vh" type="file" accept="image/*" capture="user" id="fCam"></label>
       <button class="linkbtn" style="color:#E8D3A6" data-ed="camhelp">打不開怎麼辦？</button>
     </div>
   </div>
@@ -993,7 +993,7 @@ function camHelp(){
     <p class="os">Android</p>
     <ol><li>點網址列左邊的小鎖頭或設定圖示</li><li>選「權限」</li><li>把「相機」打開</li></ol>
     <p>還是不行的話，可以改用手機本來的相機拍，一樣可以集章。</p>`,
-    [{label:'改用手機相機拍', fn:()=>{ if(!$('#cam').hidden) $('#fCam').click(); }}, {label:'我知道了', soft:true}]);
+    [{label:'用手機內建相機開', fn:()=>{ if(!$('#cam').hidden) $('#fCam').click(); }}, {label:'我知道了', soft:true}]);
 }
 async function requestCamera(){
   if(!navigator.mediaDevices?.getUserMedia){ camHelp(); return false; }
