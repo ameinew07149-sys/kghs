@@ -1,9 +1,0 @@
-{
-  "indexes": [
-    { "collectionGroup": "entries", "queryScope": "COLLECTION",
-      "fields": [ { "fieldPath": "hidden", "order": "ASCENDING" }, { "fieldPath": "t", "order": "DESCENDING" } ] },
-    { "collectionGroup": "entries", "queryScope": "COLLECTION",
-      "fields": [ { "fieldPath": "hidden", "order": "ASCENDING" }, { "fieldPath": "spot", "order": "ASCENDING" }, { "fieldPath": "t", "order": "DESCENDING" } ] }
-  ],
-  "fieldOverrides": []
-}

@@ -13,8 +13,6 @@ on:
           - firestore:rules,storage
           - hosting
           - hosting,firestore:rules,storage
-          - firestore,storage
-          - hosting,firestore,storage
 
 jobs:
   deploy:

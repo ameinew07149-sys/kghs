@@ -401,29 +401,6 @@ input[type=text],input[type=number],textarea{background:var(--card)}
 .spot .award{font-family:var(--serif);font-weight:600;color:var(--gold);font-size:1rem;letter-spacing:.06em;margin:0 0 8px}
 .spot .mark{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-family:var(--serif);font-weight:600}
 .spot h3.unknown{letter-spacing:.3em}
-.wallcard{display:flex;align-items:center;gap:14px;margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
-.wallcard .wc-pics{display:flex;flex:none}
-.wallcard .wc-pics span{width:40px;height:40px;border-radius:10px;border:2px solid var(--card);margin-left:-12px;background:#2A231E center/cover no-repeat;display:grid;place-items:center;color:var(--gold)}
-.wallcard .wc-pics span:first-child{margin-left:0}
-.wallcard .wc-t{flex:1;min-width:0}
-.wallcard .wc-t b{display:block;font-family:var(--serif);font-weight:600;font-size:1.08rem}
-.wallcard .wc-t small{color:var(--muted);font-size:.86rem}
-.wallcard .wc-go{color:var(--gold);font-size:1.4rem;flex:none}
-.gal-sub{color:var(--muted);font-size:.9rem;margin:0 0 10px}
-.gal-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
-.gal-chips .chip{flex:none}
-.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
-.gal-grid button{position:relative;aspect-ratio:1;border:0;padding:0;border-radius:6px;overflow:hidden;background:#2A231E;cursor:pointer}
-.gal-grid img{width:100%;height:100%;object-fit:cover;display:block}
-.gal-grid .gn{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 4px;font-size:.72rem;color:#fff;text-align:left;background:linear-gradient(transparent,rgba(0,0,0,.65));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gal-grid .mine{position:absolute;top:4px;right:4px;font-size:.66rem;background:var(--gold);color:#1B1613;border-radius:6px;padding:1px 5px}
-.gal-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
-.gal-more{margin-top:14px}
-.gal-big{display:block;width:100%;max-height:58vh;object-fit:contain;border-radius:10px;background:#0B0908}
-.gal-meta{margin:10px 0 0}
-.gal-meta .where{color:var(--gold);font-size:.88rem}
-.gal-meta .say{font-family:var(--serif);font-size:1.15rem;margin:6px 0}
-.gal-meta .hand{max-width:100%;max-height:90px;display:block;margin:6px 0;background:#fff;border-radius:6px}
 .partyspot .spot.party{background:linear-gradient(160deg,#1B1613,#2A1E16);border-color:rgba(217,189,126,.6);color:#F3EADB}
 .partyspot .spot.party .riddle{color:#E2D6C2}
 .partyspot .spot.party .status.ok,.partyspot .spot.party .said,.partyspot .spot.party .work{color:#F3DFA8}
@@ -626,14 +603,6 @@ try{ new Function('var a=null; return a?.b ?? 1'); }catch(e){ document.addEventL
   </section>
 
   <section id="home" class="view" hidden></section>
-
-  <section id="gallery" class="view" hidden>
-    <div class="bar"><button class="btn soft small" data-act="home">返回</button><h2>互動牆</h2><button class="btn soft small" data-act="galreload">重新整理</button></div>
-    <p class="gal-sub" id="galSub">看看大家在各個角落拍的照片</p>
-    <div class="gal-chips" id="galChips"></div>
-    <div class="gal-grid" id="galGrid"></div>
-    <p class="gal-more"><button class="btn soft wide" data-act="galmore" id="galMore" hidden>再看更多</button></p>
-  </section>
 
 
 
@@ -1383,7 +1352,6 @@ function renderHome(){
     <div class="who-row"><span class="tiny" style="margin:0">找回進度用：末三碼 ${esc(p.l3)}</span><button class="btn soft small" data-act="logout">不是妳？</button></div>
     <div class="stamps" aria-label="已摘 ${n} / ${spots.length} 顆星">${spots.map(s=>`<div class="slot ${S.done[s.id]?'on':''} ${justStamped===s.id?'thump':''}">${s.stamp}</div>`).join('')}</div>
     ${partyHTML()}
-    ${wallCardHTML()}
     <section class="clues" aria-label="提示卡"><h2 class="clues-h">提示卡<span>點一下翻面</span></h2><div class="clue-row">${spots.map(clueHTML).join('')}</div></section>
     ${n===0 ? `<section class="howto"><h2>怎麼玩</h2><ol><li>翻開上面的提示卡，猜猜五個地點在校園哪裡</li><li>走到那裡，點下方的「${ic('scan')} 掃描 QR Code」，對準牆上的圖案</li><li>拍自己、拍合照，或當攝影師拍下懷念的風景，再留一句得獎感言，就摘下這一顆星</li></ol><button class="linkbtn" data-act="intro">再看一次開場故事</button></section>` : ''}
     ${n===spots.length ? `<section class="unlock"><h2>五星獎全部到手</h2><p>星光晚宴的入場券準備好了，時間地點都寫在裡面。</p><button class="btn white wide" data-act="invite">打開入場券</button><p class="center"><button class="linkbtn" style="color:#fff" data-act="ending">重看結尾故事</button></p></section>` : ''}
@@ -1398,63 +1366,6 @@ function clueHTML(s,i){
       <span class="clue-b"><span class="clue-no">No.${i+1}　提示</span><span class="clue-ht">${esc(s.hint)}</span>${found?`<span class="clue-ans">${ic('pin')} ${esc(s.name)}</span>`:''}</span>
     </span></button>`;
 }
-/* ===================== 互動牆（手機版）：看大家的作品 =====================
-   省流量設計：首頁的人數／張數讀投影牆回報的 1 筆狀態；牆上的照片一次只載入 24 張小圖，點開才載入大圖 */
-const GAL={ items:[], last:null, done:false, busy:false, spot:'all', ordered:true, stat:null, statAt:0 };
-const GAL_N=24;
-async function wallStat(){
-  if(!API.live || Date.now()-GAL.statAt<60000) return;
-  GAL.statAt=Date.now();
-  try{
-    const { db }=await fb(), d=await timeout(db.collection('control').doc('state').get(), 8000), s=d.data();
-    if(s && typeof s.total==='number'){ GAL.stat={ photos:s.total, people:typeof s.people==='number'?s.people:null }; if(S && !$('#home').hidden) renderHome(); }
-  }catch(_){}
-}
-function wallCardHTML(){
-  const st=GAL.stat, pics=GAL.items.slice(0,3);
-  const line = st && st.photos ? (st.people ? `已有 <b style="display:inline;font-size:inherit">${st.people}</b> 位校友、${st.photos} 張照片上牆` : `已有 ${st.photos} 張照片上牆`) : '看看大家在各個角落拍的照片';
-  setTimeout(wallStat,0);
-  return `<button class="wallcard" data-act="gallery"><span class="wc-pics">${pics.length?pics.map(it=>`<span style="background-image:url('${esc(it.tiny)}')"></span>`).join(''):`<span>${ic('image')}</span>`}</span><span class="wc-t"><b>互動牆</b><small>${line}</small></span><span class="wc-go">›</span></button>`;
-}
-function galItem(id,e){ return { id, uid:e.playerUid, name:e.name, cls:e.cls, spot:e.spot, msg:e.msg||'', kind:e.kind||'selfie', title:e.title||'', t:e.t||0, tiny:e.tinyUrl||e.wallUrl||e.photoUrl, wall:e.wallUrl||e.photoUrl, hand:e.handUrl||null }; }
-async function galLoad(reset){
-  if(GAL.busy) return; if(reset){ GAL.items=[]; GAL.last=null; GAL.done=false; }
-  if(GAL.done) return;
-  GAL.busy=true; renderGallery();
-  try{
-    if(API.live){
-      const { db }=await fb();
-      const q=ordered=>{ let r=db.collection('entries').where('hidden','==',false); if(GAL.spot!=='all') r=r.where('spot','==',GAL.spot); if(ordered) r=r.orderBy('t','desc'); if(GAL.last) r=r.startAfter(GAL.last); return r.limit(GAL_N); };
-      let snap;
-      try{ snap=await timeout(q(GAL.ordered).get(), 15000); }
-      catch(e){ if(!GAL.ordered || !/index/i.test(String(e && (e.code+' '+e.message)))) throw e; GAL.ordered=false; GAL.last=null; GAL.items=[]; snap=await timeout(q(false).get(), 15000); }   // 還沒建好排序索引時，改成不排序
-      snap.docs.forEach(d=>GAL.items.push(galItem(d.id,d.data())));
-      GAL.last=snap.docs[snap.docs.length-1]||GAL.last; GAL.done=snap.docs.length<GAL_N;
-    } else {
-      const all=(await IDB.all('mock')).filter(x=>x.id.startsWith('e:') && (GAL.spot==='all'||x.spot===GAL.spot)).sort((a,b)=>b.t-a.t);
-      GAL.items=all.map(e=>({ id:e.id, uid:null, name:e.name, cls:e.cls, spot:e.spot, msg:e.msg||'', kind:e.kind||'selfie', title:e.title||'', t:e.t, tiny:URL.createObjectURL(e.photo), wall:URL.createObjectURL(e.photo), hand:e.hand?URL.createObjectURL(e.hand):null })); GAL.done=true;
-    }
-  }catch(e){ toast('互動牆讀取失敗，請檢查網路後按「重新整理」'); }
-  finally{ GAL.busy=false; renderGallery(); }
-}
-function openGallery(){ show('gallery'); wallStat(); renderGallery(); if(!GAL.items.length || Date.now()-(GAL.loadedAt||0)>120000){ GAL.loadedAt=Date.now(); galLoad(true); } }
-function renderGallery(){
-  if($('#gallery').hidden) return;
-  const st=GAL.stat, spots=[{id:'all',name:'全部'}, ...CONFIG.spots, ...(CONFIG.party?[CONFIG.party]:[])];
-  $('#galSub').textContent = st && st.photos ? `${st.people?`${st.people} 位校友・`:''}${st.photos} 張照片，最新的在最前面` : '看看大家在各個角落拍的照片';
-  $('#galChips').innerHTML=spots.map(s=>`<button class="chip" data-act="galspot" data-id="${s.id}" aria-pressed="${GAL.spot===s.id}">${esc(s.name)}</button>`).join('');
-  const me=S && S.player.uid;
-  $('#galGrid').innerHTML = GAL.items.length ? GAL.items.map((it,i)=>`<button data-act="galopen" data-i="${i}" aria-label="${esc(it.name)}的照片"><img src="${esc(it.tiny)}" alt="" loading="lazy">${me&&it.uid===me?'<span class="mine">我的</span>':''}<span class="gn">${esc(it.name)}・${esc(it.cls)}屆</span></button>`).join('')
-    : `<p class="gal-empty">${GAL.busy?'載入中…':'這裡還沒有照片，快去拍第一張！'}</p>`;
-  $('#galMore').hidden = GAL.done || !GAL.items.length; $('#galMore').disabled=GAL.busy; $('#galMore').textContent=GAL.busy?'載入中…':'再看更多';
-}
-function galOpen(i){
-  const it=GAL.items[i]; if(!it) return;
-  const sp=spotById(it.spot), where = it.kind==='scene' ? `攝影作品・${sp?sp.name:''}` : it.kind==='note' ? `便利貼祝福・${sp?sp.name:''}` : (sp ? (sp.award ? `${sp.award}・${sp.name}` : sp.name) : '');
-  modal(`<img class="gal-big" src="${esc(it.wall)}" alt="${esc(it.name)}的照片"><div class="gal-meta"><p class="where">${esc(where)}</p>${it.title?`<p class="say">《${esc(it.title)}》</p>`:''}${it.hand?`<img class="hand" src="${esc(it.hand)}" alt="手寫留言">`:it.msg&&it.kind!=='note'?`<p class="say">「${esc(it.msg)}」</p>`:''}<p><b>${esc(it.name)}</b>　第 ${esc(it.cls)} 屆</p></div>`,
-    [{label:'關閉', soft:true}]);
-}
-
 /* 第六個拍照點：晚會現場（不用掃 QR Code、不算星星） */
 function partyHTML(){
   const s=CONFIG.party; if(!s) return '';
@@ -2777,11 +2688,6 @@ document.addEventListener('click', e=>{
   if(a==='invite') openInvite();
   if(a==='logout') logout();
   if(a==='retry'){ SYNC.fails=0; processOutbox(); toast('重新上傳中…'); }
-  if(a==='gallery') openGallery();
-  if(a==='galmore') galLoad(false);
-  if(a==='galreload'){ GAL.statAt=0; wallStat(); GAL.loadedAt=Date.now(); galLoad(true); }
-  if(a==='galspot'){ GAL.spot=b.dataset.id; GAL.loadedAt=Date.now(); galLoad(true); }
-  if(a==='galopen') galOpen(+b.dataset.i);
 });
 
 fontsReady.then(()=>{ if(E.spot) draw(); });
