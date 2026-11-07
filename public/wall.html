@@ -466,9 +466,15 @@ function renderGrid(){
   clearInterval(GRID.swapT); clearInterval(GRID.featT);
   if(!items.length){ $('#stage').innerHTML = all.length ? '<p class="empty">這個篩選目前沒有照片。</p>' : '<p class="empty">還沒有照片。<br>校友們集章後，照片和留言會出現在這裡。</p>'; return; }
   const st=$('#stage'), W=st.clientWidth, H=st.clientHeight;
-  const cols = W/H>1.4 ? 32 : 20, u=W/(cols+0.7);
+  // 依高度決定格子大小：讓直式照片（5 格高）剛好排滿 2、3、4… 排，再挑每排張數最接近原本密度的那一種
+  // （以前固定切 32 欄，超寬的 LED 螢幕每格太大，下面會空一大段）
+  const vh=window.innerHeight/100, Hf=H-2.4*vh, target = W/H>1.4 ? 32 : 20;
+  let best=null;
+  for(const R of [10,15,20,25,30]){ const uu=Hf/(R+1.05), cc=Math.floor((W/uu-0.7)/4)*4, sc=Math.abs(cc-target)+(cc<12?99:0); if(!best || sc<best.sc) best={ u:uu, cols:cc, sc }; }
+  // 欄數取 4 的倍數（直式照片 4 格寬）才排得滿；整面置中，左右不會留一條空白
+  const cols=best.cols, u=Math.min(W/(cols+0.7), best.u);
   GRID.queues={};
-  st.innerHTML=`<div class="collage" style="--cols:${cols};--u:${u}px"></div>`;
+  st.innerHTML=`<div class="collage" style="--cols:${cols};--u:${u}px;grid-template-columns:repeat(${cols},${u}px);justify-content:center"></div>`;
   const wall=st.querySelector('.collage'), box=st.getBoundingClientRect(), limit=box.bottom-u*0.15;
   // 一張一張貼上去，貼到畫面滿為止；放不下的就換小一點的形狀補空位
   let fails=0;
