@@ -686,7 +686,7 @@ let rt=null; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()
    其他裝置（例如用手機當遙控器）：Firestore 的 control/wall 文件 */
 const BC = 'BroadcastChannel' in window ? new BroadcastChannel('kghs-wall') : null;
 const SEEN=new Set(), BOOT=Date.now();
-function wallStatus(){ return { display:DISPLAY, mode, paused, inFinale, standby, spot:WF.spot, kind:WF.kind, shown:items.length, total:all.length, featured:$('#spot').classList.contains('show')?($('#spot').dataset.id||null):null, t:Date.now() }; }
+function wallStatus(){ return { display:DISPLAY, mode, paused, inFinale, standby, spot:WF.spot, kind:WF.kind, shown:items.length, total:all.length, people:people().size, featured:$('#spot').classList.contains('show')?($('#spot').dataset.id||null):null, t:Date.now() }; }
 function sendState(){
   const st=wallStatus();
   if(BC){ try{ BC.postMessage({ type:'state', ...st, filter:{ spot:st.spot, kind:st.kind } }); }catch(_){} }
