@@ -174,6 +174,12 @@ ol.steps b{color:var(--ink);font-weight:500}
       <p class="note" style="margin-top:8px">只在同一台電腦操作時，不登入也能切換畫面；要看到全部照片、隱藏照片，請先登入。</p>
     </section>
 
+    <section class="card" id="demoCard" hidden>
+      <h2>示範照片 <span id="demoCount"></span></h2>
+      <p class="note">照片還不多時，可以先放幾張校園照片讓牆看起來熱鬧一點。每按一次「加入」會新增 11 張（各地點的校園照片＋留言範例），署名「籌備小組」。真照片夠多之後，按「全部清除」就會一次拿掉，真的照片不受影響。</p>
+      <div class="row" style="margin-top:10px"><button class="btn gold wide" data-a="demoAdd">加入 11 張示範照片</button><button class="btn wide" data-a="demoClear">全部清除示範照片</button></div>
+    </section>
+
     <section class="card" id="photoCard" hidden>
       <h2>照片管理 <span id="countText"></span></h2>
       <div class="chips" id="statusChips"></div>
@@ -208,7 +214,15 @@ const CONFIG = {
     { id:'s4', name:'學生活動中心', award:'最佳人氣獎' }, { id:'s5', name:'體育館', award:'最佳青春熱血獎' }
   ],
   // 第六個拍照點：晚會現場（不用掃 QR Code、不算在五星裡）
-  party: { id:'s6', name:'晚會現場' }
+  party: { id:'s6', name:'晚會現場' },
+  // 示範照片：用網站上現有的校園照片，name／cls 是牆上顯示的署名（第 cls 屆）
+  demo: {
+    name:'籌備小組', cls:'3040',
+    photos:[ ['s1','s1-1.jpg'],['s1','s1-old.jpg'],['s2','s2-1.jpg'],['s2','s2-old.jpg'],['s3','s3-1.jpg'],['s3','s3-2.jpg'],['s3','s3-old.jpg'],
+             ['s4','s4-1.jpg'],['s4','s4-old.jpg'],['s5','s5-1.jpg'],['s5','s5-old.jpg'] ],
+    msgs:['好久不見，大家都好嗎？','我們班的大家，今晚見！','當年一起趕公車的妳們在哪裡？','謝謝當年的妳們','謝謝老師們，我們都長大了','謝謝這裡，讓我成為現在的我',
+          '雄女永遠是我們的家','青春不散場！','我還是當年那個少女','鐘聲一響，腳還是會想衝','福利社，我回來了！','光線跟三十年前一模一樣','每次想起高中，腦中就是這個畫面']
+  }
 };
 const KINDS={ all:'全部類型', selfie:'自拍／合照', scene:'攝影作品', note:'便利貼', preset:'準備好的照片' };
 const $=s=>document.querySelector(s);
@@ -331,6 +345,7 @@ function renderPhotos(){
   $('#statusChips').innerHTML=[['shown','顯示中',shown],['hidden','已隱藏',hid],['all','全部',entries.length]].map(([k,l,n])=>`<button class="chip" data-st="${k}" aria-pressed="${F.status===k}">${l}<b>${n}</b></button>`).join('');
   const l=filtered();
   $('#countText').textContent=`符合 ${l.length} 張`;
+  const dn=entries.filter(e=>e.demo).length; $('#demoCount').textContent = dn ? `目前牆上有 ${dn} 張` : '目前沒有';
   // 名字提示清單：輸入時跳出「小美・第 45 屆・3 張」
   const ppl=new Map(); entries.forEach(e=>{ const k=e.name+'|'+e.cls; const p=ppl.get(k)||{ name:e.name, cls:e.cls, n:0 }; p.n++; ppl.set(k,p); });
   $('#nameList').innerHTML=[...ppl.values()].sort((a,b)=>b.n-a.n).map(p=>`<option value="${esc(p.name)} ${esc(p.cls)}" label="${esc(p.name)}・第 ${esc(p.cls)} 屆・${p.n} 張"></option>`).join('');
@@ -353,6 +368,34 @@ function renderPhotos(){
         :`<button class="btn" data-a="hide" data-id="${esc(e.id)}">隱藏</button><button class="btn gold" data-a="feature" data-id="${esc(e.id)}">投到牆上</button>`}</div>
     </article>`; }).join('') : '<p class="empty">沒有符合的照片</p>';
   $('#moreBtn').hidden = l.length<=shownN;
+}
+/* 示範照片：寫進 entries，加上 demo:true 記號，清除時只刪有記號的 */
+let demoBusy=false;
+async function demoAdd(){
+  if(demoBusy) return; demoBusy=true;
+  try{
+    const { db }=await fb(), D=CONFIG.demo, base=location.origin+'/assets/presets/', run=Date.now().toString(36), t0=Date.now();
+    const msgs=[...D.msgs].sort(()=>Math.random()-.5), batch=db.batch();
+    D.photos.forEach(([spot,file],i)=>{
+      const pu=`demo-${run}-${i}`, url=base+file;
+      batch.set(db.collection('entries').doc(`${pu}_${spot}`), { playerUid:pu, spot, name:D.name, cls:D.cls, msg:msgs[i%msgs.length], kind:'preset', title:'', layout:'single',
+        photoUrl:url, wallUrl:url, tinyUrl:url, handUrl:null, hidden:false, demo:true, t:t0-i*1000 });
+    });
+    await batch.commit(); toast(`已加入 ${D.photos.length} 張示範照片`);
+  }catch(e){ toast(e.code==='permission-denied'?'沒有權限，請確認登入的是管理員帳號':'網路有問題，沒有加入成功'); }
+  finally{ demoBusy=false; }
+}
+async function demoClear(){
+  const n=entries.filter(e=>e.demo).length;
+  if(!n) return toast('目前沒有示範照片');
+  if(!confirm(`確定要清除全部 ${n} 張示範照片嗎？（真的照片不受影響）`)) return;
+  if(demoBusy) return; demoBusy=true;
+  try{
+    const { db }=await fb(), ids=entries.filter(e=>e.demo).map(e=>e.id);
+    for(let i=0;i<ids.length;i+=400){ const b=db.batch(); ids.slice(i,i+400).forEach(id=>b.delete(db.collection('entries').doc(id))); await b.commit(); }
+    toast(`已清除 ${ids.length} 張示範照片`);
+  }catch(e){ toast(e.code==='permission-denied'?'沒有權限，請確認登入的是管理員帳號':'網路有問題，沒有清除成功'); }
+  finally{ demoBusy=false; }
 }
 async function setHidden(id, hidden){
   try{
@@ -399,6 +442,8 @@ document.addEventListener('click', e=>{
   if(a==='hide'){ $('#modal').hidden=true; setHidden(id,true); }
   if(a==='unhide'){ $('#modal').hidden=true; setHidden(id,false); }
   if(a==='logout') FB && FB.auth.signOut();
+  if(a==='demoAdd') demoAdd();
+  if(a==='demoClear') demoClear();
 });
 $('#modal').addEventListener('click', e=>{ if(e.target.id==='modal') $('#modal').hidden=true; });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') $('#modal').hidden=true; });
@@ -416,7 +461,7 @@ fb().then(({auth})=>{
   auth.onAuthStateChanged(u=>{
     user=u && u.email===CONFIG.adminEmail ? u : null;
     $('#userPill').className='pill '+(user?'ok':''); $('#userText').textContent=user?'管理員已登入':'未登入';
-    $('#loginCard').hidden=!!user; $('#photoCard').hidden=!user;
+    $('#loginCard').hidden=!!user; $('#photoCard').hidden=!user; $('#demoCard').hidden=!user;
     if(user) listen(); renderWall();
   });
 }).catch(()=>toast('Firebase 載入失敗，請確認網路'));
